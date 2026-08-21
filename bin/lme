@@ -1,0 +1,110 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+$LOAD_PATH.unshift File.expand_path("../lib", __dir__)
+require "local_model_evaluation"
+require "optparse"
+
+ROOT = File.expand_path("..", __dir__)
+
+def load_workers
+  path = File.join(ROOT, "config", "workers.yml")
+  abort "Missing #{path}; copy config/workers.example.yml first." unless File.file?(path)
+  data = LocalModelEvaluation::Config.load_yaml(path)
+  (data.fetch("workers")).to_h { |name, attrs| [name.to_s, LocalModelEvaluation::Worker.new(name, attrs)] }
+end
+
+def load_models
+  data = LocalModelEvaluation::Config.load_yaml(File.join(ROOT, "config", "models.yml"))
+  data.fetch("models").transform_keys(&:to_s)
+end
+
+command = ARGV.shift
+case command
+when "plan"
+  experiment_path = ARGV.shift or abort "Usage: bin/lme plan EXPERIMENT.yml"
+  exp = LocalModelEvaluation::Experiment.new(experiment_path)
+  workers = load_workers
+  models = load_models
+  scheduler = LocalModelEvaluation::Scheduler.new(experiment: exp, workers:, models:)
+  jobs = scheduler.jobs
+  puts "Experiment: #{exp.name}"
+  puts "Purpose: #{exp.purpose}" unless exp.purpose.empty?
+  puts "Dispatch: #{exp.dispatch}"
+  puts "Models: #{exp.models.join(', ')}"
+  puts "Adventures: #{exp.adventures.length}"
+  puts "Replicates: #{exp.replicates}"
+  puts "Workers: #{exp.worker_names.join(', ')}"
+  puts "Jobs: #{jobs.length}"
+  puts "Cost cap: #{format('$%.2f', exp.cost_cap_usd)} (soft scoring-runtime stop)" if exp.cost_cap_usd
+  exp.worker_names.each do |name|
+    w = workers.fetch(name)
+    puts "  - #{name}: #{format('$%.4f/hr', w.hourly_rate_usd)} #{w.labels.empty? ? '' : '[' + w.labels.join(', ') + ']'}"
+  end
+
+when "worker-check"
+  experiment_path = ARGV.shift
+  workers = load_workers
+  models = load_models
+  selected = workers.values
+  required_models = []
+  if experiment_path
+    exp = LocalModelEvaluation::Experiment.new(experiment_path)
+    selected = exp.worker_names.map { |name| workers.fetch(name) }
+    required_models = exp.models.map { |name| models.fetch(name).fetch("ollama_model") }
+  end
+
+  checker = LocalModelEvaluation::WorkerCheck.new
+  failed = false
+  puts format("%-14s %-8s %-12s %s", "WORKER", "STATUS", "OLLAMA", "REQUIRED MODELS")
+  selected.each do |worker|
+    result = checker.check(worker)
+    if result.ok
+      missing = required_models.reject { |model| result.models.include?(model) || result.models.any? { |m| m.start_with?("#{model}:") } }
+      status = missing.empty? ? "OK" : "MISSING"
+      failed ||= !missing.empty?
+      model_text = required_models.empty? ? "-" : (missing.empty? ? "yes" : "missing: #{missing.join(', ')}")
+      puts format("%-14s %-8s %-12s %s", worker.name, status, result.version || "?", model_text)
+    else
+      failed = true
+      puts format("%-14s %-8s %-12s %s", worker.name, "ERROR", "-", result.error)
+    end
+  end
+  exit(failed ? 1 : 0)
+
+when "run"
+  experiment_path = ARGV.shift or abort "Usage: bin/lme run EXPERIMENT.yml [--rerun-failed|--force]"
+  opts = { rerun_failed: false, force: false }
+  OptionParser.new do |o|
+    o.on("--rerun-failed") { opts[:rerun_failed] = true }
+    o.on("--force") { opts[:force] = true }
+  end.parse!(ARGV)
+
+  exp = LocalModelEvaluation::Experiment.new(experiment_path)
+  workers = load_workers
+  models = load_models
+  scheduler = LocalModelEvaluation::Scheduler.new(experiment: exp, workers:, models:)
+  jobs = scheduler.jobs
+  puts "Experiment: #{exp.name}"
+  puts "Dispatch: #{exp.dispatch}"
+  puts "Jobs: #{jobs.length}"
+  runner = LocalModelEvaluation::Runner.new(experiment: exp, workers:, models:, output_root: File.join(ROOT, "output"), **opts)
+  runner.run(jobs)
+  LocalModelEvaluation::Reporter.new(runner.output_dir).write
+  puts "Report: #{File.join(runner.output_dir, 'summary.md')}"
+
+when "report"
+  output = ARGV.shift or abort "Usage: bin/lme report OUTPUT_DIR"
+  LocalModelEvaluation::Reporter.new(output).write
+  puts "Report: #{File.join(File.expand_path(output), 'summary.md')}"
+
+else
+  warn <<~USAGE
+    Usage:
+      bin/lme plan EXPERIMENT.yml
+      bin/lme worker-check [EXPERIMENT.yml]
+      bin/lme run EXPERIMENT.yml [--rerun-failed|--force]
+      bin/lme report OUTPUT_DIR
+  USAGE
+  exit 1
+end

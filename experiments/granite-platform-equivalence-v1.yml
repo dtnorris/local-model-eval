@@ -1,0 +1,40 @@
+name: granite-platform-equivalence-v1
+purpose: >
+  Determine whether Granite produces materially comparable AdventureFinder
+  scoring behavior on Apple Silicon and NVIDIA before cloud workers are used
+  to accelerate broader local-model evaluation.
+
+dispatch: matrix
+
+models:
+  - granite
+
+dimension: Rules / System-Mastery Demand
+
+adventures:
+  - ADV-0034
+  - ADV-0277
+  - ADV-0262
+
+replicates: 3
+
+workers:
+  - mac
+  - cloud_a
+
+scorer:
+  repo: ../af-cli-scoring-utility
+  mode: regression
+  extra_args: []
+
+success_criteria:
+  - No structured-output failures.
+  - Cloud results look like legitimate replicates of the same model rather than a systematically different backend behavior.
+  - Any score divergence is adjudicated before cloud workers are admitted to pooled evaluation.
+
+stop_conditions:
+  - Cloud worker cannot reliably execute the scorer.
+  - Material systematic platform-dependent behavior appears.
+  - Configured pilot cost cap would be exceeded.
+
+cost_cap_usd: 1.00

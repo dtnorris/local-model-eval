@@ -1,0 +1,24 @@
+workers:
+  mac:
+    type: ollama
+    base_url: http://127.0.0.1:11434
+    hourly_rate_usd: 0.0
+    labels:
+      - local
+      - apple-silicon
+    scorer_env:
+      AF_LLM_PROVIDER: ollama
+      # Replace this key if af-cli-scoring-utility uses a different remote endpoint variable.
+      AF_OLLAMA_BASE_URL: http://127.0.0.1:11434
+
+  cloud_a:
+    type: ollama
+    base_url: ${LME_CLOUD_A_URL}
+    hourly_rate_usd: 0.33
+    labels:
+      - cloud
+      - nvidia
+      - a6000
+    scorer_env:
+      AF_LLM_PROVIDER: ollama
+      AF_OLLAMA_BASE_URL: ${LME_CLOUD_A_URL}
