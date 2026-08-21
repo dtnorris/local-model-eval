@@ -1,6 +1,8 @@
 # Machine-specific worker configuration
 config/workers.yml
+output/
 
 *.DS_Store
 */**/.DS_Store
 */**/.gitignore.swp
+*.swp
