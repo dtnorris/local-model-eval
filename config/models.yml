@@ -7,3 +7,5 @@ models:
     ollama_model: gemma4:26b
   qwen:
     ollama_model: qwen3.6:35b-a3b
+  nemotron:
+    ollama_model: nemotron-3-nano:30b
