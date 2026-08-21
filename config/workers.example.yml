@@ -16,6 +16,7 @@ workers:
     base_url: ${LME_CLOUD_A_URL}
     hourly_rate_usd: 0.33
     labels:
+      - remote
       - cloud
       - nvidia
       - a6000

@@ -3,7 +3,10 @@
 
 $LOAD_PATH.unshift File.expand_path("../lib", __dir__)
 require "local_model_evaluation"
+require "fileutils"
+require "json"
 require "optparse"
+require "rbconfig"
 
 ROOT = File.expand_path("..", __dir__)
 
@@ -19,15 +22,39 @@ def load_models
   data.fetch("models").transform_keys(&:to_s)
 end
 
-command = ARGV.shift
-case command
-when "plan"
-  experiment_path = ARGV.shift or abort "Usage: bin/lme plan EXPERIMENT.yml"
+def load_experiment_context(experiment_path)
   exp = LocalModelEvaluation::Experiment.new(experiment_path)
   workers = load_workers
   models = load_models
   scheduler = LocalModelEvaluation::Scheduler.new(experiment: exp, workers:, models:)
-  jobs = scheduler.jobs
+  [exp, workers, models, scheduler.jobs]
+end
+
+def output_dir_for(exp)
+  File.join(ROOT, "output", exp.name)
+end
+
+def parse_run_options(argv)
+  opts = { rerun_failed: false, force: false }
+  OptionParser.new do |o|
+    o.on("--rerun-failed") { opts[:rerun_failed] = true }
+    o.on("--force") { opts[:force] = true }
+  end.parse!(argv)
+  opts
+end
+
+def forwarded_run_options(opts)
+  args = []
+  args << "--rerun-failed" if opts[:rerun_failed]
+  args << "--force" if opts[:force]
+  args
+end
+
+command = ARGV.shift
+case command
+when "plan"
+  experiment_path = ARGV.shift or abort "Usage: bin/lme plan EXPERIMENT.yml"
+  exp, workers, _models, jobs = load_experiment_context(experiment_path)
   puts "Experiment: #{exp.name}"
   puts "Purpose: #{exp.purpose}" unless exp.purpose.empty?
   puts "Dispatch: #{exp.dispatch}"
@@ -72,19 +99,56 @@ when "worker-check"
   end
   exit(failed ? 1 : 0)
 
+when "start"
+  experiment_path = ARGV.shift or abort "Usage: bin/lme start EXPERIMENT.yml [--rerun-failed|--force]"
+  opts = parse_run_options(ARGV)
+  exp, _workers, _models, jobs = load_experiment_context(experiment_path)
+  output_dir = output_dir_for(exp)
+  status = LocalModelEvaluation::RunStatus.new(output_dir:, jobs:)
+  abort "Experiment manager is already running (pid #{status.manager_pid})." if status.manager_running?
+
+  FileUtils.mkdir_p(output_dir)
+  log_path = File.join(output_dir, "manager.log")
+  pid_path = File.join(output_dir, "manager.pid")
+  child_command = [RbConfig.ruby, File.expand_path(__FILE__), "run", File.expand_path(experiment_path), *forwarded_run_options(opts)]
+
+  log = File.open(log_path, "a")
+  pid = Process.spawn(*child_command, chdir: ROOT, in: File::NULL, out: log, err: [:child, :out], pgroup: true)
+  Process.detach(pid)
+  log.close
+  File.write(pid_path, "#{pid}\n")
+
+  puts "Started: #{exp.name}"
+  puts "Manager PID: #{pid}"
+  puts "Jobs: #{jobs.length}"
+  puts "Status: bin/lme status #{experiment_path}"
+  puts "Log: #{log_path}"
+
+when "status"
+  experiment_path = ARGV.shift or abort "Usage: bin/lme status EXPERIMENT.yml"
+  exp, _workers, _models, jobs = load_experiment_context(experiment_path)
+  status = LocalModelEvaluation::RunStatus.new(output_dir: output_dir_for(exp), jobs:)
+  counts = status.counts
+  manager = if status.manager_running?
+              "running (pid #{status.manager_pid})"
+            elsif status.manager_pid
+              "stopped (stale pid #{status.manager_pid})"
+            else
+              "not started"
+            end
+
+  puts "Experiment: #{exp.name}"
+  puts "Manager: #{manager}"
+  puts "Jobs: #{jobs.length} total; #{counts['complete']} complete; #{counts['failed']} failed; #{counts['running']} running; #{counts['pending']} pending; #{counts['unknown']} unknown"
+  puts format("Estimated scoring-runtime cost: $%.4f", status.estimated_cost_usd)
+  puts "Report: #{File.join(output_dir_for(exp), 'summary.md')}" if File.file?(File.join(output_dir_for(exp), "summary.md"))
+  puts "Log: #{File.join(output_dir_for(exp), 'manager.log')}" if File.file?(File.join(output_dir_for(exp), "manager.log"))
+
 when "run"
   experiment_path = ARGV.shift or abort "Usage: bin/lme run EXPERIMENT.yml [--rerun-failed|--force]"
-  opts = { rerun_failed: false, force: false }
-  OptionParser.new do |o|
-    o.on("--rerun-failed") { opts[:rerun_failed] = true }
-    o.on("--force") { opts[:force] = true }
-  end.parse!(ARGV)
+  opts = parse_run_options(ARGV)
 
-  exp = LocalModelEvaluation::Experiment.new(experiment_path)
-  workers = load_workers
-  models = load_models
-  scheduler = LocalModelEvaluation::Scheduler.new(experiment: exp, workers:, models:)
-  jobs = scheduler.jobs
+  exp, workers, models, jobs = load_experiment_context(experiment_path)
   puts "Experiment: #{exp.name}"
   puts "Dispatch: #{exp.dispatch}"
   puts "Jobs: #{jobs.length}"
@@ -103,6 +167,8 @@ else
     Usage:
       bin/lme plan EXPERIMENT.yml
       bin/lme worker-check [EXPERIMENT.yml]
+      bin/lme start EXPERIMENT.yml [--rerun-failed|--force]
+      bin/lme status EXPERIMENT.yml
       bin/lme run EXPERIMENT.yml [--rerun-failed|--force]
       bin/lme report OUTPUT_DIR
   USAGE

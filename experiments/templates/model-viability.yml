@@ -23,7 +23,7 @@ workers:
   - cloud_a
 
 scorer:
-  repo: ../af-cli-scoring-utility
+  repo: ../../../af-cli-scoring-utility
   mode: regression
   extra_args: []
 

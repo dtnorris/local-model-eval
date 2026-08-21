@@ -1,0 +1,47 @@
+name: rsmd-remote-parallel-v1
+purpose: >
+  Use remote Ollama workers to execute the same Mac-capable open model in
+  parallel while preserving af-cli-scoring-utility as the authoritative
+  local scorer and keeping the experiment resumable and auditable.
+
+dispatch: pool
+
+models:
+  - granite
+
+dimension: Rules / System-Mastery Demand
+
+adventures:
+  - ADV-0053
+  - ADV-0287
+  - ADV-0034
+  - ADV-0040
+  - ADV-0031
+  - ADV-0032
+
+replicates: 1
+
+# Add more configured remote worker names here. Pool mode will use them
+# concurrently, one scorer job at a time per worker.
+workers:
+  - cloud_a
+
+required_worker_labels:
+  - remote
+
+scorer:
+  repo: ../../../af-cli-scoring-utility
+  mode: regression
+  extra_args: []
+
+success_criteria:
+  - Remote workers execute the frozen scorer without structured-output failures.
+  - Results are suitable for the same human/oracle review used for local runs.
+  - Parallel wall-clock time is materially lower than serial local execution.
+
+stop_conditions:
+  - A remote worker is unavailable or missing the selected model.
+  - Material platform-dependent scoring behavior appears.
+  - The configured soft scoring-runtime cost cap is reached.
+
+cost_cap_usd: 1.00

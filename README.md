@@ -1,31 +1,37 @@
 # local-model-evaluation
 
-Small experiment harness for running controlled `af-cli-scoring-utility` model evaluations across local and remote Ollama workers.
+Small orchestration and experiment-management layer for running controlled `af-cli-scoring-utility` evaluations across local and remote Ollama workers.
 
 ## Scope
 
-This repository answers **what to test, where to run it, and what the experiment established**. It deliberately does **not** contain AdventureFinder scoring semantics, AFAO interpretation, prompts, guardrails, cloud provisioning, or autoscaling.
+This repository answers **what to test, where to run it, how to dispatch it, and what the experiment established**. Its primary role is to act as a lightweight control plane from the Mac: keep AdventureFinder scoring semantics and source access local, while sending model inference to one or more reachable Ollama workers.
 
-`af-cli-scoring-utility` remains authoritative for scoring behavior.
+That split is intentional. `af-cli-scoring-utility` remains authoritative for scoring behavior, prompts, AFAO interpretation, guardrails, and source resolution. A remote worker only needs Ollama plus the selected model; it does not need a copy of the AdventureFinder scorer or source corpus.
 
-## v0.1 capabilities
+This makes the repo useful for parallelizing the waiting time around local-model evaluation without changing the scoring contract.
+
+## v0.2 capabilities
 
 - define Ollama workers as URLs plus environment variables;
 - health-check workers and verify required models;
 - define experiments declaratively in YAML;
 - run either a worker-by-worker **matrix** or a shared **pool**;
-- invoke the existing `bin/af-score` CLI;
+- invoke the existing `bin/af-score` CLI while routing inference to the selected worker;
+- kick off a detached experiment manager with `bin/lme start`;
+- inspect progress with `bin/lme status` while continuing other work;
 - preserve native scorer output plus stdout/stderr/metadata;
 - resume interrupted experiments without rerunning successful jobs;
 - retry only failed jobs when requested;
 - consolidate operational results into `jobs.csv`, `results.csv`, and `summary.md`;
 - estimate per-worker scoring-runtime cost when an hourly rate is configured.
 
-## Non-goals for v0.1
+## Non-goals for v0.2
 
-No RunPod/Vast API integration, GPU purchasing, Terraform, Docker orchestration, SSH fleet management, queues, databases, dashboards, autoscaling, or automatic model downloads.
+No RunPod/Vast API integration, GPU purchasing, Terraform, Docker orchestration, SSH fleet management, queues, databases, dashboards, autoscaling, automatic model downloads, or remote scorer-repository synchronization.
 
-The concrete first pilot is committed as `experiments/granite-platform-equivalence-v1.yml`. See `docs/SCORER_INTEGRATION_GATE.md` before starting paid compute.
+In particular, v0.2 does **not** copy `af-cli-scoring-utility` to remote machines or execute the whole scorer remotely. The Mac remains the lightweight control plane and the expensive model inference happens on the worker. Whole-job remote execution should only be added if this simpler architecture proves insufficient.
+
+The concrete first pilot remains `experiments/granite-platform-equivalence-v1.yml`. See `docs/SCORER_INTEGRATION_GATE.md` before starting paid compute. After platform equivalence is established, `experiments/templates/remote-parallel.yml` is the starting point for remote throughput runs.
 
 ## Requirements
 
@@ -63,13 +69,19 @@ workers:
     type: ollama
     base_url: ${LME_CLOUD_A_URL}
     hourly_rate_usd: 0.33
-    labels: [cloud, nvidia, a6000]
+    labels: [remote, cloud, nvidia, a6000]
     scorer_env:
       AF_LLM_PROVIDER: ollama
       AF_OLLAMA_BASE_URL: ${LME_CLOUD_A_URL}
 ```
 
 The harness intentionally treats scorer environment variables as configuration rather than hard-coding the scorer's remote-endpoint variable name. If the scorer uses a different endpoint variable, change `scorer_env` without changing this repository.
+
+Use the `remote` label as a semantic guardrail when an experiment must only use remote workers:
+
+```yaml
+required_worker_labels: [remote]
+```
 
 ## Dry-run the experiment plan
 
@@ -95,14 +107,42 @@ The check calls Ollama's `/api/version` and `/api/tags` endpoints.
 
 ## Define an experiment
 
-See `experiments/templates/model-viability.yml`.
+See `experiments/templates/model-viability.yml` for the general manifest shape and `experiments/templates/remote-parallel.yml` for a remote throughput campaign.
 
 The two dispatch modes are:
 
 - `matrix`: every configured worker runs every model/adventure/replicate combination. Use this for platform-equivalence tests.
-- `pool`: each model/adventure/replicate combination runs once and is assigned to the next available compatible worker. Use this to parallelize an evaluation campaign.
+- `pool`: each model/adventure/replicate combination runs once and is assigned to the next available compatible worker. Use this for remote parallelism. Each eligible worker processes one scorer job at a time, so adding workers increases concurrency without multiplying the logical benchmark.
 
-## Run
+## Kick off remote work and keep working
+
+The intended management-layer flow is:
+
+```bash
+bin/lme worker-check experiments/my-experiment.yml
+bin/lme plan experiments/my-experiment.yml
+bin/lme start experiments/my-experiment.yml
+bin/lme status experiments/my-experiment.yml
+```
+
+`start` launches the normal `run` command as a detached local manager. The manager writes to:
+
+```text
+output/<experiment>/manager.log
+output/<experiment>/manager.pid
+```
+
+Your terminal is returned immediately, so you can continue human review or other AdventureFinder work while remote workers process jobs. Check progress at any time with `status`, or inspect the manager log directly:
+
+```bash
+tail -f output/<experiment>/manager.log
+```
+
+The manager is still running on the Mac. If the Mac sleeps, shuts down, or loses network connectivity, active remote Ollama calls can be interrupted. Resume behavior prevents completed jobs from being repeated when the experiment is started again.
+
+## Foreground run
+
+For debugging or small experiments, run synchronously:
 
 ```bash
 bin/lme run experiments/my-experiment.yml
@@ -114,6 +154,8 @@ By default, completed jobs are never rerun.
 bin/lme run experiments/my-experiment.yml --rerun-failed
 bin/lme run experiments/my-experiment.yml --force
 ```
+
+The same retry flags are accepted by `bin/lme start`.
 
 ## Report
 
@@ -132,6 +174,8 @@ output/<experiment>/
 ├── jobs.csv
 ├── results.csv
 ├── summary.md
+├── manager.log       # detached-manager stdout/stderr, when started with `start`
+├── manager.pid       # manager pid; may remain after completion as a stale pid record
 └── runs/
     └── <job-id>/
         ├── metadata.json
@@ -144,19 +188,16 @@ output/<experiment>/
 
 ## Cost discipline
 
-The harness does not provision paid compute. A worker's `hourly_rate_usd` produces a **scoring-runtime estimate**, not a provider invoice. If `cost_cap_usd` is set, v0.1 stops dispatching new jobs once completed-job estimated runtime reaches that cap. This is deliberately a **soft cap**: already-running jobs can finish, and provider idle/storage/network charges are outside the estimate.
+The harness does not provision paid compute. A worker's `hourly_rate_usd` produces a **scoring-runtime estimate**, not a provider invoice. If `cost_cap_usd` is set, v0.2 stops dispatching new jobs once completed-job estimated runtime reaches that cap. This is deliberately a **soft cap**: already-running jobs can finish, and provider boot, idle, storage, and network charges are outside the estimate.
 
-Before adding cloud-provider automation, v0.1 should first establish:
+Before adding cloud-provider automation, the repo should first establish:
 
 1. remote Ollama produces legitimate comparable scoring evidence;
 2. parallel execution materially improves throughput;
-3. enough repeated use exists to justify automation work.
+3. repeated manual worker setup is burdensome enough to justify another automation layer.
 
 ## Tests
 
 ```bash
-bundle exec ruby -Itest test/config_test.rb
-bundle exec ruby -Itest test/experiment_test.rb
-bundle exec ruby -Itest test/scheduler_test.rb
-bundle exec ruby -Itest test/runner_test.rb
+rake
 ```
