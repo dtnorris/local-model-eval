@@ -1,0 +1,44 @@
+name: 08-qwen-weirdness-adv0278-upper-control-v1
+
+purpose: >
+  Test Qwen 3.6 35B-A3B against the clean ADV-0278 Witchlight Carnival
+  Fantastic Weirdness upper control after prior Barrier Peaks evidence
+  was affected by target-reference contamination concerns.
+
+dispatch: pool
+
+models:
+  - qwen
+
+dimension: Fantastic Weirdness
+
+adventures:
+  - ADV-0278
+
+replicates: 1
+
+workers:
+  - mac_alt
+
+required_worker_labels:
+  - alternate-endpoint
+
+scorer:
+  repo: ../../af-cli-scoring-utility
+  mode: positional
+  extra_args: []
+
+success_criteria:
+  - The target-reference line-wrap scrubber fix is active before execution.
+  - Structured output validates and is grounded to the ADV-0278 canonical source unit.
+  - Proposed Fantastic Weirdness 4 => AUDITION_SURVIVED.
+  - Proposed Fantastic Weirdness 3 or 5 => AUDITION_SURVIVED_WITH_BIAS.
+  - No target-specific expected-score contamination is used in the assessment.
+
+stop_conditions:
+  - Do not execute if the target-reference line-wrap scrubber fix has not been verified.
+  - Proposed Fantastic Weirdness is 1 or 2; classify AUDITION_FAILED for this discriminator.
+  - Structured-output failure, serious grounding failure, wrong canonical unit, or other qualitative failure occurs.
+  - The single planned discriminator run completes; do not add reruns to seek a more favorable result.
+
+cost_cap_usd: 0.01

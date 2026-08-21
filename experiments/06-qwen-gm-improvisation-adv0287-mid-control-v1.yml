@@ -1,0 +1,41 @@
+name: 06-qwen-gm-improvisation-adv0287-mid-control-v1
+
+purpose: >
+  Test Qwen 3.6 35B-A3B on a midscale GM Improvisation Demand
+  discriminator after existing clean evidence was concentrated at score 1.
+
+dispatch: pool
+
+models:
+  - qwen
+
+dimension: GM Improvisation Demand
+
+adventures:
+  - ADV-0287
+
+replicates: 1
+
+workers:
+  - mac_alt
+
+required_worker_labels:
+  - alternate-endpoint
+
+scorer:
+  repo: ../../af-cli-scoring-utility
+  mode: positional
+  extra_args: []
+
+success_criteria:
+  - Structured output validates and is grounded to the ADV-0287 canonical source unit.
+  - Proposed GM Improvisation Demand 3 => AUDITION_SURVIVED.
+  - Proposed GM Improvisation Demand 2 or 4 => AUDITION_SURVIVED_WITH_BIAS.
+  - No target-specific expected-score contamination is used in the assessment.
+
+stop_conditions:
+  - Proposed GM Improvisation Demand is 1 or 5; classify AUDITION_FAILED for this discriminator.
+  - Structured-output failure, serious grounding failure, wrong canonical unit, or other qualitative failure occurs.
+  - The single planned discriminator run completes; do not add reruns to seek a more favorable result.
+
+cost_cap_usd: 0.01

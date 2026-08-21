@@ -1,0 +1,42 @@
+name: 05-qwen-social-adv0229-upper-control-v1
+
+purpose: >
+  Test Qwen 3.6 35B-A3B against the high-Social ADV-0229
+  Danger at Dunwater control after clean evidence at the low end
+  of the Social Interaction Emphasis scale.
+
+dispatch: pool
+
+models:
+  - qwen
+
+dimension: Social Interaction Emphasis
+
+adventures:
+  - ADV-0229
+
+replicates: 1
+
+workers:
+  - mac_alt
+
+required_worker_labels:
+  - alternate-endpoint
+
+scorer:
+  repo: ../../af-cli-scoring-utility
+  mode: positional
+  extra_args: []
+
+success_criteria:
+  - Structured output validates and is grounded to the ADV-0229 canonical source unit.
+  - Proposed Social Interaction Emphasis 5 => AUDITION_SURVIVED.
+  - Proposed Social Interaction Emphasis 4 => AUDITION_SURVIVED_WITH_BIAS.
+  - No target-specific expected-score contamination is used in the assessment.
+
+stop_conditions:
+  - Proposed Social Interaction Emphasis is 1, 2, or 3; classify AUDITION_FAILED for this discriminator.
+  - Structured-output failure, serious grounding failure, wrong canonical unit, or other qualitative failure occurs.
+  - The single planned discriminator run completes; do not add reruns to seek a more favorable result.
+
+cost_cap_usd: 0.01

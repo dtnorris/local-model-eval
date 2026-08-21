@@ -1,0 +1,39 @@
+name: 03-nemotron-cpa-adv0040-discriminator-v1
+
+purpose: >
+  Test whether Nemotron-3-Nano 30B-A3B can recover the ADV-0040
+  Expedition to the Barrier Peaks Consequential Player Agency
+  discriminator that produced a serious Qwen miss.
+
+dispatch: pool
+
+models:
+  - nemotron
+
+dimension: Consequential Player Agency
+
+adventures:
+  - ADV-0040
+
+replicates: 1
+
+workers:
+  - mac
+
+scorer:
+  repo: ../../af-cli-scoring-utility
+  mode: positional
+  extra_args: []
+
+success_criteria:
+  - Structured output validates and is grounded to the ADV-0040 canonical source unit.
+  - Proposed Consequential Player Agency 4 => AUDITION_SURVIVED.
+  - Proposed Consequential Player Agency 3 or 5 => AUDITION_SURVIVED_WITH_BIAS.
+  - No target-specific expected-score contamination is used in the assessment.
+
+stop_conditions:
+  - Proposed Consequential Player Agency is 1 or 2; classify AUDITION_FAILED and do not deepen Nemotron CPA testing yet.
+  - Structured-output failure, serious grounding failure, wrong canonical unit, or other qualitative failure occurs.
+  - The single planned discriminator run completes; do not add reruns to seek a more favorable result.
+
+cost_cap_usd: 0.01

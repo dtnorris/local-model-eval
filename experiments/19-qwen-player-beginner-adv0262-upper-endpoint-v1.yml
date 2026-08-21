@@ -1,0 +1,39 @@
+name: 19-qwen-player-beginner-adv0262-upper-endpoint-v1
+
+purpose: >
+  Expand Qwen 3.6 35B-A3B Player Beginner Suitability coverage from
+  existing lower and middle cases to the exceptionally supportive
+  endpoint using ADV-0262 Lost Mine of Phandelver.
+
+dispatch: pool
+
+models:
+  - qwen
+
+dimension: Player Beginner Suitability
+
+adventures:
+  - ADV-0262
+
+replicates: 1
+
+workers:
+  - mac
+
+scorer:
+  repo: ../../af-cli-scoring-utility
+  mode: positional
+  extra_args: []
+
+success_criteria:
+  - Structured output validates and is grounded to the ADV-0262 canonical source unit.
+  - Proposed Player Beginner Suitability 5 => ENDPOINT_MATCH.
+  - Proposed Player Beginner Suitability 4 => BOUNDED_MISS_REQUIRES_REVIEW.
+  - No target-specific expected-score contamination is used in the assessment.
+
+stop_conditions:
+  - Proposed Player Beginner Suitability is 1, 2, or 3; classify as a serious discriminator failure.
+  - Structured-output failure, serious grounding failure, wrong canonical unit, or other qualitative failure occurs.
+  - The single planned endpoint run completes; do not add reruns to seek a more favorable result.
+
+cost_cap_usd: 0.01

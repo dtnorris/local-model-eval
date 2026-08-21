@@ -1,0 +1,39 @@
+name: 04-nemotron-gm-prep-adv0287-discriminator-v1
+
+purpose: >
+  Test whether Nemotron-3-Nano 30B-A3B can recover the ADV-0287
+  House of Lament GM Preparation Burden discriminator that produced
+  a serious Qwen miss.
+
+dispatch: pool
+
+models:
+  - nemotron
+
+dimension: GM Preparation Burden
+
+adventures:
+  - ADV-0287
+
+replicates: 1
+
+workers:
+  - mac
+
+scorer:
+  repo: ../../af-cli-scoring-utility
+  mode: positional
+  extra_args: []
+
+success_criteria:
+  - Structured output validates and is grounded to the ADV-0287 canonical source unit.
+  - Proposed GM Preparation Burden 4 => AUDITION_SURVIVED.
+  - Proposed GM Preparation Burden 3 or 5 => AUDITION_SURVIVED_WITH_BIAS.
+  - No target-specific expected-score contamination is used in the assessment.
+
+stop_conditions:
+  - Proposed GM Preparation Burden is 1 or 2; classify AUDITION_FAILED and do not deepen Nemotron GM Preparation testing yet.
+  - Structured-output failure, serious grounding failure, wrong canonical unit, or other qualitative failure occurs.
+  - The single planned discriminator run completes; do not add reruns to seek a more favorable result.
+
+cost_cap_usd: 0.01

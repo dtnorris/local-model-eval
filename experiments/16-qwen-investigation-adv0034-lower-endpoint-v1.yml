@@ -1,0 +1,39 @@
+name: 16-qwen-investigation-adv0034-lower-endpoint-v1
+
+purpose: >
+  Expand Qwen 3.6 35B-A3B Investigation Emphasis evidence from the
+  existing upper-ladder cases to the minimal endpoint using
+  ADV-0034 Tomb of Horrors.
+
+dispatch: pool
+
+models:
+  - qwen
+
+dimension: Investigation Emphasis
+
+adventures:
+  - ADV-0034
+
+replicates: 1
+
+workers:
+  - mac
+
+scorer:
+  repo: ../../af-cli-scoring-utility
+  mode: positional
+  extra_args: []
+
+success_criteria:
+  - Structured output validates and is grounded to the ADV-0034 canonical source unit.
+  - Proposed Investigation Emphasis 1 => ENDPOINT_MATCH.
+  - Proposed Investigation Emphasis 2 => BOUNDED_MISS_REQUIRES_REVIEW.
+  - No target-specific expected-score contamination is used in the assessment.
+
+stop_conditions:
+  - Proposed Investigation Emphasis is 3, 4, or 5; classify as a serious discriminator failure.
+  - Structured-output failure, serious grounding failure, wrong canonical unit, or other qualitative failure occurs.
+  - The single planned endpoint run completes; do not add reruns to seek a more favorable result.
+
+cost_cap_usd: 0.01
