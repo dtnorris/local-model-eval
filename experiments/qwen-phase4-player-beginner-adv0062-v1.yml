@@ -1,7 +1,7 @@
-name: qwen-phase4-weirdness-adv0230-v1
+name: qwen-phase4-player-beginner-adv0062-v1
 
 purpose: >
-  Run the Phase-4 Fantastic Weirdness discriminator on ADV-0230
+  Run a differentiated Phase-4 Player Beginner Suitability discriminator on ADV-0062
   using Qwen 3.6 35B-A3B.
 
 dispatch: pool
@@ -9,10 +9,10 @@ dispatch: pool
 models:
   - qwen
 
-dimension: Fantastic Weirdness
+dimension: Player Beginner Suitability
 
 adventures:
-  - ADV-0230
+  - ADV-0062
 
 replicates: 1
 
@@ -32,6 +32,3 @@ stop_conditions:
   - Structured output fails.
   - Source grounding fails.
   - The scorer cannot complete the assessment.
-
-cost_cap_usd: 0.01
-

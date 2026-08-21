@@ -1,0 +1,39 @@
+name: qwen-levels-ADV-0278-discriminator-v1
+purpose: >
+  Phase-4 clean Qwen Levels canonical-boundary discriminator using
+  ADV-0278 Witchlight Carnival. Test whether the scorer preserves the
+  nested adventure's own level endpoint rather than inheriting advancement
+  belonging to subsequent material.
+
+dispatch: pool
+
+models:
+  - qwen
+
+dimension: Levels
+
+adventures:
+  - ADV-0278
+
+replicates: 1
+
+workers:
+  - mac
+
+scorer:
+  repo: ../../af-cli-scoring-utility
+  mode: positional
+  extra_args: []
+
+success_criteria:
+  - Structured output validates and is grounded to the ADV-0278 canonical source unit.
+  - Level Start and Level End preserve the canonical Adventure-ID boundary.
+  - No parent-campaign or subsequent-adventure advancement is assigned backward.
+  - No target-specific expected-value contamination is used.
+
+stop_conditions:
+  - The scorer assigns levels from the containing campaign or later Hither material to ADV-0278.
+  - Structured-output failure, serious grounding failure, or wrong canonical unit occurs.
+  - The single planned discriminator run completes; do not add favorable reruns.
+
+cost_cap_usd: 0.01

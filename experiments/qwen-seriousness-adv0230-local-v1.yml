@@ -1,0 +1,38 @@
+name: qwen-seriousness-adv0230-local-v1
+
+purpose: >
+  Run a clean local Qwen 3.6 35B-A3B assessment of
+  ADV-0230 Salvage Operation for Seriousness
+  without regression-oracle contamination.
+
+dispatch: pool
+
+models:
+  - qwen
+
+dimension: Seriousness
+
+adventures:
+  - ADV-0230
+
+replicates: 1
+
+workers:
+  - mac
+
+scorer:
+  repo: ../../af-cli-scoring-utility
+  mode: positional
+  extra_args: []
+
+success_criteria:
+  - One scoring job completes successfully.
+  - Structured output validates.
+  - Assessment is grounded to the ADV-0230 canonical source unit.
+  - No target-specific expected-score contamination is used in the assessment.
+
+stop_conditions:
+  - Structured-output failure, serious grounding failure, wrong canonical unit, or other qualitative failure occurs.
+  - The single planned run completes; do not add reruns merely to seek a more favorable result.
+
+cost_cap_usd: 0.01

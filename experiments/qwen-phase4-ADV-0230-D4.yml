@@ -1,7 +1,8 @@
-name: qwen-phase4-adv-0230-d4
+name: qwen-phase4-puzzle-adv0230-v1
 
 purpose: >
-  Test GM Preparation Burden on ADV-0230
+  Run the Phase-4 Puzzle / Problem-Solving Emphasis discriminator on ADV-0230
+  using Qwen 3.6 35B-A3B.
 
 dispatch: pool
 
@@ -16,22 +17,20 @@ adventures:
 replicates: 1
 
 workers:
-  - mac_alt
-
-required_worker_labels:
-  - alternate-endpoint
+  - mac
 
 scorer:
   repo: ../../af-cli-scoring-utility
-  mode: regression
+  mode: positional
   extra_args: []
 
 success_criteria:
-  - One scoring job completes successfully.
-  - Run metadata identifies mac_alt.
-  - The scorer uses Ollama at port 11435 rather than the default 11434.
+  - One valid structured assessment completes.
+  - The assessment is source-grounded and uses the correct canonical adventure unit.
 
 stop_conditions:
-  - Worker check fails.
-  - Model is unavailable on the alternate endpoint.
-  - Scoring fails because the scorer ignores AF_OLLAMA_BASE_URL.
+  - Structured output fails.
+  - Source grounding fails.
+  - The scorer cannot complete the assessment.
+
+cost_cap_usd: 0.01

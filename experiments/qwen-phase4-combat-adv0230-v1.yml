@@ -1,7 +1,7 @@
-name: qwen-phase4-weirdness-adv0230-v1
+name: qwen-phase4-combat-adv0230-v1
 
 purpose: >
-  Run the Phase-4 Fantastic Weirdness discriminator on ADV-0230
+  Run the Phase-4 Combat Emphasis discriminator on ADV-0230
   using Qwen 3.6 35B-A3B.
 
 dispatch: pool
@@ -9,7 +9,7 @@ dispatch: pool
 models:
   - qwen
 
-dimension: Fantastic Weirdness
+dimension: Combat Emphasis
 
 adventures:
   - ADV-0230
@@ -34,4 +34,3 @@ stop_conditions:
   - The scorer cannot complete the assessment.
 
 cost_cap_usd: 0.01
-

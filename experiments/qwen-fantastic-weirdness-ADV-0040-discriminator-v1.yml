@@ -1,0 +1,36 @@
+name: qwen-fantastic-weirdness-ADV-0040-discriminator-v1
+purpose: >
+  Phase-4 upper-end Qwen discriminator for Fantastic Weirdness using
+  ADV-0040 Expedition to the Barrier Peaks. Run only if the prior
+  Fantastic Weirdness discriminator did not produce a hard failure.
+
+dispatch: pool
+
+models:
+  - qwen
+
+dimension: Fantastic Weirdness
+
+adventures:
+  - ADV-0040
+
+replicates: 1
+
+workers:
+  - mac
+
+scorer:
+  repo: ../../af-cli-scoring-utility
+  mode: positional
+  extra_args: []
+
+success_criteria:
+  - Structured output validates and is grounded to the canonical source unit.
+  - Assessment remains within the exact-or-adjacent Phase-4 acceptance band.
+  - No target-specific expected-score contamination is used.
+
+stop_conditions:
+  - A non-adjacent score error or serious qualitative failure occurs; classify AUDITION_FAILED for Qwen Fantastic Weirdness.
+  - The single planned discriminator run completes; do not add favorable reruns.
+
+cost_cap_usd: 0.01

@@ -1,15 +1,15 @@
-name: qwen-phase4-weirdness-adv0230-v1
+name: nemotron-phase4-exploration-adv0230-v1
 
 purpose: >
-  Run the Phase-4 Fantastic Weirdness discriminator on ADV-0230
-  using Qwen 3.6 35B-A3B.
+  Run the Phase-4 Exploration Emphasis rescue discriminator on ADV-0230
+  using Nemotron-3-Nano 30B-A3B after Qwen's hard failure on the same case.
 
 dispatch: pool
 
 models:
-  - qwen
+  - nemotron
 
-dimension: Fantastic Weirdness
+dimension: Exploration Emphasis
 
 adventures:
   - ADV-0230
@@ -32,6 +32,3 @@ stop_conditions:
   - Structured output fails.
   - Source grounding fails.
   - The scorer cannot complete the assessment.
-
-cost_cap_usd: 0.01
-
