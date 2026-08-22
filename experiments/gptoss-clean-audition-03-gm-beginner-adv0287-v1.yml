@@ -1,0 +1,39 @@
+name: gptoss-clean-audition-03-gm-beginner-adv0287-v1
+
+purpose: >
+  Complete the GPT-OSS 20B clean non-RSMD audition with a high-end discriminator.
+  Test ADV-0287 House of Lament on GM Beginner Suitability, exercising the
+  beginner-suitability scorer group at the calibrated score-5 endpoint.
+
+dispatch: pool
+
+models:
+  - gptoss
+
+dimension: GM Beginner Suitability
+
+adventures:
+  - ADV-0287
+
+replicates: 1
+
+workers:
+  - mac
+
+scorer:
+  repo: ../../af-cli-scoring-utility
+  mode: positional
+  extra_args: []
+
+success_criteria:
+  - Structured output validates and is grounded to the ADV-0287 canonical source unit.
+  - Proposed GM Beginner Suitability 5 => EXACT_PASS.
+  - Proposed GM Beginner Suitability 4 => ADJACENT_MISS.
+  - No target-specific expected-score contamination is used in the assessment.
+
+stop_conditions:
+  - Proposed GM Beginner Suitability is 1, 2, or 3; classify GPT-OSS audition as failed.
+  - Structured-output failure, serious grounding failure, wrong canonical unit, or other qualitative failure occurs.
+  - Do not rerun this discriminator to seek a more favorable result.
+
+cost_cap_usd: 0.01

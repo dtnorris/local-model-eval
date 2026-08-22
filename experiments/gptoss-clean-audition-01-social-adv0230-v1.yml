@@ -1,0 +1,39 @@
+name: gptoss-clean-audition-01-social-adv0230-v1
+
+purpose: >
+  Reopen GPT-OSS 20B outside RSMD with a clean low-anchor discriminator.
+  Test ADV-0230 Salvage Operation on Social Interaction Emphasis, a dimension
+  with stable local/Qwen behavior and a well-established score-1 placement.
+
+dispatch: pool
+
+models:
+  - gptoss
+
+dimension: Social Interaction Emphasis
+
+adventures:
+  - ADV-0230
+
+replicates: 1
+
+workers:
+  - mac
+
+scorer:
+  repo: ../../af-cli-scoring-utility
+  mode: positional
+  extra_args: []
+
+success_criteria:
+  - Structured output validates and is grounded to the ADV-0230 canonical source unit.
+  - Proposed Social Interaction Emphasis 1 => EXACT_PASS.
+  - Proposed Social Interaction Emphasis 2 => ADJACENT_MISS.
+  - No target-specific expected-score contamination is used in the assessment.
+
+stop_conditions:
+  - Proposed Social Interaction Emphasis is 3, 4, or 5; classify GPT-OSS audition as failed.
+  - Structured-output failure, serious grounding failure, wrong canonical unit, or other qualitative failure occurs.
+  - Do not rerun this discriminator to seek a more favorable result.
+
+cost_cap_usd: 0.01

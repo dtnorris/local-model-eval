@@ -1,0 +1,39 @@
+name: gptoss-clean-audition-02-seriousness-adv0062-v1
+
+purpose: >
+  Continue the GPT-OSS 20B clean non-RSMD audition with a middle-anchor
+  discriminator. Test ADV-0062 No Honour Among Thieves on Seriousness,
+  exercising the experience/tone scorer group at the calibrated score-3 boundary.
+
+dispatch: pool
+
+models:
+  - gptoss
+
+dimension: Seriousness
+
+adventures:
+  - ADV-0062
+
+replicates: 1
+
+workers:
+  - mac
+
+scorer:
+  repo: ../../af-cli-scoring-utility
+  mode: positional
+  extra_args: []
+
+success_criteria:
+  - Structured output validates and is grounded to the ADV-0062 canonical source unit.
+  - Proposed Seriousness 3 => EXACT_PASS.
+  - Proposed Seriousness 2 or 4 => ADJACENT_MISS.
+  - No target-specific expected-score contamination is used in the assessment.
+
+stop_conditions:
+  - Proposed Seriousness is 1 or 5; classify GPT-OSS audition as failed.
+  - Structured-output failure, serious grounding failure, wrong canonical unit, or other qualitative failure occurs.
+  - Do not rerun this discriminator to seek a more favorable result.
+
+cost_cap_usd: 0.01
