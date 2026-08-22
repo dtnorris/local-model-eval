@@ -1,0 +1,41 @@
+name: 28-qwen-gm-beginner-adv0287-upper-endpoint-v1
+
+purpose: >
+  Conditional follow-up to experiment 07. If Qwen survives the Tomb of Horrors
+  midscale GM Beginner Suitability control, test the exceptionally supportive
+  endpoint using ADV-0287 House of Lament.
+
+dispatch: pool
+
+models:
+  - qwen
+
+dimension: GM Beginner Suitability
+
+adventures:
+  - ADV-0287
+
+replicates: 1
+
+workers:
+  - mac
+
+scorer:
+  repo: ../../af-cli-scoring-utility
+  mode: positional
+  extra_args: []
+
+success_criteria:
+  - Experiment 07 survived its discriminator.
+  - Structured output validates and is grounded to the ADV-0287 canonical source unit.
+  - Proposed GM Beginner Suitability 5 => ENDPOINT_MATCH.
+  - Proposed GM Beginner Suitability 4 => BOUNDED_MISS_REQUIRES_BIAS_REVIEW.
+  - No target-specific expected-score contamination is used in the assessment.
+
+stop_conditions:
+  - Do not execute if experiment 07 failed its discriminator.
+  - Proposed GM Beginner Suitability is 1, 2, or 3; classify as a serious discriminator failure.
+  - Structured-output failure, serious grounding failure, wrong canonical unit, or other qualitative failure occurs.
+  - The single planned endpoint run completes; do not add reruns to seek a more favorable result.
+
+cost_cap_usd: 0.01

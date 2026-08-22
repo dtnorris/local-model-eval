@@ -1,0 +1,39 @@
+name: nemotron-phase4-gm-prep-adv0288-v1
+
+purpose: >
+  Run a differentiated second Phase-4 GM Preparation Burden discriminator on
+  ADV-0288 A Friend in Need using Nemotron-3-Nano 30B-A3B after its first
+  GM Preparation Burden discriminator on ADV-0287.
+
+dispatch: pool
+
+models:
+  - nemotron
+
+dimension: GM Preparation Burden
+
+adventures:
+  - ADV-0288
+
+replicates: 1
+
+workers:
+  - mac
+
+scorer:
+  repo: ../../af-cli-scoring-utility
+  mode: positional
+  extra_args: []
+
+success_criteria:
+  - One valid structured assessment completes.
+  - The assessment is source-grounded.
+  - The scorer evaluates the correct canonical adventure unit.
+  - No target-specific calibration material is used as evidence.
+
+stop_conditions:
+  - Structured output fails.
+  - Source grounding fails.
+  - The wrong canonical adventure unit is assessed.
+  - Target-specific calibration material is observed in the scoring context.
+  - The scorer cannot complete the assessment.

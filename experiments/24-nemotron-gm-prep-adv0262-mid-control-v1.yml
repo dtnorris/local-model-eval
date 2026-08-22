@@ -1,0 +1,41 @@
+name: 24-nemotron-gm-prep-adv0262-mid-control-v1
+
+purpose: >
+  Conditional follow-up to the Nemotron GM Preparation Burden rescue audition.
+  Run only if experiment 04 survived. Test ADV-0262 Lost Mine of Phandelver
+  as a calibrated middle-ladder control.
+
+dispatch: pool
+
+models:
+  - nemotron
+
+dimension: GM Preparation Burden
+
+adventures:
+  - ADV-0262
+
+replicates: 1
+
+workers:
+  - mac
+
+scorer:
+  repo: ../../af-cli-scoring-utility
+  mode: positional
+  extra_args: []
+
+success_criteria:
+  - Experiment 04 survived its discriminator.
+  - Structured output validates and is grounded to the ADV-0262 canonical source unit.
+  - Proposed GM Preparation Burden 3 => CONTROL_MATCH.
+  - Proposed GM Preparation Burden 2 or 4 => BOUNDED_MISS_REQUIRES_BIAS_REVIEW.
+  - No target-specific expected-score contamination is used in the assessment.
+
+stop_conditions:
+  - Do not execute if experiment 04 failed its discriminator.
+  - Proposed GM Preparation Burden is 1 or 5; classify as a serious discriminator failure.
+  - Structured-output failure, serious grounding failure, wrong canonical unit, or other qualitative failure occurs.
+  - The single planned control run completes; do not add reruns to seek a more favorable result.
+
+cost_cap_usd: 0.01

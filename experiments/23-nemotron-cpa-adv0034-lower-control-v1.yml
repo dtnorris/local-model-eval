@@ -1,0 +1,41 @@
+name: 23-nemotron-cpa-adv0034-lower-control-v1
+
+purpose: >
+  Conditional follow-up to the Nemotron Consequential Player Agency rescue
+  audition. Run only if experiment 03 survived. Test ADV-0034 Tomb of Horrors
+  at the calibrated low-CPA placement.
+
+dispatch: pool
+
+models:
+  - nemotron
+
+dimension: Consequential Player Agency
+
+adventures:
+  - ADV-0034
+
+replicates: 1
+
+workers:
+  - mac
+
+scorer:
+  repo: ../../af-cli-scoring-utility
+  mode: positional
+  extra_args: []
+
+success_criteria:
+  - Experiment 03 survived its discriminator.
+  - Structured output validates and is grounded to the ADV-0034 canonical source unit.
+  - Proposed Consequential Player Agency 2 => CONTROL_MATCH.
+  - Proposed Consequential Player Agency 1 or 3 => BOUNDED_MISS_REQUIRES_BIAS_REVIEW.
+  - No target-specific expected-score contamination is used in the assessment.
+
+stop_conditions:
+  - Do not execute if experiment 03 failed its discriminator.
+  - Proposed Consequential Player Agency is 4 or 5; classify as a serious discriminator failure.
+  - Structured-output failure, serious grounding failure, wrong canonical unit, or other qualitative failure occurs.
+  - The single planned control run completes; do not add reruns to seek a more favorable result.
+
+cost_cap_usd: 0.01

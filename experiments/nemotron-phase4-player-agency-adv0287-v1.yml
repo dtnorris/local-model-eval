@@ -1,0 +1,39 @@
+name: nemotron-phase4-player-agency-adv0287-v1
+
+purpose: >
+  Run a differentiated second Phase-4 Consequential Player Agency discriminator
+  on ADV-0287 House of Lament using Nemotron-3-Nano 30B-A3B after its first
+  Consequential Player Agency discriminator on ADV-0040.
+
+dispatch: pool
+
+models:
+  - nemotron
+
+dimension: Consequential Player Agency
+
+adventures:
+  - ADV-0287
+
+replicates: 1
+
+workers:
+  - mac
+
+scorer:
+  repo: ../../af-cli-scoring-utility
+  mode: positional
+  extra_args: []
+
+success_criteria:
+  - One valid structured assessment completes.
+  - The assessment is source-grounded.
+  - The scorer evaluates the correct canonical adventure unit.
+  - No target-specific calibration material is used as evidence.
+
+stop_conditions:
+  - Structured output fails.
+  - Source grounding fails.
+  - The wrong canonical adventure unit is assessed.
+  - Target-specific calibration material is observed in the scoring context.
+  - The scorer cannot complete the assessment.

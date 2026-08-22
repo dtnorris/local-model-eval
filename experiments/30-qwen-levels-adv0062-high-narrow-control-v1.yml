@@ -1,0 +1,42 @@
+name: 30-qwen-levels-adv0062-high-narrow-control-v1
+
+purpose: >
+  Conditional follow-up to experiment 10. If Qwen survives the ordinary
+  Lost Mine of Phandelver multilevel control, test a high-start narrow-span
+  Levels case using ADV-0062 No Honour Among Thieves.
+
+dispatch: pool
+
+models:
+  - qwen
+
+dimension: Levels
+
+adventures:
+  - ADV-0062
+
+replicates: 1
+
+workers:
+  - mac
+
+scorer:
+  repo: ../../af-cli-scoring-utility
+  mode: positional
+  extra_args: []
+
+success_criteria:
+  - Experiment 10 survived its discriminator.
+  - Structured output validates and is grounded to the ADV-0062 canonical source unit.
+  - Proposed Level Start 10 and Level End 11 => CONTROL_MATCH.
+  - A one-level error on exactly one endpoint => BOUNDED_MISS_REQUIRES_REVIEW.
+  - No target-specific expected-level contamination is used in the assessment.
+
+stop_conditions:
+  - Do not execute if experiment 10 failed its discriminator.
+  - Either endpoint differs from the expected value by more than one level; classify as a serious discriminator failure.
+  - Both endpoints are wrong, even if each is only adjacent; classify as a failed control.
+  - Structured-output failure, serious grounding failure, wrong canonical unit, or other qualitative failure occurs.
+  - The single planned control run completes; do not add reruns to seek a more favorable result.
+
+cost_cap_usd: 0.01
