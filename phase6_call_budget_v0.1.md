@@ -16,7 +16,7 @@ This file freezes the maximum local inference budget for the initial Phase-6 rem
 
 The budget exists to prevent result-driven expansion, benchmark chasing, and silent reallocation of compute after a hypothesis performs poorly.
 
-A budget allocation is a **ceiling**, not a requirement to spend every call. Predeclared per-dimension stop rules may terminate a pilot early.
+The 25 core calls are both a **ceiling and the default diagnostic-completion set**. Strict remediation criteria may become impossible part-way through a family, but an unfavorable numeric result does not by itself terminate the remaining authorized core diagnostics. Early termination is reserved for systemic experiment-integrity failures.
 
 ---
 
@@ -55,12 +55,13 @@ No favorable rerun is authorized merely because an output was malformed, inconve
 ## 4. Allocation rules
 
 1. **Allocations are dimension-specific.** Unused calls from one dimension do not transfer automatically to another.
-2. **Five core calls is the maximum default pilot size per dimension.** Stop rules may reduce actual usage.
+2. **Five core calls is the default diagnostic set per dimension.** Complete all five unless a systemic integrity failure makes later evidence invalid or non-comparable.
 3. **The single optional call is reserved exclusively for Social Interaction Emphasis.** It cannot be reassigned to Investigation, Lethality, Puzzle, Seriousness, another model, or another dimension under v0.1.
 4. **The Social optional call is not a favorable rerun.** It may be used only when the five predeclared core Social calls leave a genuinely unresolved boundary question that was identified in the experiment plan before the optional call is selected.
-5. **A failed hypothesis does not unlock unused budget.** Stop the pilot instead of spending remaining calls to improve its apparent percentage.
+5. **A failed strict remediation criterion does not unlock extra budget and does not cancel remaining core diagnostics.** Complete the frozen core set for information value; do not add calls merely to improve the apparent percentage.
 6. **A successful hypothesis does not unlock extra remediation calls.** Success earns a separately planned fresh qualification run; qualification calls are outside this remediation budget and require their own predeclared plan.
 7. **No paid API, hosted inference, rented compute, or larger-model escalation is included.** Any such escalation requires a separate costed decision.
+8. **Score-triggered stop language in earlier pilot documents is superseded by `phase6_diagnostic_completion_policy_v0.1.md`.** Strict success/failure classifications in those documents remain in force.
 
 ---
 

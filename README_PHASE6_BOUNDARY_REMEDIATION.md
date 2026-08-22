@@ -17,8 +17,9 @@ This workspace does **not** alter or reinterpret Phase-5 evidence. A successful 
 5. One manifest remains one model × one adventure × one dimension × one replicate unless a later Phase-6 plan explicitly says otherwise.
 6. Preserve blind scoring: accepted/oracle values may be used by analysis/validation tooling but must never enter target scorer input.
 7. Do not favorable-rerun a completed case. If a run is operationally invalid, record that failure and follow the predeclared experiment rule.
-8. Execute remediation dimension-by-dimension with the most diagnostic kill test first; stop a failed hypothesis rather than spending the rest of its call budget.
-9. Keep external inference cost at `$0` for this phase unless a separately approved escalation decision says otherwise.
+8. Execute remediation dimension-by-dimension in the frozen diagnostic order. A numeric miss may fail the strict remediation criterion, but does not by itself terminate the remaining authorized core diagnostic cases.
+9. Apply [`phase6_diagnostic_completion_policy_v0.1.md`](phase6_diagnostic_completion_policy_v0.1.md) whenever score-triggered early-stop language in an earlier pilot conflicts with this rule.
+10. Keep external inference cost at `$0` for this phase unless a separately approved escalation decision says otherwise.
 
 ## Frozen call-budget envelope
 
@@ -33,7 +34,7 @@ The initial remediation budget is frozen in [`phase6_call_budget_v0.1.md`](phase
 | Seriousness | 5 | 0 | Test the diagnosed upward bias once its rationale-level failure is frozen |
 | **Total** | **25** | **1** | **26 maximum** |
 
-This table is a budget ceiling, not an instruction to execute every call. Per-dimension stop rules control actual spend. The frozen budget file governs call accounting, non-transferability, the Social-only optional call, and amendments.
+The 25 core calls are the default diagnostic-completion set as well as the budget ceiling. Skip remaining core calls only for a systemic experiment-integrity failure that would make subsequent evidence invalid or non-comparable. The frozen budget file still governs call accounting, non-transferability, the Social-only optional call, and amendments.
 
 ## Planned execution order
 

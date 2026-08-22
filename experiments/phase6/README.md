@@ -34,8 +34,13 @@ Every remediation manifest should declare or preserve:
 - Phase-5 results are frozen baseline evidence, not files to overwrite.
 - A remediation case is deliberately diagnostic and therefore is **not** final qualification evidence by itself.
 - Successful remediation earns a separate benchmark-blind qualification run under the new scorer profile.
-- Failed hypotheses should stop early according to their predeclared stop rules.
+- Strict remediation success/failure criteria remain predeclared and unchanged.
+- A numeric failure does not itself stop the rest of an authorized five-case diagnostic family.
+- Complete the 25 authorized core calls by default so later cases can measure partial improvement, unchanged bias, control regression, or blanket directional movement.
+- Stop or pause early only for a systemic integrity failure that would invalidate later evidence.
 - Do not rerun merely to seek a favorable sample.
+
+Execution precedence for the initial wave is defined in `../../phase6_diagnostic_completion_policy_v0.1.md`.
 
 ## Current status
 
