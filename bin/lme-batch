@@ -1,0 +1,96 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "optparse"
+require "rbconfig"
+require_relative "../lib/local_model_evaluation/manifest_batch"
+
+ROOT = File.expand_path("..", __dir__)
+
+
+def parse_run_options(argv)
+  opts = { rerun_failed: false, force: false }
+  OptionParser.new do |o|
+    o.on("--rerun-failed") { opts[:rerun_failed] = true }
+    o.on("--force") { opts[:force] = true }
+  end.parse!(argv)
+  opts
+end
+
+
+def forwarded_run_options(opts)
+  args = []
+  args << "--rerun-failed" if opts[:rerun_failed]
+  args << "--force" if opts[:force]
+  args
+end
+
+
+def load_batch(path)
+  LocalModelEvaluation::ManifestBatch.new(path)
+rescue ArgumentError, KeyError => e
+  abort e.message
+end
+
+
+def print_batch(batch)
+  puts "Manifest batch: #{batch.list_path}"
+  puts "Manifests: #{batch.entries.length}"
+  puts "Ordering: worker -> model -> adventure -> dimension"
+  batch.ordered_entries.each_with_index do |entry, index|
+    puts format(
+      "%4d  %-14s %-12s %-12s %s",
+      index + 1,
+      entry.worker,
+      entry.model,
+      entry.adventure,
+      entry.dimension
+    )
+  end
+end
+
+command = ARGV.shift
+case command
+when "plan"
+  list_path = ARGV.shift or abort "Usage: bin/lme-batch plan MANIFEST_LIST.txt"
+  abort "Unexpected arguments: #{ARGV.join(' ')}" unless ARGV.empty?
+  print_batch(load_batch(list_path))
+
+when "run"
+  list_path = ARGV.shift or abort "Usage: bin/lme-batch run MANIFEST_LIST.txt [--rerun-failed|--force]"
+  opts = parse_run_options(ARGV)
+  batch = load_batch(list_path)
+  print_batch(batch)
+
+  failures = []
+  batch.ordered_entries.each_with_index do |entry, index|
+    puts
+    puts "================================================================"
+    puts "[#{index + 1}/#{batch.entries.length}] #{entry.worker} / #{entry.model} / #{entry.adventure} / #{entry.dimension}"
+    puts "Manifest: #{entry.manifest_path}"
+    puts "================================================================"
+
+    child = [
+      RbConfig.ruby,
+      File.join(ROOT, "bin", "lme"),
+      "run",
+      entry.manifest_path,
+      *forwarded_run_options(opts)
+    ]
+    failures << entry.manifest_path unless system(*child, chdir: ROOT)
+  end
+
+  unless failures.empty?
+    warn "Batch completed with #{failures.length} failed manifest(s):"
+    failures.each { |path| warn "  - #{path}" }
+    exit 1
+  end
+
+else
+  warn <<~USAGE
+    Usage:
+      bin/lme-batch plan MANIFEST_LIST.txt
+      bin/lme-batch run MANIFEST_LIST.txt [--rerun-failed|--force]
+  USAGE
+  exit 1
+end
