@@ -1,0 +1,41 @@
+name: ministral-rsmd-adv0034-discriminator-v1
+
+purpose: >
+  Test whether Ministral 3 14B Instruct correctly distinguishes dense,
+  dangerous adventure-specific mechanics from sustained player-side rules
+  mastery on ADV-0034 Tomb of Horrors, the key RSMD discriminator where
+  prior local models have shown construct confusion.
+
+dispatch: pool
+
+models:
+  - ministral
+
+dimension: Rules / System-Mastery Demand
+
+adventures:
+  - ADV-0034
+
+replicates: 1
+
+workers:
+  - mac
+
+scorer:
+  repo: ../../af-cli-scoring-utility
+  mode: positional
+  extra_args: []
+
+success_criteria:
+  - Structured output validates and is grounded to the ADV-0034 canonical source unit.
+  - Proposed Rules / System-Mastery Demand 3 => AUDITION_SURVIVED.
+  - Proposed Rules / System-Mastery Demand 2 or 4 => AUDITION_SURVIVED_WITH_BIAS.
+  - Rationale does not treat trap density, danger, unusual effects, or localized mechanics alone as player-side system mastery.
+  - No target-specific expected-score contamination is used in the assessment.
+
+stop_conditions:
+  - Proposed Rules / System-Mastery Demand is 1 or 5; classify AUDITION_FAILED for this discriminator.
+  - Structured-output failure, serious grounding failure, wrong canonical unit, or other qualitative failure occurs.
+  - The single planned discriminator run completes; do not add reruns to seek a more favorable result.
+
+cost_cap_usd: 0.01

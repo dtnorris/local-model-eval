@@ -1,0 +1,40 @@
+name: ministral-exploration-adv0230-discriminator-v1
+
+purpose: >
+  Test whether Ministral 3 14B Instruct survives the exact clean
+  ADV-0230 Salvage Operation Exploration Emphasis discriminator that
+  Qwen 3.6 35B-A3B hard-failed 4 -> 2 and that did not yield a viable
+  Nemotron Exploration route.
+
+dispatch: pool
+
+models:
+  - ministral
+
+dimension: Exploration Emphasis
+
+adventures:
+  - ADV-0230
+
+replicates: 1
+
+workers:
+  - mac
+
+scorer:
+  repo: ../../af-cli-scoring-utility
+  mode: positional
+  extra_args: []
+
+success_criteria:
+  - Structured output validates and is grounded to the ADV-0230 canonical source unit.
+  - Proposed Exploration Emphasis 4 => AUDITION_SURVIVED.
+  - Proposed Exploration Emphasis 3 or 5 => AUDITION_SURVIVED_WITH_BIAS.
+  - No target-specific expected-score contamination is used in the assessment.
+
+stop_conditions:
+  - Proposed Exploration Emphasis is 1 or 2; classify AUDITION_FAILED and do not deepen Ministral Exploration testing yet.
+  - Structured-output failure, serious grounding failure, wrong canonical unit, or other qualitative failure occurs.
+  - The single planned discriminator run completes; do not add reruns to seek a more favorable result.
+
+cost_cap_usd: 0.01

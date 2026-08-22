@@ -12,3 +12,7 @@ models:
     ollama_model: nemotron-3-nano:30b
   gptoss:
     ollama_model: gpt-oss:20b
+  gemma4mlx:
+    ollama_model: gemma4:31b-mlx
+  ministral:
+    ollama_model: ministral-3:14b-instruct-2512-q4_K_M
