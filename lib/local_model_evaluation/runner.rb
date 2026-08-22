@@ -108,7 +108,7 @@ module LocalModelEvaluation
       @io.puts "[#{worker.name}] #{job.model_alias} #{job.adventure} rep#{job.replicate}"
 
       command = scorer_command(job, native_dir)
-      env = worker.scorer_env
+      env = experiment.effective_scorer_env(worker.scorer_env)
       stdout, stderr, status = Open3.capture3(env, *command, chdir: experiment.scorer_repo)
       finished = Time.now
 
