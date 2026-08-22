@@ -1,9 +1,9 @@
-name: 30-qwen-levels-adv0062-high-narrow-control-v1
+name: qwen-levels-adv0262-post-scrub-fix-v1
 
 purpose: >
-  Conditional follow-up to experiment 10. If Qwen survives the ordinary
-  Lost Mine of Phandelver multilevel control, test a high-start narrow-span
-  Levels case using ADV-0062 No Honour Among Thieves.
+  Obtain the clean ordinary multi-level Qwen Levels control still required by
+  the Phase-4 routing ledger after the scrubber fix, using ADV-0262 Lost Mine
+  of Phandelver with calibrated Level Start 1 and Level End 5.
 
 dispatch: pool
 
@@ -13,7 +13,7 @@ models:
 dimension: Levels
 
 adventures:
-  - ADV-0062
+  - ADV-0262
 
 replicates: 1
 
@@ -26,14 +26,12 @@ scorer:
   extra_args: []
 
 success_criteria:
-  - Experiment 10 survived its discriminator.
-  - Structured output validates and is grounded to the ADV-0062 canonical source unit.
-  - Proposed Level Start 10 and Level End 11 => CONTROL_MATCH.
+  - Structured output validates and is grounded to the ADV-0262 canonical source unit.
+  - Proposed Level Start 1 and Level End 5 => CONTROL_MATCH.
   - A one-level error on exactly one endpoint => BOUNDED_MISS_REQUIRES_REVIEW.
   - No target-specific expected-level contamination is used in the assessment.
 
 stop_conditions:
-  - Do not execute if experiment 10 failed its discriminator.
   - Either endpoint differs from the expected value by more than one level; classify as a serious discriminator failure.
   - Both endpoints are wrong, even if each is only adjacent; classify as a failed control.
   - Structured-output failure, serious grounding failure, wrong canonical unit, or other qualitative failure occurs.
