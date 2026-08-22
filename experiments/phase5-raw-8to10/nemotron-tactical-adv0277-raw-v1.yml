@@ -1,0 +1,37 @@
+name: nemotron-tactical-adv0277-raw-v1
+purpose: >
+  Overnight raw Phase-5 evidence collection. This manifest scores one local
+  model on one accepted AFAO calibration benchmark adventure for one dimension,
+  with one replicate. It deliberately does not apply Terra-relative early stopping.
+dispatch: pool
+
+models:
+  - nemotron
+
+dimension: Tactical Complexity
+
+adventures:
+  - ADV-0277
+
+replicates: 1
+
+workers:
+  - mac
+
+required_worker_labels:
+  - local
+
+scorer:
+  repo: ../../../af-cli-scoring-utility
+  mode: positional
+  extra_args: []
+
+success_criteria:
+  - Structured scorer output validates and remains grounded to the canonical source unit.
+  - Preserve the single completed sample for later Terra/oracle comparison; do not rerun for a favorable score.
+
+stop_conditions:
+  - Operational failure is logged by the overnight batch and the next manifest continues.
+  - Do not rerun a completed case to seek a more favorable sample.
+
+cost_cap_usd: 0.01

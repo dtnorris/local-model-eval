@@ -1,0 +1,24 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+$LOAD_PATH.unshift File.expand_path("../lib", __dir__)
+require "optparse"
+require "local_model_evaluation/qualification_plan"
+require "local_model_evaluation/qualification_runner"
+
+ROOT = File.expand_path("..", __dir__)
+options = { dry_run: false, force: false }
+
+parser = OptionParser.new do |o|
+  o.banner = "Usage: bin/lme-qualify PLAN.yml [--dry-run] [--force]"
+  o.on("--dry-run", "Validate and print the maximum run plan without worker calls or inference") { options[:dry_run] = true }
+  o.on("--force", "Rebuild qualification bookkeeping; underlying lme completed jobs remain resume-safe") { options[:force] = true }
+end
+parser.parse!(ARGV)
+
+path = ARGV.shift or abort parser.to_s
+abort parser.to_s unless ARGV.empty?
+
+plan = LocalModelEvaluation::QualificationPlan.new(path)
+runner = LocalModelEvaluation::QualificationRunner.new(plan:, repo_root: ROOT, **options)
+exit(runner.run ? 0 : 1)
