@@ -1,0 +1,68 @@
+name: phase6-remediation-social-interaction-adv0053-score2-anti-inflation-control-v1
+purpose: >
+  Phase-6 local-only remediation pilot case P6-SOC-05. Score exactly one frozen
+  adventure on exactly one dimension with one Qwen replicate under the declared
+  experimental prompt profile. Oracle metadata is for post-run adjudication only
+  and must never be exposed to the scorer prompt.
+dispatch: pool
+
+models:
+  - qwen
+
+dimension: Social Interaction Emphasis
+
+adventures:
+  - ADV-0053
+
+replicates: 1
+
+workers:
+  - mac
+
+required_worker_labels:
+  - local
+
+scorer:
+  repo: ../../../af-cli-scoring-utility
+  mode: positional
+  extra_args: []
+
+phase6_contract:
+  pilot_case_id: P6-SOC-05
+  pilot_source: experiments/phase6/social/phase6_social_pilot_v0.1.md
+  sequence: 5
+  role: score2-anti-inflation-control
+  model_alias: qwen
+  ollama_model: qwen3.6:35b-a3b
+  prompt_profile:
+    version: phase6-v0.3
+    env_name: AF_SOCIAL_INTERACTION_GUARDRAIL_PROFILE
+    env_value: phase6-v0.3
+  case:
+    adventure_id: ADV-0053
+    adventure_title: "Call of the Wild"
+  oracle:
+    source: frozen-afao-calibration
+    score: 2
+    visibility: post-run-adjudication-only
+  replicate_count: 1
+  stop_condition:
+    type: final-social-classification
+    action: stop-current-dimension
+    rule: >
+      Run only after prior Social gates pass. After this result, classify 5/5 exact as REMEDIATION_SUCCESS; exactly 4/5 exact with 5/5 within ±1 and no hard errors as INCONCLUSIVE; anything weaker as REMEDIATION_FAILED. No sixth call is authorized by these manifests.
+  no_favorable_rerun: true
+  external_api_cost_usd: 0.0
+
+success_criteria:
+  - Structured scorer output validates and remains grounded to the canonical source unit.
+  - Apply the oracle only after inference; the accepted score must not enter scorer input.
+  - Preserve the single attempted inference and do not rerun for a favorable score.
+
+stop_conditions:
+  - >
+    Run only after prior Social gates pass. After this result, classify 5/5 exact as REMEDIATION_SUCCESS; exactly 4/5 exact with 5/5 within ±1 and no hard errors as INCONCLUSIVE; anything weaker as REMEDIATION_FAILED. No sixth call is authorized by these manifests.
+  - Any malformed output, canonical-unit failure, or material grounding failure consumes the attempted slot and is adjudicated under the frozen pilot contract.
+  - Do not rerun a completed or attempted inference to seek a more favorable sample.
+
+cost_cap_usd: 0.01

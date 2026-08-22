@@ -1,0 +1,68 @@
+name: phase6-remediation-seriousness-adv0262-upper-boundary-inflation-recovery-v1
+purpose: >
+  Phase-6 local-only remediation pilot case P6-SER-03. Score exactly one frozen
+  adventure on exactly one dimension with one Qwen replicate under the declared
+  experimental prompt profile. Oracle metadata is for post-run adjudication only
+  and must never be exposed to the scorer prompt.
+dispatch: pool
+
+models:
+  - qwen
+
+dimension: Seriousness
+
+adventures:
+  - ADV-0262
+
+replicates: 1
+
+workers:
+  - mac
+
+required_worker_labels:
+  - local
+
+scorer:
+  repo: ../../../af-cli-scoring-utility
+  mode: positional
+  extra_args: []
+
+phase6_contract:
+  pilot_case_id: P6-SER-03
+  pilot_source: phase6_seriousness_pilot_v0.1.md
+  sequence: 3
+  role: upper-boundary-inflation-recovery
+  model_alias: qwen
+  ollama_model: qwen3.6:35b-a3b
+  prompt_profile:
+    version: phase6-v0.3
+    env_name: AF_SERIOUSNESS_GUARDRAIL_PROFILE
+    env_value: phase6-v0.3
+  case:
+    adventure_id: ADV-0262
+    adventure_title: "Lost Mine of Phandelver"
+  oracle:
+    source: frozen-afao-calibration
+    score: 4
+    visibility: post-run-adjudication-only
+  replicate_count: 1
+  stop_condition:
+    type: exact-or-stop
+    action: stop-current-dimension
+    rule: >
+      Continue only if score is exactly 4; otherwise stop this dimension and classify REMEDIATION_FAILED.
+  no_favorable_rerun: true
+  external_api_cost_usd: 0.0
+
+success_criteria:
+  - Structured scorer output validates and remains grounded to the canonical source unit.
+  - Apply the oracle only after inference; the accepted score must not enter scorer input.
+  - Preserve the single attempted inference and do not rerun for a favorable score.
+
+stop_conditions:
+  - >
+    Continue only if score is exactly 4; otherwise stop this dimension and classify REMEDIATION_FAILED.
+  - Any malformed output, canonical-unit failure, or material grounding failure consumes the attempted slot and is adjudicated under the frozen pilot contract.
+  - Do not rerun a completed or attempted inference to seek a more favorable sample.
+
+cost_cap_usd: 0.01
