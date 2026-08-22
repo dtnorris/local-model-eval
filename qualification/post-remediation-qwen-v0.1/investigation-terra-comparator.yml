@@ -1,0 +1,56 @@
+version: 1
+acceptance_contract: AdventureFinder_Phase4_Local_Model_Acceptance_Contract_v0.1
+id: investigation-remediated-terra-v1
+dimension: Investigation Emphasis
+metric: Investigation Emphasis
+kind: ordinal_1_5
+
+source:
+  accepted_artifact_set: llm-response-data/full-19-first-calibration/investigation-emphasis-v0.3/rep1
+  artifact_paths:
+    - full-19-first-calibration/investigation-emphasis-v0.3/rep1/regression/ADV-0053_20260817T170248Z_4fe71464_regression.csv
+    - full-19-first-calibration/investigation-emphasis-v0.3/rep1/regression/ADV-0262_20260817T170415Z_6426d2cb_regression.csv
+    - full-19-first-calibration/investigation-emphasis-v0.3/rep1/regression/ADV-0277_20260817T170442Z_91bf4df7_regression.csv
+    - full-19-first-calibration/investigation-emphasis-v0.3/rep1/regression/ADV-0034_20260817T170224Z_772555fc_regression.csv
+    - full-19-first-calibration/investigation-emphasis-v0.3/rep1/regression/ADV-0234_20260817T170543Z_7dbef4a4_regression.csv
+
+malformed_unusable_outputs: 0
+known_bias: ""
+editorial_caveats:
+  - "ADV-0053, ADV-0262, and ADV-0277 are fresh relative to the Phase-6 Investigation remediation pilot."
+  - "ADV-0034 and ADV-0234 are independent reruns retained specifically to confirm the remediated score-1 and score-5 endpoints."
+  - "Storm King's Thunder is excluded because prior local runs exposed a cross-dimension structured-validation pathology that would confound this qualification wave."
+
+cases:
+  - id: investigation-adv0053
+    adventure: ADV-0053
+    oracle: 2
+    terra: 2
+    notes: "Fresh qualification case; archived Terra exact."
+  - id: investigation-adv0262
+    adventure: ADV-0262
+    oracle: 3
+    terra: 3
+    notes: "Fresh qualification case; archived Terra exact."
+  - id: investigation-adv0277
+    adventure: ADV-0277
+    oracle: 3
+    terra: 3
+    notes: "Fresh qualification case; archived Terra exact."
+  - id: investigation-adv0034
+    adventure: ADV-0034
+    oracle: 1
+    terra: 1
+    notes: "Independent lower-endpoint confirmation; archived Terra exact."
+  - id: investigation-adv0234
+    adventure: ADV-0234
+    oracle: 5
+    terra: 5
+    notes: "Independent upper-endpoint confirmation; archived Terra exact."
+
+summary:
+  completed_assessments: 5
+  exact: 5
+  adjacent: 0
+  hard_errors: 0
+  malformed_unusable_outputs: 0

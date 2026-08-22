@@ -1,0 +1,55 @@
+version: 1
+acceptance_contract: AdventureFinder_Phase4_Local_Model_Acceptance_Contract_v0.1
+id: social-interaction-remediated-terra-v1
+dimension: Social Interaction Emphasis
+metric: Social Interaction Emphasis
+kind: ordinal_1_5
+
+source:
+  accepted_artifact_set: llm-response-data/full-19-first-calibration/social-interaction-emphasis-v0.2/rep1
+  artifact_paths:
+    - full-19-first-calibration/social-interaction-emphasis-v0.2/rep1/regression/ADV-0040_20260817T161756Z_47cd4fc3_regression.csv
+    - full-19-first-calibration/social-interaction-emphasis-v0.2/rep1/regression/ADV-0062_20260817T161646Z_86ac56f6_regression.csv
+    - full-19-first-calibration/social-interaction-emphasis-v0.2/rep1/regression/ADV-0262_20260817T161714Z_e41465e5_regression.csv
+    - full-19-first-calibration/social-interaction-emphasis-v0.2/rep1/regression/ADV-0277_20260817T161907Z_14b6bccb_regression.csv
+    - full-19-first-calibration/social-interaction-emphasis-v0.2/rep1/regression/ADV-0257_20260817T161843Z_f0ee5658_regression.csv
+
+malformed_unusable_outputs: 0
+known_bias: "Archived Terra misses ADV-0040 3→2 and ADV-0257 4→3; both are adjacent."
+editorial_caveats:
+  - "Four of five local qualification cases are fresh relative to the Phase-6 Social remediation pilot; ADV-0257 is retained as the remediated score-4 boundary confirmation."
+  - "No fresh score-1 Social case has accepted archived Terra evidence in this frozen comparator set; Phase-6 already protected the score-1 anti-inflation boundary with Tomb of Horrors."
+
+cases:
+  - id: social-adv0040
+    adventure: ADV-0040
+    oracle: 3
+    terra: 2
+    notes: "Fresh qualification case; archived Terra adjacent low."
+  - id: social-adv0062
+    adventure: ADV-0062
+    oracle: 2
+    terra: 2
+    notes: "Fresh qualification case; archived Terra exact."
+  - id: social-adv0262
+    adventure: ADV-0262
+    oracle: 3
+    terra: 3
+    notes: "Fresh qualification case; archived Terra exact."
+  - id: social-adv0277
+    adventure: ADV-0277
+    oracle: 5
+    terra: 5
+    notes: "Fresh qualification case; archived Terra exact upper endpoint."
+  - id: social-adv0257
+    adventure: ADV-0257
+    oracle: 4
+    terra: 3
+    notes: "Independent rerun under frozen remediated profile; archived Terra adjacent low."
+
+summary:
+  completed_assessments: 5
+  exact: 3
+  adjacent: 2
+  hard_errors: 0
+  malformed_unusable_outputs: 0

@@ -1,0 +1,54 @@
+name: qualification-qwen-social-adv0262-remediated-v1
+purpose: >
+  Fresh benchmark-blind post-remediation qualification case for Qwen3.6 35B.
+  Run exactly one canonical adventure on exactly one dimension with one replicate
+  under the frozen successful remediation profile. Accepted/oracle scores are
+  intentionally absent from this manifest and scorer input.
+dispatch: pool
+
+models:
+  - qwen
+
+dimension: Social Interaction Emphasis
+
+adventures:
+  - ADV-0262
+
+replicates: 1
+
+workers:
+  - mac
+
+required_worker_labels:
+  - local
+
+scorer:
+  repo: ../../../af-cli-scoring-utility
+  mode: positional
+  extra_args: []
+
+phase6_contract:
+  prompt_profile:
+    version: phase6-v0.3
+    env_name: AF_SOCIAL_INTERACTION_GUARDRAIL_PROFILE
+    env_value: phase6-v0.3
+
+qualification_contract:
+  wave: qwen-social-investigation-post-remediation-v0.1
+  case_role: fresh-middle-control
+  candidate_model: qwen
+  replicate_count: 1
+  blind_expected_score: true
+  no_favorable_rerun: true
+  external_api_cost_usd: 0.0
+
+success_criteria:
+  - Structured scorer output validates and remains grounded to the canonical source unit.
+  - Preserve the single attempted inference for qualification adjudication.
+  - Accepted/oracle values are applied only by the qualification comparator after inference.
+
+stop_conditions:
+  - Invalid output or a hard-error count exceeding the frozen Terra allowance is handled by the qualification runner under the Local Model Acceptance Contract.
+  - Do not rerun a completed or attempted inference to seek a more favorable sample.
+
+cost_cap_usd: 0.01
