@@ -1,0 +1,133 @@
+run_sequence,candidate_id,model_alias,dimension,adventure_id,adventure_title,afao_benchmark_score,in_afhro_v0.4,afhro_v0.4_score,manifest_path
+1,qwen-combat,qwen,Combat Emphasis,ADV-0277,The Wild Beyond the Witchlight,1,yes,1,experiments/phase5-raw-8to10/qwen-combat-adv0277-raw-v1.yml
+2,qwen-social,qwen,Social Interaction Emphasis,ADV-0034,Tomb of Horrors,1,yes,1,experiments/phase5-raw-8to10/qwen-social-adv0034-raw-v1.yml
+3,qwen-investigation,qwen,Investigation Emphasis,ADV-0034,Tomb of Horrors,1,yes,1,experiments/phase5-raw-8to10/qwen-investigation-adv0034-raw-v1.yml
+4,qwen-puzzle,qwen,Puzzle / Problem-Solving Emphasis,ADV-0040,Expedition to the Barrier Peaks,1,yes,1,experiments/phase5-raw-8to10/qwen-puzzle-adv0040-raw-v1.yml
+5,qwen-lethality,qwen,Lethality / Failure Severity,ADV-0278,Witchlight Carnival,1,no,,experiments/phase5-raw-8to10/qwen-lethality-adv0278-raw-v1.yml
+6,qwen-structural-openness,qwen,Structural Openness,ADV-0200,Lake Monster,1,no,,experiments/phase5-raw-8to10/qwen-structural-openness-adv0200-raw-v1.yml
+7,qwen-seriousness,qwen,Seriousness,ADV-0013,A Conspiracy Most Cracked,1,no,,experiments/phase5-raw-8to10/qwen-seriousness-adv0013-raw-v1.yml
+8,qwen-darkness,qwen,Darkness / Horror Intensity,ADV-0062,No Honour Among Thieves,1,yes,1,experiments/phase5-raw-8to10/qwen-darkness-adv0062-raw-v1.yml
+9,qwen-fantastic-weirdness,qwen,Fantastic Weirdness,ADV-0062,No Honour Among Thieves,1,yes,1,experiments/phase5-raw-8to10/qwen-fantastic-weirdness-adv0062-raw-v1.yml
+10,qwen-player-beginner,qwen,Player Beginner Suitability,ADV-0034,Tomb of Horrors,1,yes,1,experiments/phase5-raw-8to10/qwen-player-beginner-adv0034-raw-v1.yml
+11,qwen-gm-beginner,qwen,GM Beginner Suitability,ADV-0168,Blood Night,1,no,,experiments/phase5-raw-8to10/qwen-gm-beginner-adv0168-raw-v1.yml
+12,nemotron-tactical,nemotron,Tactical Complexity,ADV-0278,Witchlight Carnival,1,no,,experiments/phase5-raw-8to10/nemotron-tactical-adv0278-raw-v1.yml
+13,nemotron-cpa,nemotron,Consequential Player Agency,ADV-0031,White Plume Mountain,1,no,,experiments/phase5-raw-8to10/nemotron-cpa-adv0031-raw-v1.yml
+14,nemotron-gm-prep,nemotron,GM Preparation Burden,ADV-0200,Lake Monster,1,no,,experiments/phase5-raw-8to10/nemotron-gm-prep-adv0200-raw-v1.yml
+15,qwen-combat,qwen,Combat Emphasis,ADV-0032,Dead in Thay,5,no,,experiments/phase5-raw-8to10/qwen-combat-adv0032-raw-v1.yml
+16,qwen-social,qwen,Social Interaction Emphasis,ADV-0229,Danger at Dunwater,5,no,,experiments/phase5-raw-8to10/qwen-social-adv0229-raw-v1.yml
+17,qwen-investigation,qwen,Investigation Emphasis,ADV-0234,The Styes,5,no,,experiments/phase5-raw-8to10/qwen-investigation-adv0234-raw-v1.yml
+18,qwen-puzzle,qwen,Puzzle / Problem-Solving Emphasis,ADV-0034,Tomb of Horrors,5,yes,5,experiments/phase5-raw-8to10/qwen-puzzle-adv0034-raw-v1.yml
+19,qwen-lethality,qwen,Lethality / Failure Severity,ADV-0034,Tomb of Horrors,5,yes,5,experiments/phase5-raw-8to10/qwen-lethality-adv0034-raw-v1.yml
+20,qwen-structural-openness,qwen,Structural Openness,ADV-0278,Witchlight Carnival,5,no,,experiments/phase5-raw-8to10/qwen-structural-openness-adv0278-raw-v1.yml
+21,qwen-seriousness,qwen,Seriousness,ADV-0034,Tomb of Horrors,5,yes,5,experiments/phase5-raw-8to10/qwen-seriousness-adv0034-raw-v1.yml
+22,qwen-darkness,qwen,Darkness / Horror Intensity,ADV-0287,House of Lament,5,yes,5,experiments/phase5-raw-8to10/qwen-darkness-adv0287-raw-v1.yml
+23,qwen-fantastic-weirdness,qwen,Fantastic Weirdness,ADV-0040,Expedition to the Barrier Peaks,5,yes,5,experiments/phase5-raw-8to10/qwen-fantastic-weirdness-adv0040-raw-v1.yml
+24,qwen-player-beginner,qwen,Player Beginner Suitability,ADV-0262,Lost Mine of Phandelver,5,yes,5,experiments/phase5-raw-8to10/qwen-player-beginner-adv0262-raw-v1.yml
+25,qwen-gm-beginner,qwen,GM Beginner Suitability,ADV-0277,The Wild Beyond the Witchlight,5,yes,5,experiments/phase5-raw-8to10/qwen-gm-beginner-adv0277-raw-v1.yml
+26,nemotron-tactical,nemotron,Tactical Complexity,ADV-0062,No Honour Among Thieves,5,yes,4,experiments/phase5-raw-8to10/nemotron-tactical-adv0062-raw-v1.yml
+27,nemotron-cpa,nemotron,Consequential Player Agency,ADV-0277,The Wild Beyond the Witchlight,5,yes,5,experiments/phase5-raw-8to10/nemotron-cpa-adv0277-raw-v1.yml
+28,nemotron-gm-prep,nemotron,GM Preparation Burden,ADV-0303,Storm King's Thunder,5,yes,5,experiments/phase5-raw-8to10/nemotron-gm-prep-adv0303-raw-v1.yml
+29,qwen-combat,qwen,Combat Emphasis,ADV-0278,Witchlight Carnival,1,no,,experiments/phase5-raw-8to10/qwen-combat-adv0278-raw-v1.yml
+30,qwen-combat,qwen,Combat Emphasis,ADV-0034,Tomb of Horrors,2,yes,2,experiments/phase5-raw-8to10/qwen-combat-adv0034-raw-v1.yml
+31,qwen-combat,qwen,Combat Emphasis,ADV-0287,House of Lament,2,yes,2,experiments/phase5-raw-8to10/qwen-combat-adv0287-raw-v1.yml
+32,qwen-combat,qwen,Combat Emphasis,ADV-0053,Call of the Wild,3,no,,experiments/phase5-raw-8to10/qwen-combat-adv0053-raw-v1.yml
+33,qwen-combat,qwen,Combat Emphasis,ADV-0062,No Honour Among Thieves,3,yes,3,experiments/phase5-raw-8to10/qwen-combat-adv0062-raw-v1.yml
+34,qwen-combat,qwen,Combat Emphasis,ADV-0040,Expedition to the Barrier Peaks,4,yes,4,experiments/phase5-raw-8to10/qwen-combat-adv0040-raw-v1.yml
+35,qwen-combat,qwen,Combat Emphasis,ADV-0262,Lost Mine of Phandelver,4,yes,4,experiments/phase5-raw-8to10/qwen-combat-adv0262-raw-v1.yml
+36,qwen-combat,qwen,Combat Emphasis,ADV-0033,Against the Giants,5,no,,experiments/phase5-raw-8to10/qwen-combat-adv0033-raw-v1.yml
+37,qwen-social,qwen,Social Interaction Emphasis,ADV-0053,Call of the Wild,2,no,,experiments/phase5-raw-8to10/qwen-social-adv0053-raw-v1.yml
+38,qwen-social,qwen,Social Interaction Emphasis,ADV-0062,No Honour Among Thieves,2,yes,2,experiments/phase5-raw-8to10/qwen-social-adv0062-raw-v1.yml
+39,qwen-social,qwen,Social Interaction Emphasis,ADV-0040,Expedition to the Barrier Peaks,3,yes,3,experiments/phase5-raw-8to10/qwen-social-adv0040-raw-v1.yml
+40,qwen-social,qwen,Social Interaction Emphasis,ADV-0262,Lost Mine of Phandelver,3,yes,3,experiments/phase5-raw-8to10/qwen-social-adv0262-raw-v1.yml
+41,qwen-social,qwen,Social Interaction Emphasis,ADV-0287,House of Lament,3,yes,3,experiments/phase5-raw-8to10/qwen-social-adv0287-raw-v1.yml
+42,qwen-social,qwen,Social Interaction Emphasis,ADV-0303,Storm King's Thunder,3,yes,3,experiments/phase5-raw-8to10/qwen-social-adv0303-raw-v1.yml
+43,qwen-social,qwen,Social Interaction Emphasis,ADV-0257,The Magister's Masquerade,4,no,,experiments/phase5-raw-8to10/qwen-social-adv0257-raw-v1.yml
+44,qwen-social,qwen,Social Interaction Emphasis,ADV-0277,The Wild Beyond the Witchlight,5,yes,5,experiments/phase5-raw-8to10/qwen-social-adv0277-raw-v1.yml
+45,qwen-investigation,qwen,Investigation Emphasis,ADV-0062,No Honour Among Thieves,1,yes,1,experiments/phase5-raw-8to10/qwen-investigation-adv0062-raw-v1.yml
+46,qwen-investigation,qwen,Investigation Emphasis,ADV-0040,Expedition to the Barrier Peaks,2,yes,2,experiments/phase5-raw-8to10/qwen-investigation-adv0040-raw-v1.yml
+47,qwen-investigation,qwen,Investigation Emphasis,ADV-0053,Call of the Wild,2,no,,experiments/phase5-raw-8to10/qwen-investigation-adv0053-raw-v1.yml
+48,qwen-investigation,qwen,Investigation Emphasis,ADV-0303,Storm King's Thunder,2,yes,2,experiments/phase5-raw-8to10/qwen-investigation-adv0303-raw-v1.yml
+49,qwen-investigation,qwen,Investigation Emphasis,ADV-0262,Lost Mine of Phandelver,3,yes,3,experiments/phase5-raw-8to10/qwen-investigation-adv0262-raw-v1.yml
+50,qwen-investigation,qwen,Investigation Emphasis,ADV-0277,The Wild Beyond the Witchlight,3,yes,3,experiments/phase5-raw-8to10/qwen-investigation-adv0277-raw-v1.yml
+51,qwen-investigation,qwen,Investigation Emphasis,ADV-0287,House of Lament,4,yes,4,experiments/phase5-raw-8to10/qwen-investigation-adv0287-raw-v1.yml
+52,qwen-puzzle,qwen,Puzzle / Problem-Solving Emphasis,ADV-0262,Lost Mine of Phandelver,1,yes,1,experiments/phase5-raw-8to10/qwen-puzzle-adv0262-raw-v1.yml
+53,qwen-puzzle,qwen,Puzzle / Problem-Solving Emphasis,ADV-0053,Call of the Wild,2,no,,experiments/phase5-raw-8to10/qwen-puzzle-adv0053-raw-v1.yml
+54,qwen-puzzle,qwen,Puzzle / Problem-Solving Emphasis,ADV-0062,No Honour Among Thieves,2,yes,2,experiments/phase5-raw-8to10/qwen-puzzle-adv0062-raw-v1.yml
+55,qwen-puzzle,qwen,Puzzle / Problem-Solving Emphasis,ADV-0287,House of Lament,2,yes,2,experiments/phase5-raw-8to10/qwen-puzzle-adv0287-raw-v1.yml
+56,qwen-puzzle,qwen,Puzzle / Problem-Solving Emphasis,ADV-0303,Storm King's Thunder,2,yes,2,experiments/phase5-raw-8to10/qwen-puzzle-adv0303-raw-v1.yml
+57,qwen-puzzle,qwen,Puzzle / Problem-Solving Emphasis,ADV-0277,The Wild Beyond the Witchlight,3,yes,3,experiments/phase5-raw-8to10/qwen-puzzle-adv0277-raw-v1.yml
+58,qwen-puzzle,qwen,Puzzle / Problem-Solving Emphasis,ADV-0031,White Plume Mountain,4,no,,experiments/phase5-raw-8to10/qwen-puzzle-adv0031-raw-v1.yml
+59,qwen-lethality,qwen,Lethality / Failure Severity,ADV-0053,Call of the Wild,2,no,,experiments/phase5-raw-8to10/qwen-lethality-adv0053-raw-v1.yml
+60,qwen-lethality,qwen,Lethality / Failure Severity,ADV-0277,The Wild Beyond the Witchlight,2,yes,2,experiments/phase5-raw-8to10/qwen-lethality-adv0277-raw-v1.yml
+61,qwen-lethality,qwen,Lethality / Failure Severity,ADV-0040,Expedition to the Barrier Peaks,3,yes,3,experiments/phase5-raw-8to10/qwen-lethality-adv0040-raw-v1.yml
+62,qwen-lethality,qwen,Lethality / Failure Severity,ADV-0062,No Honour Among Thieves,3,yes,3,experiments/phase5-raw-8to10/qwen-lethality-adv0062-raw-v1.yml
+63,qwen-lethality,qwen,Lethality / Failure Severity,ADV-0262,Lost Mine of Phandelver,3,yes,3,experiments/phase5-raw-8to10/qwen-lethality-adv0262-raw-v1.yml
+64,qwen-lethality,qwen,Lethality / Failure Severity,ADV-0303,Storm King's Thunder,3,yes,3,experiments/phase5-raw-8to10/qwen-lethality-adv0303-raw-v1.yml
+65,qwen-lethality,qwen,Lethality / Failure Severity,ADV-0287,House of Lament,4,yes,4,experiments/phase5-raw-8to10/qwen-lethality-adv0287-raw-v1.yml
+66,qwen-structural-openness,qwen,Structural Openness,ADV-0288,A Friend in Need,1,no,,experiments/phase5-raw-8to10/qwen-structural-openness-adv0288-raw-v1.yml
+67,qwen-structural-openness,qwen,Structural Openness,ADV-0053,Call of the Wild,2,no,,experiments/phase5-raw-8to10/qwen-structural-openness-adv0053-raw-v1.yml
+68,qwen-structural-openness,qwen,Structural Openness,ADV-0062,No Honour Among Thieves,2,yes,2,experiments/phase5-raw-8to10/qwen-structural-openness-adv0062-raw-v1.yml
+69,qwen-structural-openness,qwen,Structural Openness,ADV-0034,Tomb of Horrors,3,yes,3,experiments/phase5-raw-8to10/qwen-structural-openness-adv0034-raw-v1.yml
+70,qwen-structural-openness,qwen,Structural Openness,ADV-0262,Lost Mine of Phandelver,3,yes,3,experiments/phase5-raw-8to10/qwen-structural-openness-adv0262-raw-v1.yml
+71,qwen-structural-openness,qwen,Structural Openness,ADV-0040,Expedition to the Barrier Peaks,4,yes,4,experiments/phase5-raw-8to10/qwen-structural-openness-adv0040-raw-v1.yml
+72,qwen-structural-openness,qwen,Structural Openness,ADV-0277,The Wild Beyond the Witchlight,4,yes,4,experiments/phase5-raw-8to10/qwen-structural-openness-adv0277-raw-v1.yml
+73,qwen-structural-openness,qwen,Structural Openness,ADV-0323,Dungeon Level,5,no,,experiments/phase5-raw-8to10/qwen-structural-openness-adv0323-raw-v1.yml
+74,qwen-seriousness,qwen,Seriousness,ADV-0278,Witchlight Carnival,2,no,,experiments/phase5-raw-8to10/qwen-seriousness-adv0278-raw-v1.yml
+75,qwen-seriousness,qwen,Seriousness,ADV-0040,Expedition to the Barrier Peaks,3,yes,3,experiments/phase5-raw-8to10/qwen-seriousness-adv0040-raw-v1.yml
+76,qwen-seriousness,qwen,Seriousness,ADV-0062,No Honour Among Thieves,3,yes,3,experiments/phase5-raw-8to10/qwen-seriousness-adv0062-raw-v1.yml
+77,qwen-seriousness,qwen,Seriousness,ADV-0277,The Wild Beyond the Witchlight,3,yes,3,experiments/phase5-raw-8to10/qwen-seriousness-adv0277-raw-v1.yml
+78,qwen-seriousness,qwen,Seriousness,ADV-0053,Call of the Wild,4,no,,experiments/phase5-raw-8to10/qwen-seriousness-adv0053-raw-v1.yml
+79,qwen-seriousness,qwen,Seriousness,ADV-0262,Lost Mine of Phandelver,4,yes,4,experiments/phase5-raw-8to10/qwen-seriousness-adv0262-raw-v1.yml
+80,qwen-seriousness,qwen,Seriousness,ADV-0303,Storm King's Thunder,4,yes,4,experiments/phase5-raw-8to10/qwen-seriousness-adv0303-raw-v1.yml
+81,qwen-seriousness,qwen,Seriousness,ADV-0287,House of Lament,5,yes,5,experiments/phase5-raw-8to10/qwen-seriousness-adv0287-raw-v1.yml
+82,qwen-darkness,qwen,Darkness / Horror Intensity,ADV-0040,Expedition to the Barrier Peaks,2,yes,2,experiments/phase5-raw-8to10/qwen-darkness-adv0040-raw-v1.yml
+83,qwen-darkness,qwen,Darkness / Horror Intensity,ADV-0053,Call of the Wild,2,no,,experiments/phase5-raw-8to10/qwen-darkness-adv0053-raw-v1.yml
+84,qwen-darkness,qwen,Darkness / Horror Intensity,ADV-0262,Lost Mine of Phandelver,3,yes,3,experiments/phase5-raw-8to10/qwen-darkness-adv0262-raw-v1.yml
+85,qwen-darkness,qwen,Darkness / Horror Intensity,ADV-0277,The Wild Beyond the Witchlight,3,yes,3,experiments/phase5-raw-8to10/qwen-darkness-adv0277-raw-v1.yml
+86,qwen-darkness,qwen,Darkness / Horror Intensity,ADV-0303,Storm King's Thunder,3,yes,3,experiments/phase5-raw-8to10/qwen-darkness-adv0303-raw-v1.yml
+87,qwen-darkness,qwen,Darkness / Horror Intensity,ADV-0034,Tomb of Horrors,4,yes,4,experiments/phase5-raw-8to10/qwen-darkness-adv0034-raw-v1.yml
+88,qwen-fantastic-weirdness,qwen,Fantastic Weirdness,ADV-0262,Lost Mine of Phandelver,1,yes,1,experiments/phase5-raw-8to10/qwen-fantastic-weirdness-adv0262-raw-v1.yml
+89,qwen-fantastic-weirdness,qwen,Fantastic Weirdness,ADV-0303,Storm King's Thunder,1,yes,1,experiments/phase5-raw-8to10/qwen-fantastic-weirdness-adv0303-raw-v1.yml
+90,qwen-fantastic-weirdness,qwen,Fantastic Weirdness,ADV-0185,The Murkmire Malevolence,2,no,,experiments/phase5-raw-8to10/qwen-fantastic-weirdness-adv0185-raw-v1.yml
+91,qwen-fantastic-weirdness,qwen,Fantastic Weirdness,ADV-0287,House of Lament,2,yes,2,experiments/phase5-raw-8to10/qwen-fantastic-weirdness-adv0287-raw-v1.yml
+92,qwen-fantastic-weirdness,qwen,Fantastic Weirdness,ADV-0034,Tomb of Horrors,3,yes,3,experiments/phase5-raw-8to10/qwen-fantastic-weirdness-adv0034-raw-v1.yml
+93,qwen-fantastic-weirdness,qwen,Fantastic Weirdness,ADV-0278,Witchlight Carnival,4,no,,experiments/phase5-raw-8to10/qwen-fantastic-weirdness-adv0278-raw-v1.yml
+94,qwen-fantastic-weirdness,qwen,Fantastic Weirdness,ADV-0046,Into Dreamland,5,no,,experiments/phase5-raw-8to10/qwen-fantastic-weirdness-adv0046-raw-v1.yml
+95,qwen-fantastic-weirdness,qwen,Fantastic Weirdness,ADV-0277,The Wild Beyond the Witchlight,5,yes,5,experiments/phase5-raw-8to10/qwen-fantastic-weirdness-adv0277-raw-v1.yml
+96,qwen-player-beginner,qwen,Player Beginner Suitability,ADV-0062,No Honour Among Thieves,2,yes,2,experiments/phase5-raw-8to10/qwen-player-beginner-adv0062-raw-v1.yml
+97,qwen-player-beginner,qwen,Player Beginner Suitability,ADV-0040,Expedition to the Barrier Peaks,3,yes,3,experiments/phase5-raw-8to10/qwen-player-beginner-adv0040-raw-v1.yml
+98,qwen-player-beginner,qwen,Player Beginner Suitability,ADV-0303,Storm King's Thunder,3,yes,3,experiments/phase5-raw-8to10/qwen-player-beginner-adv0303-raw-v1.yml
+99,qwen-player-beginner,qwen,Player Beginner Suitability,ADV-0053,Call of the Wild,4,no,,experiments/phase5-raw-8to10/qwen-player-beginner-adv0053-raw-v1.yml
+100,qwen-player-beginner,qwen,Player Beginner Suitability,ADV-0277,The Wild Beyond the Witchlight,4,yes,4,experiments/phase5-raw-8to10/qwen-player-beginner-adv0277-raw-v1.yml
+101,qwen-player-beginner,qwen,Player Beginner Suitability,ADV-0287,House of Lament,4,yes,4,experiments/phase5-raw-8to10/qwen-player-beginner-adv0287-raw-v1.yml
+102,qwen-gm-beginner,qwen,GM Beginner Suitability,ADV-0132,The Eyes of At'ar,2,no,,experiments/phase5-raw-8to10/qwen-gm-beginner-adv0132-raw-v1.yml
+103,qwen-gm-beginner,qwen,GM Beginner Suitability,ADV-0150,A Restless Eternity,2,no,,experiments/phase5-raw-8to10/qwen-gm-beginner-adv0150-raw-v1.yml
+104,qwen-gm-beginner,qwen,GM Beginner Suitability,ADV-0034,Tomb of Horrors,3,yes,3,experiments/phase5-raw-8to10/qwen-gm-beginner-adv0034-raw-v1.yml
+105,qwen-gm-beginner,qwen,GM Beginner Suitability,ADV-0062,No Honour Among Thieves,3,yes,3,experiments/phase5-raw-8to10/qwen-gm-beginner-adv0062-raw-v1.yml
+106,qwen-gm-beginner,qwen,GM Beginner Suitability,ADV-0303,Storm King's Thunder,3,yes,3,experiments/phase5-raw-8to10/qwen-gm-beginner-adv0303-raw-v1.yml
+107,qwen-gm-beginner,qwen,GM Beginner Suitability,ADV-0040,Expedition to the Barrier Peaks,4,yes,4,experiments/phase5-raw-8to10/qwen-gm-beginner-adv0040-raw-v1.yml
+108,qwen-gm-beginner,qwen,GM Beginner Suitability,ADV-0262,Lost Mine of Phandelver,4,yes,4,experiments/phase5-raw-8to10/qwen-gm-beginner-adv0262-raw-v1.yml
+109,qwen-gm-beginner,qwen,GM Beginner Suitability,ADV-0287,House of Lament,5,yes,5,experiments/phase5-raw-8to10/qwen-gm-beginner-adv0287-raw-v1.yml
+110,nemotron-tactical,nemotron,Tactical Complexity,ADV-0034,Tomb of Horrors,2,yes,2,experiments/phase5-raw-8to10/nemotron-tactical-adv0034-raw-v1.yml
+111,nemotron-tactical,nemotron,Tactical Complexity,ADV-0053,Call of the Wild,2,no,,experiments/phase5-raw-8to10/nemotron-tactical-adv0053-raw-v1.yml
+112,nemotron-tactical,nemotron,Tactical Complexity,ADV-0277,The Wild Beyond the Witchlight,2,yes,2,experiments/phase5-raw-8to10/nemotron-tactical-adv0277-raw-v1.yml
+113,nemotron-tactical,nemotron,Tactical Complexity,ADV-0262,Lost Mine of Phandelver,3,yes,3,experiments/phase5-raw-8to10/nemotron-tactical-adv0262-raw-v1.yml
+114,nemotron-tactical,nemotron,Tactical Complexity,ADV-0287,House of Lament,3,yes,3,experiments/phase5-raw-8to10/nemotron-tactical-adv0287-raw-v1.yml
+115,nemotron-tactical,nemotron,Tactical Complexity,ADV-0223,Sunblight,4,no,,experiments/phase5-raw-8to10/nemotron-tactical-adv0223-raw-v1.yml
+116,nemotron-tactical,nemotron,Tactical Complexity,ADV-0232,The Final Enemy,4,no,,experiments/phase5-raw-8to10/nemotron-tactical-adv0232-raw-v1.yml
+117,nemotron-tactical,nemotron,Tactical Complexity,ADV-0303,Storm King's Thunder,5,yes,4,experiments/phase5-raw-8to10/nemotron-tactical-adv0303-raw-v1.yml
+118,nemotron-cpa,nemotron,Consequential Player Agency,ADV-0034,Tomb of Horrors,2,yes,2,experiments/phase5-raw-8to10/nemotron-cpa-adv0034-raw-v1.yml
+119,nemotron-cpa,nemotron,Consequential Player Agency,ADV-0053,Call of the Wild,2,no,,experiments/phase5-raw-8to10/nemotron-cpa-adv0053-raw-v1.yml
+120,nemotron-cpa,nemotron,Consequential Player Agency,ADV-0062,No Honour Among Thieves,2,yes,2,experiments/phase5-raw-8to10/nemotron-cpa-adv0062-raw-v1.yml
+121,nemotron-cpa,nemotron,Consequential Player Agency,ADV-0287,House of Lament,2,yes,2,experiments/phase5-raw-8to10/nemotron-cpa-adv0287-raw-v1.yml
+122,nemotron-cpa,nemotron,Consequential Player Agency,ADV-0262,Lost Mine of Phandelver,3,yes,3,experiments/phase5-raw-8to10/nemotron-cpa-adv0262-raw-v1.yml
+123,nemotron-cpa,nemotron,Consequential Player Agency,ADV-0040,Expedition to the Barrier Peaks,4,yes,4,experiments/phase5-raw-8to10/nemotron-cpa-adv0040-raw-v1.yml
+124,nemotron-cpa,nemotron,Consequential Player Agency,ADV-0303,Storm King's Thunder,4,yes,4,experiments/phase5-raw-8to10/nemotron-cpa-adv0303-raw-v1.yml
+125,nemotron-gm-prep,nemotron,GM Preparation Burden,ADV-0288,A Friend in Need,2,no,,experiments/phase5-raw-8to10/nemotron-gm-prep-adv0288-raw-v1.yml
+126,nemotron-gm-prep,nemotron,GM Preparation Burden,ADV-0034,Tomb of Horrors,3,yes,3,experiments/phase5-raw-8to10/nemotron-gm-prep-adv0034-raw-v1.yml
+127,nemotron-gm-prep,nemotron,GM Preparation Burden,ADV-0053,Call of the Wild,3,no,,experiments/phase5-raw-8to10/nemotron-gm-prep-adv0053-raw-v1.yml
+128,nemotron-gm-prep,nemotron,GM Preparation Burden,ADV-0062,No Honour Among Thieves,3,yes,3,experiments/phase5-raw-8to10/nemotron-gm-prep-adv0062-raw-v1.yml
+129,nemotron-gm-prep,nemotron,GM Preparation Burden,ADV-0262,Lost Mine of Phandelver,3,yes,3,experiments/phase5-raw-8to10/nemotron-gm-prep-adv0262-raw-v1.yml
+130,nemotron-gm-prep,nemotron,GM Preparation Burden,ADV-0040,Expedition to the Barrier Peaks,4,yes,4,experiments/phase5-raw-8to10/nemotron-gm-prep-adv0040-raw-v1.yml
+131,nemotron-gm-prep,nemotron,GM Preparation Burden,ADV-0277,The Wild Beyond the Witchlight,4,yes,4,experiments/phase5-raw-8to10/nemotron-gm-prep-adv0277-raw-v1.yml
+132,nemotron-gm-prep,nemotron,GM Preparation Burden,ADV-0287,House of Lament,4,yes,4,experiments/phase5-raw-8to10/nemotron-gm-prep-adv0287-raw-v1.yml
