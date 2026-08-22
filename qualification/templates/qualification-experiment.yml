@@ -1,0 +1,39 @@
+# Copy to experiments/qualification/<candidate>-<adventure>-v1.yml.
+name: qwen-combat-adv0000-qualification-v1
+purpose: >
+  Phase-5 Terra-relative qualification case. This manifest contains one model,
+  one canonical adventure, and one replicate so the outer qualification harness
+  can stop the candidate without dispatching lower-value follow-up inference.
+dispatch: pool
+
+models:
+  - qwen
+
+dimension: Combat Emphasis
+
+adventures:
+  - ADV-0000
+
+replicates: 1
+
+workers:
+  - mac
+
+required_worker_labels:
+  - local
+
+scorer:
+  # This template is intended to be copied into experiments/qualification/.
+  repo: ../../../af-cli-scoring-utility
+  mode: positional
+  extra_args: []
+
+success_criteria:
+  - Structured output validates and remains grounded to the canonical source unit.
+  - Numeric result is evaluated against the frozen Terra Comparator Record by bin/lme-qualify.
+
+stop_conditions:
+  - Do not rerun a completed qualification case to seek a more favorable sample.
+  - Serious qualitative failure requires human adjudication even if the numeric score is exact or adjacent.
+
+cost_cap_usd: 0.01

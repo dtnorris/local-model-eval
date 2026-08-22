@@ -1,0 +1,33 @@
+version: 1
+acceptance_contract: AdventureFinder_Phase4_Local_Model_Acceptance_Contract_v0.1
+id: combat-emphasis-terra-v1
+dimension: Combat Emphasis
+metric: Combat Emphasis
+kind: ordinal_1_5
+
+source:
+  accepted_artifact_set: REPLACE_WITH_ACCEPTED_TERRA_CALIBRATION_VERSION
+  artifact_paths:
+    - REPLACE_WITH_ARCHIVED_TERRA_ARTIFACT_PATH
+
+malformed_unusable_outputs: 0
+known_bias: ""
+editorial_caveats: []
+
+# This template intentionally contains REPLACE_/ADV-0000 sentinels and will fail validation until frozen evidence replaces them.
+# Include the complete comparable qualification set, not only Phase-4 audition cases.
+cases:
+  - id: adv-example
+    adventure: ADV-0000
+    oracle: 3
+    terra: 3
+    notes: "Replace with frozen archived Terra evidence."
+
+# These values are intentionally duplicated and validated against cases so that
+# accidental edits to a frozen comparator fail closed.
+summary:
+  completed_assessments: 1
+  exact: 1
+  adjacent: 0
+  hard_errors: 0
+  malformed_unusable_outputs: 0

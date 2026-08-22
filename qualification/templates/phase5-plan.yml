@@ -1,0 +1,14 @@
+version: 1
+acceptance_contract: AdventureFinder_Phase4_Local_Model_Acceptance_Contract_v0.1
+name: phase5-local-qualification-v1
+max_exact_deficit_percentage_points: 10
+require_zero_cost_workers: true
+require_local_workers: true
+
+candidates:
+  - id: qwen-combat
+    model: qwen
+    comparator: terra-comparator.yml
+    cases:
+      - comparator_case: adv-example
+        manifest: ../../experiments/qualification/qwen-combat-adv0000-v1.yml
