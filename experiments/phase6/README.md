@@ -39,4 +39,4 @@ Every remediation manifest should declare or preserve:
 
 ## Current status
 
-Workspace scaffold only. No Phase-6 scorer changes or inference manifests have been added yet.
+Workspace scaffold plus frozen call budget only. No Phase-6 scorer changes or inference manifests have been added yet. See `../../phase6_call_budget_v0.1.md` for the 25-core / 26-maximum allocation and accounting rules.

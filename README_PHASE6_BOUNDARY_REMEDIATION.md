@@ -20,9 +20,9 @@ This workspace does **not** alter or reinterpret Phase-5 evidence. A successful 
 8. Execute remediation dimension-by-dimension with the most diagnostic kill test first; stop a failed hypothesis rather than spending the rest of its call budget.
 9. Keep external inference cost at `$0` for this phase unless a separately approved escalation decision says otherwise.
 
-## Initial call-budget envelope
+## Frozen call-budget envelope
 
-The current planning ceiling is **25 core local calls / 26 maximum**:
+The initial remediation budget is frozen in [`phase6_call_budget_v0.1.md`](phase6_call_budget_v0.1.md). The authorized ceiling is **25 core local calls / 26 maximum**:
 
 | Dimension | Core calls | Optional | Purpose |
 | --- | ---: | ---: | --- |
@@ -33,7 +33,7 @@ The current planning ceiling is **25 core local calls / 26 maximum**:
 | Seriousness | 5 | 0 | Test the diagnosed upward bias once its rationale-level failure is frozen |
 | **Total** | **25** | **1** | **26 maximum** |
 
-This table is a budget ceiling, not an instruction to execute every call. Per-dimension stop rules control actual spend.
+This table is a budget ceiling, not an instruction to execute every call. Per-dimension stop rules control actual spend. The frozen budget file governs call accounting, non-transferability, the Social-only optional call, and amendments.
 
 ## Planned execution order
 
