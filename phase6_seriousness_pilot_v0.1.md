@@ -71,42 +71,49 @@ Run in this order:
 The score ladder is conceptually 1 through 5, but execution is deliberately ordered
 for information gain. Barrier Peaks is the strongest direct test of the diagnosed
 proxy-weighting mechanism and therefore runs first. The other two known upward misses
-follow. Controls are spent only after all three targeted failures are corrected.
+follow. The two controls run afterward regardless of earlier numeric outcomes so the
+completed five-case set can distinguish targeted correction from partial improvement,
+no effect, control regression, or a blanket directional shift.
 
-## Stop conditions
+## Strict remediation classification
 
-### Upward-bias remediation gate
+Run all five core cases in the frozen order above unless a systemic experiment-integrity
+failure makes subsequent evidence invalid or non-comparable. Numeric results classify
+the remediation hypothesis; they do not control whether the remaining authorized core
+diagnostics run.
 
-- If **P6-SER-01 — Expedition to the Barrier Peaks** is not scored exactly **3**,
-  stop immediately and classify `REMEDIATION_FAILED`.
-- If Barrier Peaks is exact but **P6-SER-02 — Witchlight Carnival** is not scored
-  exactly **2**, stop immediately and classify `REMEDIATION_FAILED`.
-- If the first two are exact but **P6-SER-03 — Lost Mine of Phandelver** is not
-  scored exactly **4**, stop immediately and classify `REMEDIATION_FAILED`.
+### Upward-bias remediation cases
+
+Each of the first three cases must be exact for `REMEDIATION_SUCCESS`:
+
+- **P6-SER-01 — Expedition to the Barrier Peaks** must score exactly **3**.
+- **P6-SER-02 — Witchlight Carnival** must score exactly **2**.
+- **P6-SER-03 — Lost Mine of Phandelver** must score exactly **4**.
 
 Any persistent upward miss means the targeted proxy-weighting hypothesis has not been
-cleanly corrected.
+cleanly corrected and makes the strict pilot classification `REMEDIATION_FAILED`.
 
 A downward overshoot also fails. For example, Barrier Peaks 3→2, Carnival 2→1, or
 Lost Mine 4→3 is evidence that the intervention has become a directional correction
 rather than a decision-method correction.
 
-Do not spend control calls to improve the aggregate percentage after any numeric miss.
+If any of these numeric failures occurs, record that strict remediation success is no
+longer possible, then continue the remaining frozen core diagnostics under
+`phase6_diagnostic_completion_policy_v0.1.md`. Completing those calls is diagnostic
+evidence collection, not an attempt to rescue the aggregate percentage.
 
-### Genuine-high Seriousness gate
+### Genuine-high Seriousness control
 
-Only after all three remediation cases are exact:
-
-- Run **P6-SER-04 — House of Lament**. It must remain exactly **5**.
+Run **P6-SER-04 — House of Lament** after the three remediation cases regardless of
+their numeric outcomes. It must remain exactly **5** for `REMEDIATION_SUCCESS`.
 
 A 5→4 result is `REMEDIATION_FAILED`. The intervention must preserve genuinely
 sustained high Seriousness rather than merely lowering ambiguous or mixed cases.
 
-### Low-end anti-shift gate
+### Low-end anti-shift control
 
-Only if House of Lament remains exact:
-
-- Run **P6-SER-05 — A Conspiracy Most Cracked**. It must remain exactly **1**.
+Run **P6-SER-05 — A Conspiracy Most Cracked** after House of Lament regardless of
+House's numeric outcome. It must remain exactly **1** for `REMEDIATION_SUCCESS`.
 
 Any numeric change fails. This final control protects against a hidden uniform offset
 or unintended distortion of the unaffected 1↔2 endpoint.
@@ -131,10 +138,10 @@ case and the unaffected score-1 endpoint.
 It does **not** establish `LOCAL_QUALIFIED`. Success permits preparation of a fresh,
 benchmark-blind Seriousness qualification plan using `phase6-v0.3`.
 
-`REMEDIATION_FAILED` ends this routine decision-method tuning hypothesis. Do not
-consume additional calls merely to rescue the percentage. Further work requires a
-materially different, independently justified hypothesis and a separately frozen
-budget.
+After all five authorized core diagnostics are complete, `REMEDIATION_FAILED` ends
+this routine decision-method tuning hypothesis. Do not authorize additional calls merely
+to rescue the percentage. Further work requires a materially different, independently
+justified hypothesis and a separately frozen budget.
 
 ## Frozen execution requirements
 
@@ -144,6 +151,9 @@ budget.
 - Preserve canonical source-boundary handling and target-score scrubbing.
 - Preserve the existing structured-output schema and validator.
 - No favorable stochastic reruns.
-- Stop immediately when a stop condition is met.
+- Complete all five core calls unless a systemic experiment-integrity failure makes
+  subsequent evidence invalid or non-comparable.
+- A numeric miss may establish `REMEDIATION_FAILED` before the family completes, but it
+  does not terminate the remaining authorized core diagnostics.
 - Persist raw response, normalized assessment, run metadata, model identity, prompt
   profile, and guardrail SHA for every attempted inference.
