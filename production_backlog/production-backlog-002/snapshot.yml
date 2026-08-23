@@ -1,0 +1,755 @@
+---
+version: 1
+queue: production-backlog-002
+generated_at: '2026-08-23T19:25:27-04:00'
+local_model_eval_commit: bb5f7d4bdc46ea0e2428fe9106c4beb606e0c84b
+scorer_commit: 3fd92988bb56dc7438caf38b96d586857f1adcb9
+scorer_repo_path: "../af-cli-scoring-utility"
+catalog_path: "/Users/davidnorris/code/af-xlsx-data-sources/5e_Adventure_Master_Catalog_2.6.1.xlsx"
+catalog_sha256: a07670ffe50a5bd65953e86eac3fbfe17e1285b223baaee6de45aeddeb92b093
+model_alias: qwen
+ollama_model: qwen3.6:35b-a3b
+packs: 4
+adventures_per_pack: 10
+max_page_count: 60
+selection_strategy: stratified_page_count_source_diverse
+max_source_share: 0.3
+max_adventures_per_source_book: 12
+page_strata:
+- name: 1-2-pages
+  min_pages: 1
+  max_pages: 2
+  weight: 2
+  quota: 8
+- name: 3-10-pages
+  min_pages: 3
+  max_pages: 10
+  weight: 3
+  quota: 12
+- name: 11-30-pages
+  min_pages: 11
+  max_pages: 30
+  weight: 3
+  quota: 12
+- name: 31-60-pages
+  min_pages: 31
+  max_pages: 60
+  weight: 2
+  quota: 8
+qualified_dimensions: &1
+- name: Levels
+  slug: levels
+  profile: levels-v2.1
+  catalog_columns:
+  - Level Start
+  - Level End
+  selection_gate: false
+- name: Combat Emphasis
+  slug: combat
+  profile: production-base
+- name: Structural Openness
+  slug: structural-openness
+  profile: production-base
+- name: Darkness / Horror Intensity
+  slug: darkness
+  profile: production-base
+- name: Player Beginner Suitability
+  slug: player-beginner
+  profile: production-base
+- name: Social Interaction Emphasis
+  slug: social
+  profile: phase6-v0.3
+  env_name: AF_SOCIAL_INTERACTION_GUARDRAIL_PROFILE
+  env_value: phase6-v0.3
+- name: Investigation Emphasis
+  slug: investigation
+  profile: phase6-v0.4
+  env_name: AF_INVESTIGATION_GUARDRAIL_PROFILE
+  env_value: phase6-v0.4
+qualification_contract:
+  version: 1
+  model_alias: qwen
+  ollama_model: qwen3.6:35b-a3b
+  social_investigation_qualified_scorer_baseline: e49a198b36774d47ef136699573b6db6632032bc
+  dimensions: *1
+selected_adventures:
+- id: ADV-0244
+  title: Camp Carrionclay
+  source_book: 'Dragonlance: Shadow of the Dragon Queen'
+  publisher: Wizards of the Coast
+  page_count: 2
+  start_page: 129
+  end_page: 130
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 1-2-pages
+- id: ADV-0210
+  title: Angajuk's Bell
+  source_book: 'Icewind Dale: Rime of the Frostmaiden'
+  publisher: Wizards of the Coast
+  page_count: 3
+  start_page: 114
+  end_page: 116
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 3-10-pages
+- id: ADV-0177
+  title: Gold for Fools and Princes
+  source_book: Journeys Through the Radiant Citadel
+  publisher: Wizards of the Coast
+  page_count: 11
+  start_page: 92
+  end_page: 102
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 11-30-pages
+- id: ADV-0251
+  title: Campus Kerfuffle
+  source_book: 'Strixhaven: A Curriculum of Chaos'
+  publisher: Wizards of the Coast
+  page_count: 36
+  start_page: 60
+  end_page: 95
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 31-60-pages
+- id: ADV-0199
+  title: Nature Spirits
+  source_book: 'Icewind Dale: Rime of the Frostmaiden'
+  publisher: Wizards of the Coast
+  page_count: 2
+  start_page: 25
+  end_page: 26
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 1-2-pages
+- id: ADV-0274
+  title: Feeder Trenches
+  source_book: 'Phandelver and Below: The Shattered Obelisk'
+  publisher: Wizards of the Coast
+  page_count: 3
+  start_page: 161
+  end_page: 163
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 3-10-pages
+- id: ADV-0271
+  title: Crypt of the Talhund
+  source_book: 'Phandelver and Below: The Shattered Obelisk'
+  publisher: Wizards of the Coast
+  page_count: 11
+  start_page: 117
+  end_page: 127
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 11-30-pages
+- id: ADV-0064
+  title: The Sunken Temple of Sirenholm
+  source_book: The Prophecy of Nine Omens Trilogy
+  publisher: Midnight Tower
+  page_count: 36
+  start_page: 78
+  end_page: 113
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 31-60-pages
+- id: ADV-0311
+  title: Quest for the Giant Relics
+  source_book: Storm King's Thunder
+  publisher: Wizards of the Coast
+  page_count: 2
+  start_page: 130
+  end_page: 131
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 1-2-pages
+- id: ADV-0070
+  title: Old Bonegrinder
+  source_book: Curse of Strahd
+  publisher: Wizards of the Coast
+  page_count: 4
+  start_page: 125
+  end_page: 128
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 3-10-pages
+- id: ADV-0114
+  title: The Will of Orcus
+  source_book: Dragon Delves
+  publisher: Wizards of the Coast
+  page_count: 12
+  start_page: 49
+  end_page: 60
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 11-30-pages
+- id: ADV-0286
+  title: Palace of Heart's Desire
+  source_book: The Wild Beyond the Witchlight
+  publisher: Wizards of the Coast
+  page_count: 37
+  start_page: 171
+  end_page: 207
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 31-60-pages
+- id: ADV-0283
+  title: Fey Beacons
+  source_book: The Wild Beyond the Witchlight
+  publisher: Wizards of the Coast
+  page_count: 2
+  start_page: 143
+  end_page: 144
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 1-2-pages
+- id: ADV-0240
+  title: Blue Phoenix Shrine
+  source_book: 'Dragonlance: Shadow of the Dragon Queen'
+  publisher: Wizards of the Coast
+  page_count: 4
+  start_page: 113
+  end_page: 116
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 3-10-pages
+- id: ADV-0314
+  title: Berg of the Frost Giants
+  source_book: Storm King's Thunder
+  publisher: Wizards of the Coast
+  page_count: 12
+  start_page: 155
+  end_page: 166
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 11-30-pages
+- id: ADV-0054
+  title: Deeper into the Woods
+  source_book: Hunter's Full Moon Trilogy
+  publisher: Midnight Tower
+  page_count: 38
+  start_page: 54
+  end_page: 91
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 31-60-pages
+- id: ADV-0127
+  title: The Tenebrous Stone
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 19
+  end_page: 19
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 1-2-pages
+- id: ADV-0015
+  title: Most Excellent Fireworks
+  source_book: Shire Adventures
+  publisher: Free League Publishing
+  page_count: 4
+  start_page: 70
+  end_page: 73
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 3-10-pages
+- id: ADV-0089
+  title: Presto Change-o
+  source_book: The Game Master's Book of Random Encounters
+  publisher: Topix Media Lab
+  page_count: 12
+  start_page: 12
+  end_page: 23
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 11-30-pages
+- id: ADV-0069
+  title: Castle Ravenloft
+  source_book: Curse of Strahd
+  publisher: Wizards of the Coast
+  page_count: 40
+  start_page: 49
+  end_page: 88
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 31-60-pages
+- id: ADV-0128
+  title: Disinterred Danger
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 20
+  end_page: 20
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 1-2-pages
+- id: ADV-0319
+  title: The Grand Dame
+  source_book: Storm King's Thunder
+  publisher: Wizards of the Coast
+  page_count: 4
+  start_page: 216
+  end_page: 219
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 3-10-pages
+- id: ADV-0327
+  title: Wyllowwood
+  source_book: 'Waterdeep: Dungeon of the Mad Mage'
+  publisher: Wizards of the Coast
+  page_count: 12
+  start_page: 69
+  end_page: 80
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 11-30-pages
+- id: ADV-0056
+  title: Troubles in Winterhold
+  source_book: Secrets of the Drow Trilogy
+  publisher: Midnight Tower
+  page_count: 40
+  start_page: 4
+  end_page: 43
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 31-60-pages
+- id: ADV-0129
+  title: The Drowning Forest
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 21
+  end_page: 21
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 1-2-pages
+- id: ADV-0253
+  title: Secrets in Sedgemoor
+  source_book: 'Strixhaven: A Curriculum of Chaos'
+  publisher: Wizards of the Coast
+  page_count: 4
+  start_page: 92
+  end_page: 95
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 3-10-pages
+- id: ADV-0231
+  title: Isle of the Abbey
+  source_book: Ghosts of Saltmarsh
+  publisher: Wizards of the Coast
+  page_count: 13
+  start_page: 97
+  end_page: 109
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 11-30-pages
+- id: ADV-0065
+  title: Heart of Darkness
+  source_book: Battle for the Realm Trilogy
+  publisher: Midnight Tower
+  page_count: 48
+  start_page: 4
+  end_page: 51
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 31-60-pages
+- id: ADV-0130
+  title: The Lost Dawn
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 22
+  end_page: 22
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 1-2-pages
+- id: ADV-0280
+  title: Free Sir Talavar
+  source_book: The Wild Beyond the Witchlight
+  publisher: Wizards of the Coast
+  page_count: 4
+  start_page: 68
+  end_page: 71
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 3-10-pages
+- id: ADV-0021
+  title: Baldur's Gate, Southwest District
+  source_book: Heroes of Baldur's Gate
+  publisher: Arcanum Worlds
+  page_count: 13
+  start_page: 19
+  end_page: 31
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 11-30-pages
+- id: ADV-0057
+  title: Find the Lost Expedition
+  source_book: Secrets of the Drow Trilogy
+  publisher: Midnight Tower
+  page_count: 40
+  start_page: 44
+  end_page: 83
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 31-60-pages
+- id: ADV-0291
+  title: 'Encounter 2: Mistshore'
+  source_book: 'Waterdeep: Dragon Heist'
+  publisher: Wizards of the Coast
+  page_count: 4
+  start_page: 65
+  end_page: 68
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 3-10-pages
+- id: ADV-0088
+  title: Eve of Ruin
+  source_book: 'Vecna: Eve of Ruin'
+  publisher: Wizards of the Coast
+  page_count: 13
+  start_page: 191
+  end_page: 203
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 11-30-pages
+- id: ADV-0023
+  title: Cloakwood Forest
+  source_book: Heroes of Baldur's Gate
+  publisher: Arcanum Worlds
+  page_count: 5
+  start_page: 46
+  end_page: 50
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 3-10-pages
+- id: ADV-0249
+  title: The Flying Citadel
+  source_book: 'Dragonlance: Shadow of the Dragon Queen'
+  publisher: Wizards of the Coast
+  page_count: 14
+  start_page: 171
+  end_page: 184
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 11-30-pages
+- id: ADV-0090
+  title: Mother Knows Best
+  source_book: The Game Master's Book of Random Encounters
+  publisher: Topix Media Lab
+  page_count: 8
+  start_page: 24
+  end_page: 31
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 3-10-pages
+- id: ADV-0009
+  title: Kings of Little Kingdoms
+  source_book: Tales From Eriador
+  publisher: Free League Publishing
+  page_count: 14
+  start_page: 45
+  end_page: 58
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 11-30-pages
+- id: ADV-0330
+  title: Slitherswamp
+  source_book: 'Waterdeep: Dungeon of the Mad Mage'
+  publisher: Wizards of the Coast
+  page_count: 8
+  start_page: 109
+  end_page: 116
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 3-10-pages
+- id: ADV-0018
+  title: Hold My Beer
+  source_book: The Game Master's Book of Legendary Dragons
+  publisher: Media Lab Books
+  page_count: 14
+  start_page: 184
+  end_page: 197
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 11-30-pages

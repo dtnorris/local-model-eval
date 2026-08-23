@@ -1,0 +1,331 @@
+adventure_id,adventure_title,source_book,publisher,page_count,page_stratum,decision,reason
+ADV-0001,The Beast of Dunland,Trials of Saruman,Free League Publishing,20,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0002,The Sea-prince of the Shore,Trials of Saruman,Free League Publishing,16,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0003,The Disaster of the Gladden Fields,Trials of Saruman,Free League Publishing,18,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0004,There Let Them Lie Until the End,Trials of Saruman,Free League Publishing,22,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0005,The Quest of Moria,Trials of Saruman,Free League Publishing,18,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0006,The Ithil-stone,Trials of Saruman,Free League Publishing,27,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0007,"A Troll-hole, if Ever There Was One",Tales From Eriador,Free League Publishing,18,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0008,Messing About in Boats,Tales From Eriador,Free League Publishing,18,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0009,Kings of Little Kingdoms,Tales From Eriador,Free League Publishing,14,11-30-pages,SELECT,source_preflight_pass
+ADV-0010,Not To Strike Without Need,Tales From Eriador,Free League Publishing,16,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0011,Wonder of the Northern World,Tales From Eriador,Free League Publishing,18,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0012,The Quest of Amon Guruthos,Tales From Eriador,Free League Publishing,22,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0013,A Conspiracy Most Cracked,Shire Adventures,Free League Publishing,7,,REJECT,reserved:case_index:production_social_investigation_b1_case_index.csv
+ADV-0014,Expert Treasure Hunters,Shire Adventures,Free League Publishing,6,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0015,Most Excellent Fireworks,Shire Adventures,Free League Publishing,4,3-10-pages,SELECT,source_preflight_pass
+ADV-0016,Involuntary Postmen,Shire Adventures,Free League Publishing,5,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0017,To Soothe a Savage Beast,Shire Adventures,Free League Publishing,7,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0018,Hold My Beer,The Game Master's Book of Legendary Dragons,Media Lab Books,14,11-30-pages,SELECT,source_preflight_pass
+ADV-0019,Dragon Hunt,The Game Master's Book of Legendary Dragons,Media Lab Books,24,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0020,Hell Hath Fury,The Game Master's Book of Legendary Dragons,Media Lab Books,10,,REJECT,reserved:case_index:production_social_investigation_b1_case_index.csv
+ADV-0021,"Baldur's Gate, Southwest District",Heroes of Baldur's Gate,Arcanum Worlds,13,11-30-pages,SELECT,source_preflight_pass
+ADV-0022,Beneath Baldur's Gate,Heroes of Baldur's Gate,Arcanum Worlds,14,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0023,Cloakwood Forest,Heroes of Baldur's Gate,Arcanum Worlds,5,3-10-pages,SELECT,source_preflight_pass
+ADV-0024,The Cloakwood Mines,Heroes of Baldur's Gate,Arcanum Worlds,6,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0025,The Shadow Druids,Heroes of Baldur's Gate,Arcanum Worlds,6,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0026,The Nest,Heroes of Baldur's Gate,Arcanum Worlds,5,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0027,Return to Baldur's Gate,Heroes of Baldur's Gate,Arcanum Worlds,3,,REJECT,reserved:case_index:production_backlog/production-backlog-pilot-v1/pack-001_case_index.csv
+ADV-0028,The Sunless Citadel,Tales from the Yawning Portal,Wizards of the Coast,24,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0029,The Forge of Fury,Tales from the Yawning Portal,Wizards of the Coast,28,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0030,The Hidden Shrine of Tamoachan,Tales from the Yawning Portal,Wizards of the Coast,34,,REJECT,reserved:case_index:production_backlog/production-backlog-pilot-v1/pack-001_case_index.csv
+ADV-0031,White Plume Mountain,Tales from the Yawning Portal,Wizards of the Coast,14,,REJECT,reserved:case_index:production_social_investigation_b1_case_index.csv
+ADV-0032,Dead in Thay,Tales from the Yawning Portal,Wizards of the Coast,56,,REJECT,reserved:case_index:production_social_investigation_b1_case_index.csv
+ADV-0033,Against the Giants,Tales from the Yawning Portal,Wizards of the Coast,46,,REJECT,reserved:case_index:production_social_investigation_b1_case_index.csv
+ADV-0034,Tomb of Horrors,Tales from the Yawning Portal,Wizards of the Coast,17,,REJECT,reserved:case_index:phase5_raw_case_index.csv
+ADV-0035,The Lost City,Quests from the Infinite Staircase,Wizards of the Coast,31,31-60-pages,REJECT,"source_preflight_failed:[ADV-0035] Resolving source for The Lost City ERROR: Required source page marker(s) not found: 15 (canonical 15-45, page_marker_offset +0)"
+ADV-0036,When a Star Falls,Quests from the Infinite Staircase,Wizards of the Coast,30,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0037,Beyond the Crystal Cave,Quests from the Infinite Staircase,Wizards of the Coast,26,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0038,Pharaoh,Quests from the Infinite Staircase,Wizards of the Coast,26,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0039,The Lost Caverns of Tsojcanth,Quests from the Infinite Staircase,Wizards of the Coast,28,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0040,Expedition to the Barrier Peaks,Quests from the Infinite Staircase,Wizards of the Coast,34,,REJECT,reserved:case_index:phase5_raw_case_index.csv
+ADV-0041,The Lost Book of Mektar,Labyrinth Adventures,Kobold Press,18,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0042,Chasing the Inferno,Labyrinth Adventures,Kobold Press,16,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0043,Song of the Void,Labyrinth Adventures,Kobold Press,16,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0044,The Golden Acorn Heist,Labyrinth Adventures,Kobold Press,15,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0045,Missing Darkness,Labyrinth Adventures,Kobold Press,19,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0046,Into Dreamland,Labyrinth Adventures,Kobold Press,14,,REJECT,reserved:case_index:production_social_investigation_b1_case_index.csv
+ADV-0047,A Clockwork Mind,Labyrinth Adventures,Kobold Press,19,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0048,Threading Rava's Needle,Labyrinth Adventures,Kobold Press,18,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0049,In the Court of the Clockwork Queen,Labyrinth Adventures,Kobold Press,16,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0050,Champion of Undeath,Labyrinth Adventures,Kobold Press,17,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0051,Maze Runner,Labyrinth Adventures,Kobold Press,19,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0052,What Dwells Beneath,Labyrinth Adventures,Kobold Press,20,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0053,Call of the Wild,Hunter's Full Moon Trilogy,Midnight Tower,50,,REJECT,reserved:case_index:phase5_raw_case_index.csv
+ADV-0054,Deeper into the Woods,Hunter's Full Moon Trilogy,Midnight Tower,38,31-60-pages,SELECT,source_preflight_pass
+ADV-0055,Under the Black Mountains,Hunter's Full Moon Trilogy,Midnight Tower,28,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0056,Troubles in Winterhold,Secrets of the Drow Trilogy,Midnight Tower,40,31-60-pages,SELECT,source_preflight_pass
+ADV-0057,Find the Lost Expedition,Secrets of the Drow Trilogy,Midnight Tower,40,31-60-pages,SELECT,source_preflight_pass
+ADV-0058,The Spider Queen's Ritual,Secrets of the Drow Trilogy,Midnight Tower,41,31-60-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0059,The Frozen Labyrinth,Rise of the Ice Dragons Trilogy,Midnight Tower,34,31-60-pages,REJECT,"source_preflight_failed:[ADV-0059] Resolving source for The Frozen Labyrinth ERROR: No Markdown source resolved for ""Rise of the Ice Dragons Trilogy"" under /Users/davidnorris/code/md-for-llm-book-content"
+ADV-0060,The Quest for the Last Orbstone,Rise of the Ice Dragons Trilogy,Midnight Tower,44,31-60-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0061,Enter Drakenberg Castle,Rise of the Ice Dragons Trilogy,Midnight Tower,23,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0062,No Honour Among Thieves,The Prophecy of Nine Omens Trilogy,Midnight Tower,30,,REJECT,reserved:case_index:phase5_raw_case_index.csv
+ADV-0063,"Sea Monsters Ahead, Captain!",The Prophecy of Nine Omens Trilogy,Midnight Tower,44,31-60-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0064,The Sunken Temple of Sirenholm,The Prophecy of Nine Omens Trilogy,Midnight Tower,36,31-60-pages,SELECT,source_preflight_pass
+ADV-0065,Heart of Darkness,Battle for the Realm Trilogy,Midnight Tower,48,31-60-pages,SELECT,source_preflight_pass
+ADV-0066,Three Witches and a Missing Princess,Battle for the Realm Trilogy,Midnight Tower,52,31-60-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0067,At the Gate to the Abyss,Battle for the Realm Trilogy,Midnight Tower,53,31-60-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0068,Curse of Strahd,Curse of Strahd,Wizards of the Coast,204,,REJECT,page_count_over_limit
+ADV-0069,Castle Ravenloft,Curse of Strahd,Wizards of the Coast,40,31-60-pages,SELECT,source_preflight_pass
+ADV-0070,Old Bonegrinder,Curse of Strahd,Wizards of the Coast,4,3-10-pages,SELECT,source_preflight_pass
+ADV-0071,Argynvostholt,Curse of Strahd,Wizards of the Coast,17,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0072,Van Richten's Tower,Curse of Strahd,Wizards of the Coast,6,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0073,Wizard of Wines,Curse of Strahd,Wizards of the Coast,8,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0074,Amber Temple,Curse of Strahd,Wizards of the Coast,16,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0075,Yester Hill,Curse of Strahd,Wizards of the Coast,4,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0076,Werewolf Den,Curse of Strahd,Wizards of the Coast,5,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0077,Death House,Curse of Strahd,Wizards of the Coast,10,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0078,Vecna: Eve of Ruin,Vecna: Eve of Ruin,Wizards of the Coast,199,,REJECT,page_count_over_limit
+ADV-0079,Return from Neverdeath Graveyard,Vecna: Eve of Ruin,Wizards of the Coast,20,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0080,The Wizards Three,Vecna: Eve of Ruin,Wizards of the Coast,20,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0081,The Lambent Zenith's Last Voyage,Vecna: Eve of Ruin,Wizards of the Coast,16,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0082,The Ruined Colossus,Vecna: Eve of Ruin,Wizards of the Coast,20,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0083,Death House,Vecna: Eve of Ruin,Wizards of the Coast,18,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0084,Night of Blue Fire,Vecna: Eve of Ruin,Wizards of the Coast,20,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0085,Tomb of Wayward Souls,Vecna: Eve of Ruin,Wizards of the Coast,18,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0086,The Dragon Queen's Pride,Vecna: Eve of Ruin,Wizards of the Coast,20,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0087,The War of Pandesmos,Vecna: Eve of Ruin,Wizards of the Coast,16,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0088,Eve of Ruin,Vecna: Eve of Ruin,Wizards of the Coast,13,11-30-pages,SELECT,source_preflight_pass
+ADV-0089,Presto Change-o,The Game Master's Book of Random Encounters,Topix Media Lab,12,11-30-pages,SELECT,source_preflight_pass
+ADV-0090,Mother Knows Best,The Game Master's Book of Random Encounters,Topix Media Lab,8,3-10-pages,SELECT,source_preflight_pass
+ADV-0091,Special Delivery,The Game Master's Book of Random Encounters,Topix Media Lab,10,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0092,An Actor's Life,The Game Master's Book of Random Encounters,Topix Media Lab,16,,REJECT,reserved:case_index:production_social_investigation_b1_case_index.csv
+ADV-0093,The Tomb of the Forgotten Paladin,The Game Master's Book of Random Encounters,Topix Media Lab,10,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0094,Nature vs. Nurture,The Game Master's Book of Random Encounters,Topix Media Lab,10,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0095,One Last Job,The Game Master's Book of Random Encounters,Topix Media Lab,14,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0096,The Portal Prison,The Game Master's Book of Random Encounters,Topix Media Lab,10,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0112,Death at Sunset,Dragon Delves,Wizards of the Coast,12,,REJECT,reserved:case_index:production_backlog/production-backlog-pilot-v1/pack-001_case_index.csv
+ADV-0113,Baker's Doesn't,Dragon Delves,Wizards of the Coast,14,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0114,The Will of Orcus,Dragon Delves,Wizards of the Coast,12,11-30-pages,SELECT,source_preflight_pass
+ADV-0115,For Whom the Void Calls,Dragon Delves,Wizards of the Coast,13,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0116,The Dragon of Najkir,Dragon Delves,Wizards of the Coast,16,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0117,The Forbidden Vale,Dragon Delves,Wizards of the Coast,19,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0118,Before the Storm,Dragon Delves,Wizards of the Coast,10,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0119,Shivering Death,Dragon Delves,Wizards of the Coast,13,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0120,A Copper for a Song,Dragon Delves,Wizards of the Coast,14,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0121,Dragons of the Sandstone City,Dragon Delves,Wizards of the Coast,12,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0122,The Curse on Humble Hill,Forgotten Realms: Adventures in Faerûn,Wizards of the Coast,1,1-2-pages,REJECT,"source_preflight_failed:[ADV-0122] Resolving source for The Curse on Humble Hill ERROR: Required source page marker(s) not found: 14 (canonical 14-14, page_marker_offset +0)"
+ADV-0123,Robber Baron,Forgotten Realms: Adventures in Faerûn,Wizards of the Coast,1,1-2-pages,REJECT,"source_preflight_failed:[ADV-0123] Resolving source for Robber Baron ERROR: Required source page marker(s) not found: 15 (canonical 15-15, page_marker_offset +0)"
+ADV-0124,The Siege of Shalespire Priory,Forgotten Realms: Adventures in Faerûn,Wizards of the Coast,1,1-2-pages,REJECT,"source_preflight_failed:[ADV-0124] Resolving source for The Siege of Shalespire Priory ERROR: Required source page marker(s) not found: 16 (canonical 16-16, page_marker_offset +0)"
+ADV-0125,The Weeping Goddess,Forgotten Realms: Adventures in Faerûn,Wizards of the Coast,1,1-2-pages,REJECT,"source_preflight_failed:[ADV-0125] Resolving source for The Weeping Goddess ERROR: Required source page marker(s) not found: 17 (canonical 17-17, page_marker_offset +0)"
+ADV-0126,Fury Grove,Forgotten Realms: Adventures in Faerûn,Wizards of the Coast,1,1-2-pages,REJECT,"source_preflight_failed:[ADV-0126] Resolving source for Fury Grove ERROR: Required source page marker(s) not found: 18 (canonical 18-18, page_marker_offset +0)"
+ADV-0127,The Tenebrous Stone,Forgotten Realms: Adventures in Faerûn,Wizards of the Coast,1,1-2-pages,SELECT,source_preflight_pass
+ADV-0128,Disinterred Danger,Forgotten Realms: Adventures in Faerûn,Wizards of the Coast,1,1-2-pages,SELECT,source_preflight_pass
+ADV-0129,The Drowning Forest,Forgotten Realms: Adventures in Faerûn,Wizards of the Coast,1,1-2-pages,SELECT,source_preflight_pass
+ADV-0130,The Lost Dawn,Forgotten Realms: Adventures in Faerûn,Wizards of the Coast,1,1-2-pages,SELECT,source_preflight_pass
+ADV-0131,Wolves of Amphail,Forgotten Realms: Adventures in Faerûn,Wizards of the Coast,1,1-2-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0132,The Eyes of At'ar,Forgotten Realms: Adventures in Faerûn,Wizards of the Coast,1,,REJECT,reserved:case_index:production_social_investigation_b1_case_index.csv
+ADV-0133,Safe House Standoff,Forgotten Realms: Adventures in Faerûn,Wizards of the Coast,1,1-2-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0134,Tears Fall,Forgotten Realms: Adventures in Faerûn,Wizards of the Coast,1,1-2-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0135,Shadow of the Watch,Forgotten Realms: Adventures in Faerûn,Wizards of the Coast,1,,REJECT,reserved:case_index:production_social_investigation_b1_case_index.csv
+ADV-0136,Well of Lies,Forgotten Realms: Adventures in Faerûn,Wizards of the Coast,1,1-2-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0137,The Raid on Noanar's Hold,Forgotten Realms: Adventures in Faerûn,Wizards of the Coast,1,1-2-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0138,In for a Penny,Forgotten Realms: Adventures in Faerûn,Wizards of the Coast,1,1-2-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0139,Hell Ship,Forgotten Realms: Adventures in Faerûn,Wizards of the Coast,1,1-2-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0140,The Summerlight Ceremony,Forgotten Realms: Adventures in Faerûn,Wizards of the Coast,1,1-2-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0141,The Vault of Velsharoon,Forgotten Realms: Adventures in Faerûn,Wizards of the Coast,1,1-2-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0142,Dragon Orb,Forgotten Realms: Adventures in Faerûn,Wizards of the Coast,1,1-2-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0143,Echoes of the Shaking Plague,Forgotten Realms: Adventures in Faerûn,Wizards of the Coast,1,1-2-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0144,The Ashen Faithful,Forgotten Realms: Adventures in Faerûn,Wizards of the Coast,1,1-2-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0145,Silk and Suffering,Forgotten Realms: Adventures in Faerûn,Wizards of the Coast,1,1-2-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0146,The Flying Fortress,Forgotten Realms: Adventures in Faerûn,Wizards of the Coast,1,1-2-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0147,The Foehammer Horn,Forgotten Realms: Adventures in Faerûn,Wizards of the Coast,1,1-2-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0148,The Blight on Soubar,Forgotten Realms: Adventures in Faerûn,Wizards of the Coast,1,1-2-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0149,Mystery of Myth Rodarnum,Forgotten Realms: Adventures in Faerûn,Wizards of the Coast,1,1-2-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0150,A Restless Eternity,Forgotten Realms: Adventures in Faerûn,Wizards of the Coast,1,,REJECT,reserved:case_index:production_social_investigation_b1_case_index.csv
+ADV-0151,Dread March of the Bone Titan,Forgotten Realms: Adventures in Faerûn,Wizards of the Coast,1,1-2-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0152,Heart of Fire,Forgotten Realms: Adventures in Faerûn,Wizards of the Coast,1,1-2-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0153,The Tomb of Damara,Forgotten Realms: Adventures in Faerûn,Wizards of the Coast,1,1-2-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0154,Restoring Freedale,Forgotten Realms: Adventures in Faerûn,Wizards of the Coast,1,1-2-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0155,The Temple of Transmutation,Forgotten Realms: Adventures in Faerûn,Wizards of the Coast,2,1-2-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0156,The Cost of Warmth,Forgotten Realms: Adventures in Faerûn,Wizards of the Coast,1,1-2-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0157,Retaking the Terror,Forgotten Realms: Adventures in Faerûn,Wizards of the Coast,1,1-2-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0158,Dougan's Hell,Forgotten Realms: Adventures in Faerûn,Wizards of the Coast,1,1-2-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0159,What Wakes Below,Forgotten Realms: Adventures in Faerûn,Wizards of the Coast,1,1-2-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0160,Calim Crossing,Forgotten Realms: Adventures in Faerûn,Wizards of the Coast,2,1-2-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0161,Gods Long Forgotten,Forgotten Realms: Adventures in Faerûn,Wizards of the Coast,1,1-2-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0162,The Dallabad Curse,Forgotten Realms: Adventures in Faerûn,Wizards of the Coast,1,,REJECT,reserved:case_index:production_social_investigation_b1_case_index.csv
+ADV-0163,The Rushdown Well,Forgotten Realms: Adventures in Faerûn,Wizards of the Coast,1,1-2-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0164,Message in a Bottle,Forgotten Realms: Adventures in Faerûn,Wizards of the Coast,1,1-2-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0165,Wreck of the Silverhand,Forgotten Realms: Adventures in Faerûn,Wizards of the Coast,1,1-2-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0166,The Treaty of Ostoria,Forgotten Realms: Adventures in Faerûn,Wizards of the Coast,1,1-2-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0167,Tide of Teeth,Forgotten Realms: Adventures in Faerûn,Wizards of the Coast,1,1-2-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0168,Blood Night,Forgotten Realms: Adventures in Faerûn,Wizards of the Coast,1,,REJECT,reserved:case_index:production_social_investigation_b1_case_index.csv
+ADV-0169,Clockwork Memories,Forgotten Realms: Adventures in Faerûn,Wizards of the Coast,1,,REJECT,reserved:case_index:production_social_investigation_b1_case_index.csv
+ADV-0170,The Shadow Parliament,Forgotten Realms: Adventures in Faerûn,Wizards of the Coast,1,,REJECT,reserved:case_index:production_social_investigation_b1_case_index.csv
+ADV-0171,The Lost Library of Lethchauntos,Forgotten Realms: Adventures in Faerûn,Wizards of the Coast,15,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0172,Salted Legacy,Journeys Through the Radiant Citadel,Wizards of the Coast,13,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0173,Written in Blood,Journeys Through the Radiant Citadel,Wizards of the Coast,11,,REJECT,reserved:case_index:production_backlog/production-backlog-pilot-v1/pack-001_case_index.csv
+ADV-0174,The Fiend of Hollow Mine,Journeys Through the Radiant Citadel,Wizards of the Coast,15,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0175,Wages of Vice,Journeys Through the Radiant Citadel,Wizards of the Coast,10,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0176,Sins of Our Elders,Journeys Through the Radiant Citadel,Wizards of the Coast,12,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0177,Gold for Fools and Princes,Journeys Through the Radiant Citadel,Wizards of the Coast,11,11-30-pages,SELECT,source_preflight_pass
+ADV-0178,Trail of Destruction,Journeys Through the Radiant Citadel,Wizards of the Coast,11,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0179,In the Mists of Manivarsha,Journeys Through the Radiant Citadel,Wizards of the Coast,10,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0180,Between Tangled Roots,Journeys Through the Radiant Citadel,Wizards of the Coast,12,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0181,Shadow of the Sun,Journeys Through the Radiant Citadel,Wizards of the Coast,17,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0182,The Nightsea's Succor,Journeys Through the Radiant Citadel,Wizards of the Coast,15,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0183,Buried Dynasty,Journeys Through the Radiant Citadel,Wizards of the Coast,14,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0184,Orchids of the Invisible Mountain,Journeys Through the Radiant Citadel,Wizards of the Coast,17,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0185,The Murkmire Malevolence,Keys from the Golden Vault,Wizards of the Coast,16,,REJECT,reserved:case_index:production_social_investigation_b1_case_index.csv
+ADV-0186,The Stygian Gambit,Keys from the Golden Vault,Wizards of the Coast,14,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0187,Reach for the Stars,Keys from the Golden Vault,Wizards of the Coast,14,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0188,Prisoner 13,Keys from the Golden Vault,Wizards of the Coast,16,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0189,Tockworth's Clockworks,Keys from the Golden Vault,Wizards of the Coast,16,,REJECT,reserved:case_index:production_social_investigation_b1_case_index.csv
+ADV-0190,Masterpiece Imbroglio,Keys from the Golden Vault,Wizards of the Coast,16,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0191,Axe from the Grave,Keys from the Golden Vault,Wizards of the Coast,16,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0192,Vidorant's Vault,Keys from the Golden Vault,Wizards of the Coast,14,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0193,Shard of the Accursed,Keys from the Golden Vault,Wizards of the Coast,16,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0194,Heart of Ashes,Keys from the Golden Vault,Wizards of the Coast,12,11-30-pages,REJECT,"source_preflight_failed:[ADV-0194] Resolving source for Heart of Ashes ERROR: Required source page marker(s) not found: 160 (canonical 149-160, page_marker_offset +0)"
+ADV-0195,Affair on the Concordant Express,Keys from the Golden Vault,Wizards of the Coast,16,,REJECT,reserved:case_index:production_social_investigation_b1_case_index.csv
+ADV-0196,Party at Paliset Hall,Keys from the Golden Vault,Wizards of the Coast,18,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0197,Fire and Darkness,Keys from the Golden Vault,Wizards of the Coast,13,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0198,Cold-Hearted Killer,Icewind Dale: Rime of the Frostmaiden,Wizards of the Coast,3,,REJECT,reserved:case_index:production_social_investigation_b1_case_index.csv
+ADV-0199,Nature Spirits,Icewind Dale: Rime of the Frostmaiden,Wizards of the Coast,2,1-2-pages,SELECT,source_preflight_pass
+ADV-0200,Lake Monster,Icewind Dale: Rime of the Frostmaiden,Wizards of the Coast,4,,REJECT,reserved:case_index:production_social_investigation_b1_case_index.csv
+ADV-0201,Foaming Mugs,Icewind Dale: Rime of the Frostmaiden,Wizards of the Coast,3,,REJECT,reserved:case_index:production_backlog/production-backlog-pilot-v1/pack-001_case_index.csv
+ADV-0202,Black Swords,Icewind Dale: Rime of the Frostmaiden,Wizards of the Coast,8,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0203,The Unseen,Icewind Dale: Rime of the Frostmaiden,Wizards of the Coast,6,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0204,Holed Up,Icewind Dale: Rime of the Frostmaiden,Wizards of the Coast,6,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0205,Toil and Trouble,Icewind Dale: Rime of the Frostmaiden,Wizards of the Coast,6,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0206,The Mead Must Flow,Icewind Dale: Rime of the Frostmaiden,Wizards of the Coast,6,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0207,The White Moose,Icewind Dale: Rime of the Frostmaiden,Wizards of the Coast,6,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0208,Mountain Climb,Icewind Dale: Rime of the Frostmaiden,Wizards of the Coast,6,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0209,A Beautiful Mine,Icewind Dale: Rime of the Frostmaiden,Wizards of the Coast,6,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0210,Angajuk's Bell,Icewind Dale: Rime of the Frostmaiden,Wizards of the Coast,3,3-10-pages,SELECT,source_preflight_pass
+ADV-0211,Black Cabin,Icewind Dale: Rime of the Frostmaiden,Wizards of the Coast,6,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0212,Cackling Chasm,Icewind Dale: Rime of the Frostmaiden,Wizards of the Coast,4,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0213,Cave of the Berserkers,Icewind Dale: Rime of the Frostmaiden,Wizards of the Coast,4,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0214,Dark Duchess,Icewind Dale: Rime of the Frostmaiden,Wizards of the Coast,6,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0215,Id Ascendant,Icewind Dale: Rime of the Frostmaiden,Wizards of the Coast,6,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0216,Jarlmoot,Icewind Dale: Rime of the Frostmaiden,Wizards of the Coast,4,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0217,Karkolohk,Icewind Dale: Rime of the Frostmaiden,Wizards of the Coast,6,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0218,Lost Spire of Netheril,Icewind Dale: Rime of the Frostmaiden,Wizards of the Coast,8,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0219,Revel's End,Icewind Dale: Rime of the Frostmaiden,Wizards of the Coast,8,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0220,Skytower Shelter,Icewind Dale: Rime of the Frostmaiden,Wizards of the Coast,6,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0221,Wyrmdoom Crag,Icewind Dale: Rime of the Frostmaiden,Wizards of the Coast,4,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0222,Icewind Dale: Rime of the Frostmaiden,Icewind Dale: Rime of the Frostmaiden,Wizards of the Coast,258,,REJECT,page_count_over_limit
+ADV-0223,Sunblight,Icewind Dale: Rime of the Frostmaiden,Wizards of the Coast,15,,REJECT,reserved:case_index:production_social_investigation_b1_case_index.csv
+ADV-0224,Destruction's Light,Icewind Dale: Rime of the Frostmaiden,Wizards of the Coast,7,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0225,Auril's Abode,Icewind Dale: Rime of the Frostmaiden,Wizards of the Coast,18,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0226,Caves of Hunger,Icewind Dale: Rime of the Frostmaiden,Wizards of the Coast,16,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0227,Doom of Ythryn,Icewind Dale: Rime of the Frostmaiden,Wizards of the Coast,30,,REJECT,reserved:case_index:production_social_investigation_b1_case_index.csv
+ADV-0228,The Sinister Secret of Saltmarsh,Ghosts of Saltmarsh,Wizards of the Coast,23,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0229,Danger at Dunwater,Ghosts of Saltmarsh,Wizards of the Coast,25,,REJECT,reserved:case_index:production_social_investigation_b1_case_index.csv
+ADV-0230,Salvage Operation,Ghosts of Saltmarsh,Wizards of the Coast,9,,REJECT,reserved:case_index:production_social_investigation_b1_case_index.csv
+ADV-0231,Isle of the Abbey,Ghosts of Saltmarsh,Wizards of the Coast,13,11-30-pages,SELECT,source_preflight_pass
+ADV-0232,The Final Enemy,Ghosts of Saltmarsh,Wizards of the Coast,29,,REJECT,reserved:case_index:production_social_investigation_b1_case_index.csv
+ADV-0233,Tammeraut's Fate,Ghosts of Saltmarsh,Wizards of the Coast,21,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0234,The Styes,Ghosts of Saltmarsh,Wizards of the Coast,23,,REJECT,reserved:case_index:production_social_investigation_b1_case_index.csv
+ADV-0235,Dragonlance: Shadow of the Dragon Queen,Dragonlance: Shadow of the Dragon Queen,Wizards of the Coast,151,,REJECT,page_count_over_limit
+ADV-0236,When Home Burns,Dragonlance: Shadow of the Dragon Queen,Wizards of the Coast,25,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0237,The First Mission,Dragonlance: Shadow of the Dragon Queen,Wizards of the Coast,3,,REJECT,reserved:case_index:production_backlog/production-backlog-pilot-v1/pack-001_case_index.csv
+ADV-0238,Wheelwatch Outpost,Dragonlance: Shadow of the Dragon Queen,Wizards of the Coast,5,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0239,The Lord's Arrival,Dragonlance: Shadow of the Dragon Queen,Wizards of the Coast,9,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0240,Blue Phoenix Shrine,Dragonlance: Shadow of the Dragon Queen,Wizards of the Coast,4,3-10-pages,SELECT,source_preflight_pass
+ADV-0241,Sunward Fortress,Dragonlance: Shadow of the Dragon Queen,Wizards of the Coast,5,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0242,Wakenreth,Dragonlance: Shadow of the Dragon Queen,Wizards of the Coast,4,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0243,Bluemaw Cave,Dragonlance: Shadow of the Dragon Queen,Wizards of the Coast,4,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0244,Camp Carrionclay,Dragonlance: Shadow of the Dragon Queen,Wizards of the Coast,2,1-2-pages,SELECT,source_preflight_pass
+ADV-0245,City of Lost Names,Dragonlance: Shadow of the Dragon Queen,Wizards of the Coast,26,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0246,Temple of Paladine,Dragonlance: Shadow of the Dragon Queen,Wizards of the Coast,4,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0247,Threshold of the Heavens,Dragonlance: Shadow of the Dragon Queen,Wizards of the Coast,7,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0248,Siege of Kalaman,Dragonlance: Shadow of the Dragon Queen,Wizards of the Coast,27,,REJECT,reserved:case_index:production_social_investigation_b1_case_index.csv
+ADV-0249,The Flying Citadel,Dragonlance: Shadow of the Dragon Queen,Wizards of the Coast,14,11-30-pages,SELECT,source_preflight_pass
+ADV-0250,Strixhaven: A Curriculum of Chaos,Strixhaven: A Curriculum of Chaos,Wizards of the Coast,141,,REJECT,page_count_over_limit
+ADV-0251,Campus Kerfuffle,Strixhaven: A Curriculum of Chaos,Wizards of the Coast,36,31-60-pages,SELECT,source_preflight_pass
+ADV-0252,Campus Daredevils,Strixhaven: A Curriculum of Chaos,Wizards of the Coast,9,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0253,Secrets in Sedgemoor,Strixhaven: A Curriculum of Chaos,Wizards of the Coast,4,3-10-pages,SELECT,source_preflight_pass
+ADV-0254,Hunt for Mage Tower,Strixhaven: A Curriculum of Chaos,Wizards of the Coast,27,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0255,The Scriptoria Collections,Strixhaven: A Curriculum of Chaos,Wizards of the Coast,5,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0256,Fate at Furygale,Strixhaven: A Curriculum of Chaos,Wizards of the Coast,5,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0257,The Magister's Masquerade,Strixhaven: A Curriculum of Chaos,Wizards of the Coast,31,,REJECT,reserved:case_index:production_social_investigation_b1_case_index.csv
+ADV-0258,Midnight at Lorehold,Strixhaven: A Curriculum of Chaos,Wizards of the Coast,7,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0259,A Reckoning in Ruins,Strixhaven: A Curriculum of Chaos,Wizards of the Coast,25,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0260,Clue in the Bayou,Strixhaven: A Curriculum of Chaos,Wizards of the Coast,6,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0261,Fortress Badlands,Strixhaven: A Curriculum of Chaos,Wizards of the Coast,7,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0262,Lost Mine of Phandelver,Phandelver and Below: The Shattered Obelisk,Wizards of the Coast,61,,REJECT,reserved:case_index:phase5_raw_case_index.csv
+ADV-0263,Cragmaw Hideout,Phandelver and Below: The Shattered Obelisk,Wizards of the Coast,7,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0264,Redbrands' Hideout,Phandelver and Below: The Shattered Obelisk,Wizards of the Coast,10,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0265,Ruins of Thundertree,Phandelver and Below: The Shattered Obelisk,Wizards of the Coast,8,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0266,Cragmaw Castle,Phandelver and Below: The Shattered Obelisk,Wizards of the Coast,6,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0267,Wave Echo Cave,Phandelver and Below: The Shattered Obelisk,Wizards of the Coast,11,,REJECT,reserved:case_index:production_backlog/production-backlog-pilot-v1/pack-001_case_index.csv
+ADV-0268,The Obelisk,Phandelver and Below: The Shattered Obelisk,Wizards of the Coast,124,,REJECT,page_count_over_limit
+ADV-0269,Zorzula's Rest,Phandelver and Below: The Shattered Obelisk,Wizards of the Coast,14,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0270,Talhundereth,Phandelver and Below: The Shattered Obelisk,Wizards of the Coast,10,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0271,Crypt of the Talhund,Phandelver and Below: The Shattered Obelisk,Wizards of the Coast,11,11-30-pages,SELECT,source_preflight_pass
+ADV-0272,Gibbet Crossing,Phandelver and Below: The Shattered Obelisk,Wizards of the Coast,11,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0273,Illithinoch,Phandelver and Below: The Shattered Obelisk,Wizards of the Coast,15,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0274,Feeder Trenches,Phandelver and Below: The Shattered Obelisk,Wizards of the Coast,3,3-10-pages,SELECT,source_preflight_pass
+ADV-0275,Labyrinth of Eyes,Phandelver and Below: The Shattered Obelisk,Wizards of the Coast,4,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0276,Beyond a Lightless Star,Phandelver and Below: The Shattered Obelisk,Wizards of the Coast,32,,REJECT,reserved:case_index:production_backlog/production-backlog-pilot-v1/pack-001_case_index.csv
+ADV-0277,The Wild Beyond the Witchlight,The Wild Beyond the Witchlight,Wizards of the Coast,204,,REJECT,reserved:case_index:phase5_raw_case_index.csv
+ADV-0278,Witchlight Carnival,The Wild Beyond the Witchlight,Wizards of the Coast,33,,REJECT,reserved:case_index:production_social_investigation_b1_case_index.csv
+ADV-0279,Burly's Plan / The Heist,The Wild Beyond the Witchlight,Wizards of the Coast,1,,REJECT,reserved:case_index:production_backlog/production-backlog-pilot-v1/pack-001_case_index.csv
+ADV-0280,Free Sir Talavar,The Wild Beyond the Witchlight,Wizards of the Coast,4,3-10-pages,SELECT,source_preflight_pass
+ADV-0281,Downfall,The Wild Beyond the Witchlight,Wizards of the Coast,24,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0282,Loomlurch,The Wild Beyond the Witchlight,Wizards of the Coast,18,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0283,Fey Beacons,The Wild Beyond the Witchlight,Wizards of the Coast,2,1-2-pages,SELECT,source_preflight_pass
+ADV-0284,Brigganock Mine,The Wild Beyond the Witchlight,Wizards of the Coast,5,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0285,Motherhorn,The Wild Beyond the Witchlight,Wizards of the Coast,21,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0286,Palace of Heart's Desire,The Wild Beyond the Witchlight,Wizards of the Coast,37,31-60-pages,SELECT,source_preflight_pass
+ADV-0287,The House of Lament,Van Richten's Guide to Ravenloft,Wizards of the Coast,20,,REJECT,reserved:case_index:phase5_raw_case_index.csv
+ADV-0288,A Friend in Need,Waterdeep: Dragon Heist,Wizards of the Coast,10,,REJECT,reserved:case_index:production_social_investigation_b1_case_index.csv
+ADV-0289,Fireball,Waterdeep: Dragon Heist,Wizards of the Coast,14,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0290,Encounter 1: Alley,Waterdeep: Dragon Heist,Wizards of the Coast,5,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0291,Encounter 2: Mistshore,Waterdeep: Dragon Heist,Wizards of the Coast,4,3-10-pages,SELECT,source_preflight_pass
+ADV-0292,Encounter 4: Mausoleum,Waterdeep: Dragon Heist,Wizards of the Coast,4,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0293,Encounter 6: Theater,Waterdeep: Dragon Heist,Wizards of the Coast,4,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0294,Encounter 7: Old Tower,Waterdeep: Dragon Heist,Wizards of the Coast,5,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0295,Encounter 8: Courthouse,Waterdeep: Dragon Heist,Wizards of the Coast,4,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0296,Encounter 9: Cellar Complex,Waterdeep: Dragon Heist,Wizards of the Coast,4,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0297,Encounter 10: Converted Windmill,Waterdeep: Dragon Heist,Wizards of the Coast,5,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0298,Vault of Dragons,Waterdeep: Dragon Heist,Wizards of the Coast,9,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0299,Spring Madness,Waterdeep: Dragon Heist,Wizards of the Coast,16,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0300,Hell of a Summer,Waterdeep: Dragon Heist,Wizards of the Coast,16,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0301,Maestro's Fall,Waterdeep: Dragon Heist,Wizards of the Coast,16,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0302,Winter Wizardry,Waterdeep: Dragon Heist,Wizards of the Coast,16,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0303,Storm King's Thunder,Storm King's Thunder,Wizards of the Coast,212,,REJECT,reserved:case_index:phase5_raw_case_index.csv
+ADV-0304,A Great Upheaval,Storm King's Thunder,Wizards of the Coast,14,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0305,Dripping Caves,Storm King's Thunder,Wizards of the Coast,5,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0306,Tower of Zephyros,Storm King's Thunder,Wizards of the Coast,5,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0307,Bryn Shander,Storm King's Thunder,Wizards of the Coast,7,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0308,Goldenfields,Storm King's Thunder,Wizards of the Coast,10,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0309,Triboar,Storm King's Thunder,Wizards of the Coast,10,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0310,Eye of the All-Father,Storm King's Thunder,Wizards of the Coast,16,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0311,Quest for the Giant Relics,Storm King's Thunder,Wizards of the Coast,2,1-2-pages,SELECT,source_preflight_pass
+ADV-0312,Den of the Hill Giants,Storm King's Thunder,Wizards of the Coast,8,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0313,Canyon of the Stone Giants,Storm King's Thunder,Wizards of the Coast,10,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0314,Berg of the Frost Giants,Storm King's Thunder,Wizards of the Coast,12,11-30-pages,SELECT,source_preflight_pass
+ADV-0315,Forge of the Fire Giants,Storm King's Thunder,Wizards of the Coast,20,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0316,Castle of the Cloud Giants,Storm King's Thunder,Wizards of the Coast,14,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0317,Hold of the Storm Giants,Storm King's Thunder,Wizards of the Coast,14,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0318,Caught in the Tentacles,Storm King's Thunder,Wizards of the Coast,10,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0319,The Grand Dame,Storm King's Thunder,Wizards of the Coast,4,3-10-pages,SELECT,source_preflight_pass
+ADV-0320,The Morkoth,Storm King's Thunder,Wizards of the Coast,4,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0321,Doom of the Desert,Storm King's Thunder,Wizards of the Coast,6,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0322,Waterdeep: Dungeon of the Mad Mage,Waterdeep: Dungeon of the Mad Mage,Wizards of the Coast,298,,REJECT,page_count_over_limit
+ADV-0323,Dungeon Level,Waterdeep: Dungeon of the Mad Mage,Wizards of the Coast,14,,REJECT,reserved:case_index:production_social_investigation_b1_case_index.csv
+ADV-0324,Arcane Chambers,Waterdeep: Dungeon of the Mad Mage,Wizards of the Coast,16,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0325,Sargauth Level,Waterdeep: Dungeon of the Mad Mage,Wizards of the Coast,16,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0326,Twisted Caverns,Waterdeep: Dungeon of the Mad Mage,Wizards of the Coast,10,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0327,Wyllowwood,Waterdeep: Dungeon of the Mad Mage,Wizards of the Coast,12,11-30-pages,SELECT,source_preflight_pass
+ADV-0328,Lost Level,Waterdeep: Dungeon of the Mad Mage,Wizards of the Coast,14,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0329,Maddgoth's Castle,Waterdeep: Dungeon of the Mad Mage,Wizards of the Coast,14,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0330,Slitherswamp,Waterdeep: Dungeon of the Mad Mage,Wizards of the Coast,8,3-10-pages,SELECT,source_preflight_pass
+ADV-0331,Dweomercore,Waterdeep: Dungeon of the Mad Mage,Wizards of the Coast,18,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0332,Muiral's Gauntlet,Waterdeep: Dungeon of the Mad Mage,Wizards of the Coast,16,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0333,Troglodyte Warrens,Waterdeep: Dungeon of the Mad Mage,Wizards of the Coast,8,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0334,Maze Level,Waterdeep: Dungeon of the Mad Mage,Wizards of the Coast,12,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0335,Trobriand's Graveyard,Waterdeep: Dungeon of the Mad Mage,Wizards of the Coast,8,,REJECT,reserved:case_index:production_social_investigation_b1_case_index.csv
+ADV-0336,Arcturiadoom,Waterdeep: Dungeon of the Mad Mage,Wizards of the Coast,14,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0337,Obstacle Course,Waterdeep: Dungeon of the Mad Mage,Wizards of the Coast,16,,REJECT,reserved:case_index:production_social_investigation_b1_case_index.csv
+ADV-0338,Crystal Labyrinth / Stardock,Waterdeep: Dungeon of the Mad Mage,Wizards of the Coast,12,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0339,Seadeeps,Waterdeep: Dungeon of the Mad Mage,Wizards of the Coast,10,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0340,Vanrakdoom,Waterdeep: Dungeon of the Mad Mage,Wizards of the Coast,12,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0341,Caverns of Ooze,Waterdeep: Dungeon of the Mad Mage,Wizards of the Coast,10,3-10-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0342,Runestone Caverns,Waterdeep: Dungeon of the Mad Mage,Wizards of the Coast,12,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0343,Terminus Level,Waterdeep: Dungeon of the Mad Mage,Wizards of the Coast,12,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0344,Shadowdusk Hold,Waterdeep: Dungeon of the Mad Mage,Wizards of the Coast,12,11-30-pages,ELIGIBLE_NOT_SELECTED,stratum_quota_reached
+ADV-0345,Mad Wizard's Lair,Waterdeep: Dungeon of the Mad Mage,Wizards of the Coast,14,,REJECT,reserved:case_index:production_social_investigation_b1_case_index.csv
