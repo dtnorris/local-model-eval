@@ -58,15 +58,25 @@ require "csv"
 require "yaml"
 
 qualified_path, snapshot_path, index_path, order_path, scorer_repo, repo_root = ARGV
-qualified = YAML.safe_load_file(qualified_path)
+live_qualified = YAML.safe_load_file(qualified_path)
 snapshot = YAML.safe_load_file(snapshot_path)
 rows = CSV.read(index_path, headers: true, encoding: "UTF-8")
 order = File.readlines(order_path, chomp: true).reject(&:empty?)
 
-dims = qualified.fetch("dimensions")
+qualification_contract = snapshot.fetch("qualification_contract", live_qualified)
+dims = snapshot.fetch("qualified_dimensions", qualification_contract.fetch("dimensions"))
+if snapshot["qualification_contract"] && qualification_contract.fetch("dimensions") != dims
+  abort "snapshot qualification contract/dimension list disagree"
+end
 dim_names = dims.map { |d| d.fetch("name") }
 profiles = dims.to_h { |d| [d.fetch("name"), d.fetch("profile")] }
 selected = snapshot.fetch("selected_adventures")
+expected_dimensions_by_adv = selected.to_h do |adv|
+  runnable = adv.fetch("runnable_qualified_dimensions", dim_names)
+  unknown = runnable - dim_names
+  abort "#{adv.fetch('id')} has unknown frozen runnable dimensions: #{unknown.join(', ')}" unless unknown.empty?
+  [adv.fetch("id"), runnable]
+end
 frozen_scorer = snapshot["scorer_repo_path"].to_s
 unless frozen_scorer.empty?
   frozen_abs = File.expand_path(frozen_scorer, repo_root)
@@ -75,13 +85,17 @@ end
 packs = Integer(snapshot.fetch("packs"))
 per_pack = Integer(snapshot.fetch("adventures_per_pack"))
 expected_adventures = packs * per_pack
-expected_calls = expected_adventures * dims.length
+expected_pairs = selected.flat_map do |adv|
+  expected_dimensions_by_adv.fetch(adv.fetch("id")).map { |dim| [adv.fetch("id"), dim] }
+end
+expected_calls = expected_pairs.length
 
 abort "snapshot selected adventure count changed" unless selected.length == expected_adventures
 abort "case count #{rows.length}; expected #{expected_calls}" unless rows.length == expected_calls
 abort "run order count #{order.length}; expected #{expected_calls}" unless order.length == expected_calls
 abort "run order has duplicates" unless order.uniq.length == order.length
 abort "run order/index mismatch" unless rows.map { |r| r["manifest_path"] } == order
+abort "frozen adventure/dimension matrix changed" unless rows.map { |r| [r["adventure_id"], r["dimension"]] } == expected_pairs
 
 selected_ids = selected.map { |a| a.fetch("id") }
 actual_ids = rows.map { |r| r["adventure_id"] }.uniq
@@ -162,26 +176,30 @@ rows.each do |row|
 end
 
 dim_names.each do |dim|
-  abort "#{dim} count #{counts[dim]}; expected #{expected_adventures}" unless counts[dim] == expected_adventures
+  expected = expected_dimensions_by_adv.values.count { |names| names.include?(dim) }
+  abort "#{dim} count #{counts[dim]}; expected #{expected}" unless counts[dim] == expected
 end
 
 puts "Frozen queue semantics: PASS"
 puts "  Adventures: #{expected_adventures}"
-puts "  Dimensions: #{dims.length}"
+puts "  Qualified scoring operations: #{dims.length}"
 puts "  Calls: #{expected_calls}"
 puts "  Packs: #{packs} × #{per_pack} adventures"
 dim_names.each { |dim| puts "  #{dim}: #{counts[dim]} RUN" }
 RUBY
 
-EXPECTED_MODEL=$(ruby - "$QUALIFIED" <<'RUBY'
+EXPECTED_MODEL=$(ruby - "$SNAPSHOT" <<'RUBY'
 require "yaml"
 print YAML.safe_load_file(ARGV.fetch(0)).fetch("ollama_model")
 RUBY
 )
 
-QUALIFIED_BASE=$(ruby - "$QUALIFIED" <<'RUBY'
+QUALIFIED_BASE=$(ruby - "$QUALIFIED" "$SNAPSHOT" <<'RUBY'
 require "yaml"
-print YAML.safe_load_file(ARGV.fetch(0)).fetch("social_investigation_qualified_scorer_baseline")
+live = YAML.safe_load_file(ARGV.fetch(0))
+snapshot = YAML.safe_load_file(ARGV.fetch(1))
+contract = snapshot.fetch("qualification_contract", live)
+print contract.fetch("social_investigation_qualified_scorer_baseline")
 RUBY
 )
 
@@ -272,7 +290,7 @@ RUBY
 )
 
 echo
-echo "Rendering qualified Social/Investigation profiles (zero inference)..."
+echo "Rendering qualified production profiles (zero inference)..."
 TMP_PROFILE_DIR=$(mktemp -d)
 trap 'rm -rf "$TMP_PROFILE_DIR"' EXIT INT TERM
 
@@ -319,6 +337,38 @@ puts "Qualified prompt activation: PASS"
 puts "  Social Interaction Emphasis => phase6-v0.3"
 puts "  Investigation Emphasis => phase6-v0.4"
 RUBY
+
+FIRST_LEVELS_ADV=$(ruby - "$INDEX" <<'RUBY'
+require "csv"
+rows = CSV.read(ARGV.fetch(0), headers: true, encoding: "UTF-8")
+row = rows.find { |candidate| candidate["dimension"] == "Levels" }
+print row["adventure_id"] if row
+RUBY
+)
+
+if [[ -n "$FIRST_LEVELS_ADV" ]]; then
+  "$SCORER_REPO/bin/af-score" \
+    --model "$EXPECTED_MODEL" \
+    --dimension "Levels" \
+    --preflight \
+    --render-preflight "$TMP_PROFILE_DIR/levels.json" \
+    "$FIRST_LEVELS_ADV" >/dev/null || {
+      echo "ERROR: Levels qualified-profile preflight failed"
+      exit 1
+    }
+
+  ruby - "$TMP_PROFILE_DIR/levels.json" <<'RUBY' || exit 1
+require "json"
+levels = JSON.parse(File.read(ARGV.fetch(0)))
+prompt = levels.fetch("targets").fetch(0).dig("prompt", "input").to_s
+abort "Levels nested-context guardrail absent from rendered prompt" unless prompt.include?("Levels Nested-Adventure Context / Inherited Entry-State Guardrail v0.1")
+abort "Levels prompt does not expose both canonical assessment values" unless prompt.include?("Level Start") && prompt.include?("Level End")
+
+puts "  Levels => levels-v2.1 / Level Start + Level End / nested-context guardrail v0.1"
+RUBY
+else
+  echo "  Levels => 0 RUN (selected AMC rows already contain Levels data; no overwrite)"
+fi
 
 echo
 echo "Planning all manifests..."

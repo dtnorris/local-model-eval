@@ -42,6 +42,22 @@ def canonical_header(value)
   header == "ADV - ID" ? "Adventure ID" : header
 end
 
+def catalog_columns(dimension)
+  columns = Array(dimension["catalog_columns"]).map(&:to_s).reject(&:empty?)
+  columns.empty? ? [dimension.fetch("name")] : columns
+end
+
+def dimension_populated?(dimension, values)
+  catalog_columns(dimension).any? { |column| !blank?(values[column]) }
+end
+
+def dimension_runnable?(dimension, values)
+  # Multi-output operations are deliberately all-or-nothing. If either Levels
+  # catalog value already exists, do not run a blind production inference that
+  # could overwrite or be contaminated by accepted catalog data.
+  catalog_columns(dimension).all? { |column| blank?(values[column]) }
+end
+
 def git_head(repo)
   out, _err, status = Open3.capture3("git", "-C", repo, "rev-parse", "HEAD")
   status.success? ? out.strip : nil
@@ -198,6 +214,8 @@ abort_with("adjacent scorer checkout not found: #{SCORER_REPO}") unless File.dir
 
 dimensions = qualified.fetch("dimensions")
 dimension_names = dimensions.map { |d| d.fetch("name") }
+selection_gate_dimensions = dimensions.select { |d| d.fetch("selection_gate", true) }
+catalog_dimension_columns = dimensions.flat_map { |d| catalog_columns(d) }.uniq
 ollama_model = qualified.fetch("ollama_model")
 required_adventures = options[:packs] * options[:per_pack]
 
@@ -213,7 +231,7 @@ abort_with("AMC Adventure Catalog sheet is empty") if rows.empty?
 headers = rows.shift.map { |v| canonical_header(v) }
 required_headers = [
   "Adventure ID", "Adventure Title", "Source Book", "Book Publisher",
-  "Start Page", "End Page", *dimension_names
+  "Start Page", "End Page", *catalog_dimension_columns
 ]
 missing = required_headers - headers
 abort_with("AMC missing required columns: #{missing.join(', ')}") unless missing.empty?
@@ -232,12 +250,18 @@ rows.each do |row|
   end_page = integer_or_nil(values["End Page"])
   page_count ||= (end_page - start_page + 1) if start_page && end_page && end_page >= start_page
 
-  populated = dimension_names.select { |name| !blank?(values[name]) }
+  populated = dimensions.select { |dimension| dimension_populated?(dimension, values) }
+                        .map { |dimension| dimension.fetch("name") }
+  selection_populated = selection_gate_dimensions
+                        .select { |dimension| dimension_populated?(dimension, values) }
+                        .map { |dimension| dimension.fetch("name") }
+  runnable = dimensions.select { |dimension| dimension_runnable?(dimension, values) }
+                       .map { |dimension| dimension.fetch("name") }
   reason =
     if policy["exclude_reserved_production_adventures"] && reserved.key?(id)
       "reserved:#{reserved.fetch(id)}"
-    elsif policy["require_zero_qualified_scores"] && !populated.empty?
-      "qualified_scores_present:#{populated.join('|')}"
+    elsif policy["require_zero_qualified_scores"] && !selection_populated.empty?
+      "qualified_scores_present:#{selection_populated.join('|')}"
     elsif page_count.nil? || page_count <= 0
       "page_count_missing"
     elsif page_count > options[:max_pages]
@@ -252,7 +276,8 @@ rows.each do |row|
     "page_count" => page_count,
     "start_page" => start_page,
     "end_page" => end_page,
-    "populated_qualified_dimensions" => populated
+    "populated_qualified_dimensions" => populated,
+    "runnable_qualified_dimensions" => runnable
   }
 
   if reason
@@ -294,6 +319,13 @@ end
 
 selected = selection.fetch(:selected)
 audit.concat(selection.fetch(:audit))
+expected_calls = selected.sum { |record| record.fetch("runnable_qualified_dimensions").length }
+dimension_call_counts = dimensions.to_h { |dimension| [dimension.fetch("name"), 0] }
+selected.each do |record|
+  record.fetch("runnable_qualified_dimensions").each do |name|
+    dimension_call_counts[name] += 1
+  end
+end
 
 selected.each_with_index do |record, index|
   puts format(
@@ -334,6 +366,7 @@ snapshot = {
   "max_adventures_per_source_book" => selection.fetch(:max_per_source),
   "page_strata" => selection.fetch(:strata),
   "qualified_dimensions" => dimensions,
+  "qualification_contract" => qualified,
   "selected_adventures" => selected
 }
 File.write(File.join(queue_dir, "snapshot.yml"), YAML.dump(snapshot))
@@ -367,6 +400,8 @@ selected.each_slice(options[:per_pack]).with_index(1) do |pack_adventures, pack_
 
   pack_adventures.each do |adv|
     dimensions.each do |dimension|
+      next unless adv.fetch("runnable_qualified_dimensions").include?(dimension.fetch("name"))
+
       case_index += 1
       filename = "#{queue}-qwen-#{dimension.fetch('slug')}-adv#{adv.fetch('id').split('-').last.downcase}-v1.yml"
       relative_path = File.join("experiments", queue, filename)
@@ -376,7 +411,7 @@ selected.each_slice(options[:per_pack]).with_index(1) do |pack_adventures, pack_
       )
       puts format(
         "WRITE %3d/%d  %s",
-        case_index, required_adventures * dimensions.length, relative_path
+        case_index, expected_calls, relative_path
       )
       row = [
         case_index, pack_index, pack_rows.length + 1,
@@ -405,16 +440,16 @@ CSV.open(File.join(queue_dir, "case_index.csv"), "w") do |csv|
 end
 File.write(File.join(queue_dir, "run_order.txt"), all_run_paths.join("\n") + "\n")
 
-expected_calls = required_adventures * dimensions.length
-avg_seconds_per_call = 352.0 * 60.0 / 128.0
+avg_seconds_per_call = 118.5
 estimated_hours = expected_calls * avg_seconds_per_call / 3600.0
 
 puts
 puts "PRODUCTION BACKLOG PREPARED — NO INFERENCE WAS RUN"
 puts "Queue: #{File.join('production_backlog', queue)}"
 puts "Adventures: #{required_adventures}"
-puts "Dimensions: #{dimensions.length}"
+puts "Qualified scoring operations: #{dimensions.length}"
 puts "Calls: #{expected_calls}"
+dimensions.each { |dimension| puts "  #{dimension.fetch('name')}: #{dimension_call_counts.fetch(dimension.fetch('name'))} RUN" }
 puts "Packs: #{options[:packs]} × #{options[:per_pack]} adventures"
 puts "Max source pages: #{options[:max_pages]}"
 puts "Selection: #{policy.fetch('selection_strategy')}"
@@ -422,7 +457,8 @@ puts "Max adventures/source book: #{selection.fetch(:max_per_source)} (#{format(
 selection.fetch(:strata).each do |stratum|
   puts "  #{stratum.fetch('name')}: #{stratum.fetch('quota')} adventure(s)"
 end
-puts format("Planning runtime from recent throughput: ~%.1f hours", estimated_hours)
+puts "Levels is one inference operation that emits Level Start + Level End; populated Levels rows are not overwritten."
+puts format("Planning runtime from completed 60-call pilot throughput: ~%.1f hours", estimated_hours)
 puts "Scorer checkout: #{SCORER_REPO}"
 puts "External/API inference cost: $0"
 puts

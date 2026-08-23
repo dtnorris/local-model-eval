@@ -10,8 +10,10 @@ adventures_per_pack: 10
 # until the queue mechanism is proven reliable.
 max_page_count: 60
 
-# Require every currently qualified dimension to be blank in the AMC.
-# This maximizes newly covered adventures rather than adding isolated cells.
+# Require every qualified dimension marked as a selection gate to be blank in
+# the AMC. Catalog dimensions such as Levels may already be populated without
+# disqualifying an otherwise untouched adventure; those operations are emitted
+# only when all of their mapped AMC output cells are blank.
 require_zero_qualified_scores: true
 
 # Adventures already present in any checked-in production case index, or in

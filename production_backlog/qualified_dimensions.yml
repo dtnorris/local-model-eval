@@ -8,6 +8,14 @@ ollama_model: qwen3.6:35b-a3b
 social_investigation_qualified_scorer_baseline: e49a198b36774d47ef136699573b6db6632032bc
 
 dimensions:
+  - name: Levels
+    slug: levels
+    profile: levels-v2.1
+    catalog_columns:
+      - Level Start
+      - Level End
+    selection_gate: false
+
   - name: Combat Emphasis
     slug: combat
     profile: production-base
