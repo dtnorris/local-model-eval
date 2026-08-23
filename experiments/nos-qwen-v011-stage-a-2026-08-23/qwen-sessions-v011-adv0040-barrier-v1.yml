@@ -1,0 +1,42 @@
+name: qwen-sessions-v011-adv0040-barrier-v1
+
+purpose: >
+  Test whether the experimental Qwen # of Sessions v0.1.1
+  duration-reconciliation clarification corrects material duration compression
+  on ADV-0040. Expected-answer values are intentionally absent from this manifest.
+
+dispatch: pool
+
+models:
+  - qwen
+
+dimension: "# of Sessions"
+
+adventures:
+  - ADV-0040
+
+replicates: 1
+
+workers:
+  - mac
+
+required_worker_labels:
+  - local
+
+scorer:
+  repo: ../../../af-cli-scoring-utility-nos-v011
+  mode: positional
+  extra_args: []
+
+success_criteria:
+  - Structured scorer output validates and remains grounded to the canonical adventure source unit.
+  - Duration is derived from the supplied published source and AFAO normalization rules.
+  - Constituent substantive bodies and the final estimate are internally duration-reconciled.
+  - No target-specific benchmark, remembered actual-play duration, review, community estimate, or unsupported generic duration prior is used as scoring evidence.
+  - Preserve the single completed sample; do not rerun for a more favorable result.
+
+stop_conditions:
+  - Operational or structured-output failure requires adjudication before further Stage A inference.
+  - The single planned run completes; do not add reruns to seek a more favorable result.
+
+cost_cap_usd: 0.01
