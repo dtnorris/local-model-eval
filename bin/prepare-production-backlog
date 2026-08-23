@@ -263,6 +263,9 @@ rows.each do |row|
 end
 
 selection_policy = policy.merge("max_source_share" => options[:max_source_share])
+preflight_count = 0
+$stdout.sync = true
+
 begin
   selection = ProductionBacklogSelector.select(
     eligible: eligible,
@@ -270,7 +273,19 @@ begin
     policy: selection_policy,
     max_pages: options[:max_pages],
     preflight: lambda do |record|
-      source_preflight(SCORER_REPO, record.fetch("id"), ollama_model)
+      preflight_count += 1
+      puts format(
+        "PREFLIGHT %2d  %-9s  %3d pages  %-11s  %s",
+        preflight_count, record.fetch("id"), record.fetch("page_count"),
+        record.fetch("page_stratum"), record.fetch("title")
+      )
+
+      ok, detail = source_preflight(SCORER_REPO, record.fetch("id"), ollama_model)
+      puts format(
+        "%-9s %2d  %-9s  %s",
+        ok ? "PASS" : "REJECT", preflight_count, record.fetch("id"), record.fetch("title")
+      )
+      [ok, detail]
     end
   )
 rescue ProductionBacklogSelector::SelectionError => e
@@ -279,10 +294,6 @@ end
 
 selected = selection.fetch(:selected)
 audit.concat(selection.fetch(:audit))
-
-selection.fetch(:audit)
-         .select { |record| record.fetch("reason").start_with?("source_preflight_failed:") }
-         .each { |record| puts "REJECT source preflight #{record.fetch('id')} — #{record.fetch('title')}" }
 
 selected.each_with_index do |record, index|
   puts format(
@@ -363,10 +374,10 @@ selected.each_slice(options[:per_pack]).with_index(1) do |pack_adventures, pack_
         File.join(experiment_dir, filename),
         yaml_manifest(queue: queue, adv: adv, dimension: dimension, scorer_rel: scorer_rel)
       )
-      puts
-      puts "caffeinate -dimsu " + "\\"
-      puts "  bin/lme run " + "\\"
-      puts "  #{relative_path}"
+      puts format(
+        "WRITE %3d/%d  %s",
+        case_index, required_adventures * dimensions.length, relative_path
+      )
       row = [
         case_index, pack_index, pack_rows.length + 1,
         adv.fetch("id"), adv.fetch("title"), adv.fetch("source_book"),
