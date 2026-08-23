@@ -1,0 +1,39 @@
+name: production3-qwen-combat-adv0288-v1
+purpose: >
+  Overnight3 AdventureFinder production scoring. Produce one proposed production
+  assessment for canonical ADV-0288 on the locally authorized AFAO 1.5 dimension
+  Combat Emphasis, using Qwen 3.6 35B-A3B with one replicate. Existing AMC target scores
+  and other-dimension scores are not expected-answer context for this inference.
+dispatch: pool
+
+models:
+  - qwen
+
+dimension: Combat Emphasis
+
+adventures:
+  - ADV-0288
+
+replicates: 1
+
+workers:
+  - mac
+
+required_worker_labels:
+  - local
+
+scorer:
+  repo: ../../../af-cli-scoring-utility
+  mode: positional
+  extra_args: []
+
+success_criteria:
+  - Structured scorer output validates and remains grounded to the canonical adventure source unit.
+  - Preserve the single completed sample as a proposed production assessment for later QC and ingestion; do not rerun for a favorable score.
+  - Do not use an existing AMC score, calibration target, or score from another dimension as expected-answer context.
+
+stop_conditions:
+  - Operational failure is logged by the batch runner and the next manifest continues.
+  - Do not rerun a completed case to seek a more favorable sample.
+
+cost_cap_usd: 0.01
