@@ -47,12 +47,10 @@ def git_head(repo)
 end
 
 def scorer_catalog_path(scorer_repo)
-  config_path = File.join(scorer_repo, "config", "default.yml")
-  abort_with("missing scorer config: #{config_path}") unless File.file?(config_path)
-  config = YAML.safe_load_file(config_path)
-  relative = config.dig("files", "catalog")
-  abort_with("scorer config files.catalog is missing") if blank?(relative)
-  File.expand_path(relative.to_s, scorer_repo)
+  require File.join(scorer_repo, "lib", "af_scoring", "errors")
+  require File.join(scorer_repo, "lib", "af_scoring", "config")
+
+  AFScoring::Config.new(project_root: scorer_repo).catalog_path
 end
 
 def reserved_adventure_ids(root)
