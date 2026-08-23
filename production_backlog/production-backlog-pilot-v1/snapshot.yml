@@ -1,0 +1,152 @@
+---
+version: 1
+queue: production-backlog-pilot-v1
+generated_at: '2026-08-23T09:58:19-04:00'
+local_model_eval_commit: 959d4919e9424100a0717ae4191895fa6d902c61
+scorer_commit: 55348d331d45d47943354ac89b30d3e9a1d031d0
+scorer_repo_path: "../af-cli-scoring-utility2"
+catalog_path: "/Users/davidnorris/code/af-xlsx-data-sources/5e_Adventure_Master_Catalog_2.4.5.xlsx"
+catalog_sha256: eb3a7ee45396a28473db314cbad4593b5c6af7cd1d31b4e18e911a74861528b0
+model_alias: qwen
+ollama_model: qwen3.6:35b-a3b
+packs: 1
+adventures_per_pack: 10
+max_page_count: 60
+selection_strategy: stratified_page_count_source_diverse
+max_source_share: 0.3
+max_adventures_per_source_book: 3
+page_strata:
+- name: 1-2-pages
+  min_pages: 1
+  max_pages: 2
+  weight: 2
+  quota: 2
+- name: 3-10-pages
+  min_pages: 3
+  max_pages: 10
+  weight: 3
+  quota: 3
+- name: 11-30-pages
+  min_pages: 11
+  max_pages: 30
+  weight: 3
+  quota: 3
+- name: 31-60-pages
+  min_pages: 31
+  max_pages: 60
+  weight: 2
+  quota: 2
+qualified_dimensions:
+- name: Combat Emphasis
+  slug: combat
+  profile: production-base
+- name: Structural Openness
+  slug: structural-openness
+  profile: production-base
+- name: Darkness / Horror Intensity
+  slug: darkness
+  profile: production-base
+- name: Player Beginner Suitability
+  slug: player-beginner
+  profile: production-base
+- name: Social Interaction Emphasis
+  slug: social
+  profile: phase6-v0.3
+  env_name: AF_SOCIAL_INTERACTION_GUARDRAIL_PROFILE
+  env_value: phase6-v0.3
+- name: Investigation Emphasis
+  slug: investigation
+  profile: phase6-v0.4
+  env_name: AF_INVESTIGATION_GUARDRAIL_PROFILE
+  env_value: phase6-v0.4
+selected_adventures:
+- id: ADV-0102
+  title: Keyport in Danger
+  source_book: Sunken Isles
+  publisher: Loresmyth
+  page_count: 1
+  start_page: 78
+  end_page: 78
+  populated_qualified_dimensions: []
+  page_stratum: 1-2-pages
+- id: ADV-0237
+  title: The First Mission
+  source_book: 'Dragonlance: Shadow of the Dragon Queen'
+  publisher: Wizards of the Coast
+  page_count: 3
+  start_page: 86
+  end_page: 88
+  populated_qualified_dimensions: []
+  page_stratum: 3-10-pages
+- id: ADV-0173
+  title: Written in Blood
+  source_book: Journeys Through the Radiant Citadel
+  publisher: Wizards of the Coast
+  page_count: 11
+  start_page: 34
+  end_page: 44
+  populated_qualified_dimensions: []
+  page_stratum: 11-30-pages
+- id: ADV-0276
+  title: Beyond a Lightless Star
+  source_book: 'Phandelver and Below: The Shattered Obelisk'
+  publisher: Wizards of the Coast
+  page_count: 32
+  start_page: 169
+  end_page: 200
+  populated_qualified_dimensions: []
+  page_stratum: 31-60-pages
+- id: ADV-0279
+  title: Burly's Plan / The Heist
+  source_book: The Wild Beyond the Witchlight
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 51
+  end_page: 51
+  populated_qualified_dimensions: []
+  page_stratum: 1-2-pages
+- id: ADV-0027
+  title: Return to Baldur's Gate
+  source_book: Heroes of Baldur's Gate
+  publisher: Arcanum Worlds
+  page_count: 3
+  start_page: 68
+  end_page: 70
+  populated_qualified_dimensions: []
+  page_stratum: 3-10-pages
+- id: ADV-0267
+  title: Wave Echo Cave
+  source_book: 'Phandelver and Below: The Shattered Obelisk'
+  publisher: Wizards of the Coast
+  page_count: 11
+  start_page: 65
+  end_page: 75
+  populated_qualified_dimensions: []
+  page_stratum: 11-30-pages
+- id: ADV-0030
+  title: The Hidden Shrine of Tamoachan
+  source_book: Tales from the Yawning Portal
+  publisher: Wizards of the Coast
+  page_count: 34
+  start_page: 61
+  end_page: 94
+  populated_qualified_dimensions: []
+  page_stratum: 31-60-pages
+- id: ADV-0201
+  title: Foaming Mugs
+  source_book: 'Icewind Dale: Rime of the Frostmaiden'
+  publisher: Wizards of the Coast
+  page_count: 3
+  start_page: 34
+  end_page: 36
+  populated_qualified_dimensions: []
+  page_stratum: 3-10-pages
+- id: ADV-0112
+  title: Death at Sunset
+  source_book: Dragon Delves
+  publisher: Wizards of the Coast
+  page_count: 12
+  start_page: 12
+  end_page: 23
+  populated_qualified_dimensions: []
+  page_stratum: 11-30-pages
