@@ -11,7 +11,7 @@ EXPECTED_RUNS=63
 EXPECTED_MATRIX=66
 EXPECTED_SKIPS=3
 EXPECTED_MODEL="qwen3.6:35b-a3b"
-QUALIFIED_SCORER_BASE="e49a198b36774d47ef136699573b6db6632032bc"
+QUALIFIED_SCORER_BASE="b90684c3f65b1d6ac95381f8bb5dd2c11ef38822"
 
 SOCIAL_ENV="AF_SOCIAL_INTERACTION_GUARDRAIL_PROFILE"
 SOCIAL_PROFILE="phase6-v0.3"
@@ -152,6 +152,7 @@ git -C "$SCORER_REPO" merge-base --is-ancestor "$QUALIFIED_SCORER_BASE" HEAD || 
 PROTECTED_SCORER_FILES=(
   lib/af_scoring.rb
   lib/af_scoring/prompt_builder.rb
+  lib/af_scoring/runner.rb
   lib/af_scoring/phase6_social_interaction_guardrail.rb
   lib/af_scoring/phase6_social_interaction_runner_metadata.rb
   lib/af_scoring/phase6_investigation_emphasis_guardrail.rb
