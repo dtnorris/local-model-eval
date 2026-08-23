@@ -25,14 +25,10 @@ exclude_reserved_production_adventures: true
 # ten-adventure pilot and preserve the same proportions when later queues scale.
 selection_strategy: stratified_page_count_source_diverse
 page_strata:
-  - name: 1-2-pages
+  - name: 1-10-pages
     min_pages: 1
-    max_pages: 2
-    weight: 2
-  - name: 3-10-pages
-    min_pages: 3
     max_pages: 10
-    weight: 3
+    weight: 5
   - name: 11-30-pages
     min_pages: 11
     max_pages: 30
