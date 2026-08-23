@@ -1,0 +1,53 @@
+name: production-b1-qwen-social-adv0168-v1
+purpose: >
+  AdventureFinder production scoring batch B1. Produce one proposed production
+  assessment for canonical ADV-0168 on the locally qualified AFAO 1.5 dimension
+  Social Interaction Emphasis, using Qwen 3.6 35B-A3B with one replicate. Existing accepted scores
+  and other-dimension scores are not expected-answer context for this inference.
+dispatch: pool
+
+models:
+  - qwen
+
+dimension: Social Interaction Emphasis
+
+adventures:
+  - ADV-0168
+
+replicates: 1
+
+workers:
+  - mac
+
+required_worker_labels:
+  - local
+
+scorer:
+  repo: ../../../af-cli-scoring-utility
+  mode: positional
+  extra_args: []
+
+phase6_contract:
+  prompt_profile:
+    version: phase6-v0.3
+    env_name: AF_SOCIAL_INTERACTION_GUARDRAIL_PROFILE
+    env_value: phase6-v0.3
+
+production_contract:
+  disposition: local-qualified
+  candidate_model: qwen
+  replicate_count: 1
+  no_favorable_rerun: true
+  external_api_cost_usd: 0.0
+
+success_criteria:
+  - Structured scorer output validates and remains grounded to the canonical adventure source unit.
+  - Use the frozen locally qualified phase6-v0.3 profile for Social Interaction Emphasis.
+  - Preserve the single completed sample as a proposed production assessment for later QC and ingestion; do not rerun for a favorable score.
+  - Do not use an existing accepted score, calibration target, or score from another dimension as expected-answer context.
+
+stop_conditions:
+  - Operational failure is logged by the batch runner and the next production cell continues.
+  - Do not rerun a completed case to seek a more favorable sample.
+
+cost_cap_usd: 0.01
