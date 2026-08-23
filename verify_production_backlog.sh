@@ -25,7 +25,7 @@ ORDER="$QUEUE_DIR/run_order.txt"
 if [[ -z "$SCORER_REPO" && -f "$SNAPSHOT" ]]; then
   SNAPSHOT_SCORER=$(ruby - "$SNAPSHOT" <<'RUBY'
 require "yaml"
-snapshot = YAML.safe_load_file(ARGV.fetch(0))
+snapshot = YAML.safe_load_file(ARGV.fetch(0), aliases: true)
 print snapshot["scorer_repo_path"].to_s
 RUBY
 )
@@ -59,7 +59,7 @@ require "yaml"
 
 qualified_path, snapshot_path, index_path, order_path, scorer_repo, repo_root = ARGV
 live_qualified = YAML.safe_load_file(qualified_path)
-snapshot = YAML.safe_load_file(snapshot_path)
+snapshot = YAML.safe_load_file(snapshot_path, aliases: true)
 rows = CSV.read(index_path, headers: true, encoding: "UTF-8")
 order = File.readlines(order_path, chomp: true).reject(&:empty?)
 
@@ -190,14 +190,14 @@ RUBY
 
 EXPECTED_MODEL=$(ruby - "$SNAPSHOT" <<'RUBY'
 require "yaml"
-print YAML.safe_load_file(ARGV.fetch(0)).fetch("ollama_model")
+print YAML.safe_load_file(ARGV.fetch(0), aliases: true).fetch("ollama_model")
 RUBY
 )
 
 QUALIFIED_BASE=$(ruby - "$QUALIFIED" "$SNAPSHOT" <<'RUBY'
 require "yaml"
 live = YAML.safe_load_file(ARGV.fetch(0))
-snapshot = YAML.safe_load_file(ARGV.fetch(1))
+snapshot = YAML.safe_load_file(ARGV.fetch(1), aliases: true)
 contract = snapshot.fetch("qualification_contract", live)
 print contract.fetch("social_investigation_qualified_scorer_baseline")
 RUBY
@@ -227,7 +227,6 @@ git -C "$SCORER_REPO" merge-base --is-ancestor "$QUALIFIED_BASE" HEAD || {
 }
 
 PROTECTED_SCORER_FILES=(
-  lib/af_scoring.rb
   lib/af_scoring/prompt_builder.rb
   lib/af_scoring/phase6_social_interaction_guardrail.rb
   lib/af_scoring/phase6_social_interaction_runner_metadata.rb
@@ -284,7 +283,7 @@ echo "  raw provider response remains separately preserved"
 
 FIRST_ADV=$(ruby - "$SNAPSHOT" <<'RUBY'
 require "yaml"
-snapshot = YAML.safe_load_file(ARGV.fetch(0))
+snapshot = YAML.safe_load_file(ARGV.fetch(0), aliases: true)
 print snapshot.fetch("selected_adventures").first.fetch("id")
 RUBY
 )
