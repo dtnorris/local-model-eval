@@ -18,7 +18,7 @@ module LocalModelEvaluation
       },
       "Lethality / Failure Severity" => {
         "env_name" => "AF_LETHALITY_GUARDRAIL_PROFILE",
-        "env_value" => "phase6-v0.2"
+        "env_value" => "phase6-v0.3"
       },
       "Puzzle / Problem-Solving Emphasis" => {
         "env_name" => "AF_PUZZLE_GUARDRAIL_PROFILE",

@@ -10,6 +10,12 @@ module LocalModelEvaluation
     EXPECTED_CASE_COUNT = 25
     EXPECTED_CASES_PER_DIMENSION = 5
 
+    # Frozen contract for the original 25-case Phase-6 package.
+    #
+    # These rules are archival evidence and intentionally do not track the current
+    # live execution profile registry in Experiment::PHASE6_PROFILES. A profile can
+    # remain valid here as "what the frozen package used" after that profile has
+    # been retired from new execution.
     PROFILE_RULES = {
       "Social Interaction Emphasis" => {
         env_name: "AF_SOCIAL_INTERACTION_GUARDRAIL_PROFILE",
@@ -180,7 +186,7 @@ module LocalModelEvaluation
 
       worker = sole_worker(experiment)
       job = sole_job(experiment)
-      scorer_env = experiment.effective_scorer_env(worker.scorer_env)
+      scorer_env = frozen_profile_scorer_env(row, experiment, worker.scorer_env)
 
       run_dir = File.join(@output_root, experiment.name, "runs", job.id)
       native_dir = File.join(run_dir, "native")
@@ -217,7 +223,7 @@ module LocalModelEvaluation
         "experiment" => experiment.name,
         "dimension" => experiment.dimension,
         "adventure_id" => job.adventure,
-        "profile_env" => experiment.phase6_scorer_env,
+        "profile_env" => frozen_profile_env(row, experiment),
         "intended_output_path" => native_dir,
         "rendered_preflight" => render_path,
         "prompt_sha256" => rendered.dig("targets", 0, "prompt_sha256"),
@@ -294,9 +300,42 @@ module LocalModelEvaluation
         raise ValidationError, "#{experiment.name}: prompt profile disagrees with manifest index"
       end
 
-      experiment.phase6_scorer_env
+      # Validate against this frozen package's own profile contract rather than the
+      # current live execution registry. This lets historical v0.2 evidence remain
+      # structurally valid after live Lethality execution advances to v0.3.
+      frozen_profile_env(row, experiment)
     rescue KeyError, ArgumentError => e
       raise ValidationError, "#{experiment.name}: invalid Phase-6 contract: #{e.message}"
+    end
+
+    def frozen_profile_env(row, experiment)
+      rule = PROFILE_RULES.fetch(experiment.dimension)
+      contract = experiment.phase6_contract
+      profile = contract.fetch("prompt_profile")
+
+      unless row.fetch("prompt_profile").to_s == rule.fetch(:env_value) &&
+             row.fetch("profile_env_name").to_s == rule.fetch(:env_name) &&
+             profile["version"].to_s == rule.fetch(:env_value) &&
+             profile["env_name"].to_s == rule.fetch(:env_name) &&
+             profile["env_value"].to_s == rule.fetch(:env_value)
+        raise ValidationError,
+              "#{experiment.name}: prompt profile does not match frozen Phase-6 package contract"
+      end
+
+      { rule.fetch(:env_name) => rule.fetch(:env_value) }
+    end
+
+    def frozen_profile_scorer_env(row, experiment, base_env)
+      merged = (base_env || {}).transform_keys(&:to_s).transform_values(&:to_s)
+      frozen_profile_env(row, experiment).each do |key, value|
+        if merged.key?(key) && merged[key] != value
+          raise ValidationError,
+                "#{experiment.name}: worker scorer environment #{key}=#{merged[key].inspect} " \
+                "conflicts with frozen Phase-6 package profile #{value.inspect}"
+        end
+        merged[key] = value
+      end
+      merged
     end
 
     def sole_worker(experiment)

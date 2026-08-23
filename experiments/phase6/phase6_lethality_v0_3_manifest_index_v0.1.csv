@@ -1,0 +1,4 @@
+sequence,case_id,adventure_id,role,manifest
+1,P6-LETH-V03-01,ADV-0277,literal-post-failure-state-semantics,experiments/phase6/phase6-remediation-lethality-v0.3-adv0277-post-condition-v1.yml
+2,P6-LETH-V03-02,ADV-0287,guidance-conversion-mandatory-escalation,experiments/phase6/phase6-remediation-lethality-v0.3-adv0287-guidance-escalation-v1.yml
+3,P6-LETH-V03-03,ADV-0062,explicit-topology-anti-regression-control,experiments/phase6/phase6-remediation-lethality-v0.3-adv0062-topology-control-v1.yml
