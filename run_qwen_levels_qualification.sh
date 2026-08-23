@@ -24,7 +24,7 @@ trap 'kill "$CAFFEINATE_PID" 2>/dev/null || true' EXIT
 
 echo
 echo "Qwen Levels qualification v0.1"
-echo "External/API inference cost: $0.00"
+echo 'External/API inference cost: $0.00'
 echo "Maximum fresh local inference calls: 3"
 if $RUN_ALL; then
   echo "Mode: --all (collect all three diagnostic samples without semantic gates)"
@@ -35,7 +35,7 @@ fi
 case_number=0
 case_total=$(grep -cve '^$' "$RUN_ORDER")
 
-while IFS= read -r case_manifest; do
+while IFS= read -r case_manifest <&3; do
   [[ -z "$case_manifest" ]] && continue
   case_number=$((case_number + 1))
 
@@ -72,7 +72,7 @@ while IFS= read -r case_manifest; do
         ;;
     esac
   fi
-done < "$RUN_ORDER"
+done 3< "$RUN_ORDER"
 
 echo
 echo "All planned Levels qualification inferences are persisted."
