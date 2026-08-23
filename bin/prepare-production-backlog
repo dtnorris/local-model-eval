@@ -11,6 +11,7 @@ require "pathname"
 require "tmpdir"
 require "time"
 require "yaml"
+require_relative "../lib/production_backlog_selector"
 
 ROOT = File.expand_path("..", __dir__)
 SCORER_REPO = File.expand_path(
@@ -172,6 +173,7 @@ options = {
   packs: Integer(policy.fetch("pack_count")),
   per_pack: Integer(policy.fetch("adventures_per_pack")),
   max_pages: Integer(policy.fetch("max_page_count")),
+  max_source_share: Float(policy.fetch("max_source_share")),
   force: false
 }
 
@@ -181,6 +183,7 @@ OptionParser.new do |opts|
   opts.on("--packs N", Integer, "Number of packs (default #{options[:packs]})") { |v| options[:packs] = v }
   opts.on("--adventures-per-pack N", Integer, "Adventures per pack (default #{options[:per_pack]})") { |v| options[:per_pack] = v }
   opts.on("--max-pages N", Integer, "Maximum AMC page count (default #{options[:max_pages]})") { |v| options[:max_pages] = v }
+  opts.on("--max-source-share FRACTION", Float, "Maximum queue share from one source book (default #{options[:max_source_share]})") { |v| options[:max_source_share] = v }
   opts.on("--force", "Replace an existing queue with the same name") { options[:force] = true }
 end.parse!
 
@@ -190,6 +193,7 @@ abort_with("invalid queue name #{queue.inspect}") unless queue.match?(/\A[a-z0-9
 abort_with("--packs must be >= 1") if options[:packs] < 1
 abort_with("--adventures-per-pack must be >= 1") if options[:per_pack] < 1
 abort_with("--max-pages must be >= 1") if options[:max_pages] < 1
+abort_with("--max-source-share must be > 0 and <= 1") unless options[:max_source_share].positive? && options[:max_source_share] <= 1.0
 abort_with("adjacent scorer checkout not found: #{SCORER_REPO}") unless File.directory?(File.join(SCORER_REPO, ".git"))
 
 dimensions = qualified.fetch("dimensions")
@@ -258,37 +262,33 @@ rows.each do |row|
   end
 end
 
-eligible.sort_by! { |r| [r.fetch("page_count"), r.fetch("id")] }
-
-selected = []
-eligible.each do |record|
-  break if selected.length >= required_adventures
-
-  ok, detail = source_preflight(SCORER_REPO, record.fetch("id"), ollama_model)
-  if ok
-    selected << record
-    audit << record.merge("decision" => "SELECT", "reason" => "source_preflight_pass")
-    puts format(
-      "SELECT %2d/%d  %-9s  %3d pages  %s",
-      selected.length, required_adventures, record.fetch("id"),
-      record.fetch("page_count"), record.fetch("title")
-    )
-  else
-    compact = detail.lines.last(4).join(" ").gsub(/\s+/, " ").strip
-    audit << record.merge("decision" => "REJECT", "reason" => "source_preflight_failed:#{compact}")
-    puts "REJECT source preflight #{record.fetch('id')} — #{record.fetch('title')}"
-  end
+selection_policy = policy.merge("max_source_share" => options[:max_source_share])
+begin
+  selection = ProductionBacklogSelector.select(
+    eligible: eligible,
+    required: required_adventures,
+    policy: selection_policy,
+    max_pages: options[:max_pages],
+    preflight: lambda do |record|
+      source_preflight(SCORER_REPO, record.fetch("id"), ollama_model)
+    end
+  )
+rescue ProductionBacklogSelector::SelectionError => e
+  abort_with("#{e.message}; no queue was written")
 end
 
-eligible.drop(selected.length).each do |record|
-  next if audit.any? { |a| a["id"] == record["id"] }
-  audit << record.merge("decision" => "ELIGIBLE_NOT_SELECTED", "reason" => "pilot_capacity_reached")
-end
+selected = selection.fetch(:selected)
+audit.concat(selection.fetch(:audit))
 
-if selected.length < required_adventures
-  abort_with(
-    "only #{selected.length}/#{required_adventures} source-available adventures satisfied the policy; " \
-    "no queue was written"
+selection.fetch(:audit)
+         .select { |record| record.fetch("reason").start_with?("source_preflight_failed:") }
+         .each { |record| puts "REJECT source preflight #{record.fetch('id')} — #{record.fetch('title')}" }
+
+selected.each_with_index do |record, index|
+  puts format(
+    "SELECT %2d/%d  %-9s  %3d pages  %-11s  %s",
+    index + 1, required_adventures, record.fetch("id"), record.fetch("page_count"),
+    record.fetch("page_stratum"), record.fetch("title")
   )
 end
 
@@ -318,13 +318,17 @@ snapshot = {
   "packs" => options[:packs],
   "adventures_per_pack" => options[:per_pack],
   "max_page_count" => options[:max_pages],
+  "selection_strategy" => policy.fetch("selection_strategy"),
+  "max_source_share" => selection.fetch(:max_source_share),
+  "max_adventures_per_source_book" => selection.fetch(:max_per_source),
+  "page_strata" => selection.fetch(:strata),
   "qualified_dimensions" => dimensions,
   "selected_adventures" => selected
 }
 File.write(File.join(queue_dir, "snapshot.yml"), YAML.dump(snapshot))
 
 audit_headers = %w[
-  adventure_id adventure_title source_book publisher page_count
+  adventure_id adventure_title source_book publisher page_count page_stratum
   decision reason
 ]
 CSV.open(File.join(queue_dir, "candidate_audit.csv"), "w") do |csv|
@@ -332,7 +336,7 @@ CSV.open(File.join(queue_dir, "candidate_audit.csv"), "w") do |csv|
   audit.sort_by { |r| r["id"] }.each do |r|
     csv << [
       r["id"], r["title"], r["source_book"], r["publisher"], r["page_count"],
-      r["decision"], r["reason"]
+      r["page_stratum"], r["decision"], r["reason"]
     ]
   end
 end
@@ -398,6 +402,11 @@ puts "Dimensions: #{dimensions.length}"
 puts "Calls: #{expected_calls}"
 puts "Packs: #{options[:packs]} × #{options[:per_pack]} adventures"
 puts "Max source pages: #{options[:max_pages]}"
+puts "Selection: #{policy.fetch('selection_strategy')}"
+puts "Max adventures/source book: #{selection.fetch(:max_per_source)} (#{format('%.0f%%', selection.fetch(:max_source_share) * 100)})"
+selection.fetch(:strata).each do |stratum|
+  puts "  #{stratum.fetch('name')}: #{stratum.fetch('quota')} adventure(s)"
+end
 puts format("Planning runtime from recent throughput: ~%.1f hours", estimated_hours)
 puts "Scorer checkout: #{SCORER_REPO}"
 puts "External/API inference cost: $0"

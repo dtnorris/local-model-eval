@@ -91,6 +91,39 @@ selected.each do |adv|
   abort "#{adv.fetch('id')} exceeds frozen page cap" if Integer(adv.fetch("page_count")) > Integer(snapshot.fetch("max_page_count"))
 end
 
+if snapshot["selection_strategy"] == "stratified_page_count_source_diverse"
+  strata = snapshot.fetch("page_strata")
+  stratum_counts = selected.group_by { |adv| adv.fetch("page_stratum") }.transform_values(&:length)
+
+  strata.each do |stratum|
+    name = stratum.fetch("name")
+    expected = Integer(stratum.fetch("quota"))
+    actual = stratum_counts.fetch(name, 0)
+    abort "page stratum #{name} count #{actual}; expected #{expected}" unless actual == expected
+
+    selected.select { |adv| adv.fetch("page_stratum") == name }.each do |adv|
+      pages = Integer(adv.fetch("page_count"))
+      min_pages = Integer(stratum.fetch("min_pages"))
+      max_pages = Integer(stratum.fetch("max_pages"))
+      unless pages >= min_pages && pages <= max_pages
+        abort "#{adv.fetch('id')} is #{pages} pages but frozen stratum #{name} is #{min_pages}-#{max_pages}"
+      end
+    end
+  end
+
+  source_counts = selected.group_by do |adv|
+    value = adv.fetch("source_book", "").to_s.strip
+    value.empty? ? "(unknown source)" : value
+  end.transform_values(&:length)
+  max_per_source = Integer(snapshot.fetch("max_adventures_per_source_book"))
+  offenders = source_counts.select { |_source, count| count > max_per_source }
+  abort "source-book diversity cap exceeded: #{offenders.inspect}" unless offenders.empty?
+
+  puts "Frozen selection semantics: PASS"
+  strata.each { |stratum| puts "  #{stratum.fetch('name')}: #{stratum.fetch('quota')} adventure(s)" }
+  puts "  max per source book: #{max_per_source}"
+end
+
 counts = Hash.new(0)
 rows.each do |row|
   path = row["manifest_path"]
