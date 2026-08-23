@@ -1,0 +1,25 @@
+version: 1
+
+# Conservative first pilot: three independently inspectable packs, ten new
+# adventures per pack. Completely unscored qualified-dimension rows are
+# preferred rather than filling random holes across the whole catalog.
+pack_count: 3
+adventures_per_pack: 10
+
+# Long source bodies are intentionally deferred from idle/background compute
+# until the queue mechanism is proven reliable.
+max_page_count: 60
+
+# Require every currently qualified dimension to be blank in the AMC.
+# This maximizes newly covered adventures rather than adding isolated cells.
+require_zero_qualified_scores: true
+
+# Adventures already present in any checked-in production case index, or in
+# local completed/failed/running output metadata, are excluded from selection.
+exclude_reserved_production_adventures: true
+
+# Cheapest information-first ordering for this pilot.
+selection_order: page_count_then_adventure_id
+
+# Source availability must be proven with scorer --preflight before selection.
+require_source_preflight: true
