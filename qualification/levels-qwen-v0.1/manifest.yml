@@ -1,0 +1,45 @@
+version: 1
+name: qwen-levels-qualification-v0.1
+dimension: Levels
+candidate_model: qwen
+model_implementation: qwen3.6:35b-a3b
+criteria_document: criteria.md
+run_order: run_order.txt
+
+blindness:
+  expected_values_absent_from_case_manifests: true
+  adjudication_after_inference: true
+
+execution:
+  local_worker_only: true
+  external_api_cost_usd: 0.0
+  max_fresh_inference_calls: 3
+  replicates_per_case: 1
+  sequential_information_gate: true
+  favorable_reruns: false
+
+reference_oracle:
+  source: frozen AFAO v1.5 / Levels v2.1 human-adjudicated references
+  fresh_terra_required: false
+  comparator: exact_field_semantics
+  ordinal_tolerance_applies: false
+
+fresh_cases:
+  - id: levels-adv0040
+    adventure_id: ADV-0040
+    coverage: completion-award ownership / high-level endpoint
+    manifest: experiments/qualification/qualification-qwen-levels-adv0040-v1.yml
+  - id: levels-adv0278
+    adventure_id: ADV-0278
+    coverage: canonical child-unit transition / next-unit advancement exclusion
+    manifest: experiments/qualification/qualification-qwen-levels-adv0278-v1.yml
+  - id: levels-adv0034
+    adventure_id: ADV-0034
+    coverage: insufficient discrete level evidence / uncertainty preservation
+    manifest: experiments/qualification/qualification-qwen-levels-adv0034-v1.yml
+
+supplemental_archived_cases:
+  - adventure_id: ADV-0262
+    note: Reuse the previously completed clean exact Qwen Levels control after raw-artifact verification; do not rerun merely to enlarge the sample.
+  - adventure_id: ADV-0278
+    note: Retain the previously completed clean exact Qwen Levels control as supplemental reproducibility evidence; the fresh qualification case is the only planned new rerun.

@@ -1,0 +1,48 @@
+name: qualification-qwen-levels-adv0278-v1
+purpose: >
+  Fresh benchmark-blind Levels qualification case for Qwen3.6 35B.
+  Run exactly one canonical adventure on exactly one dimension with one replicate.
+  Accepted Level Start / Level End values and prior local scores are intentionally
+  absent from this manifest and scorer input; adjudication occurs only after output persists.
+dispatch: pool
+
+models:
+  - qwen
+
+dimension: Levels
+
+adventures:
+  - ADV-0278
+
+replicates: 1
+
+workers:
+  - mac
+
+required_worker_labels:
+  - local
+
+scorer:
+  repo: ../../../af-cli-scoring-utility
+  mode: positional
+  extra_args: []
+
+qualification_contract:
+  wave: qwen-levels-v0.1
+  case_role: canonical-child-transition
+  candidate_model: qwen
+  replicate_count: 1
+  blind_expected_value: true
+  no_favorable_rerun: true
+  external_api_cost_usd: 0.0
+
+success_criteria:
+  - Structured Levels output validates and remains grounded to the ADV-0278 canonical source unit.
+  - Apply the frozen Levels v2.1 canonical-boundary and advancement-ownership rules without target-specific expected-value input.
+  - Preserve the single completed inference for exact post-run field-level adjudication.
+
+stop_conditions:
+  - Stop the qualification wave after a semantic miss once post-run adjudication establishes that production authorization has failed.
+  - Stop on wrong canonical unit, serious grounding failure, or invalid structured output; do not add favorable reruns.
+
+cost_cap_usd: 0.01
