@@ -1,0 +1,37 @@
+version: 1
+model_alias: qwen
+ollama_model: qwen3.6:35b-a3b
+
+# This is the scorer commit at which the qualified Social and Investigation
+# prompt profiles were accepted. Descendants are allowed only if the protected
+# implementation stack is unchanged.
+social_investigation_qualified_scorer_baseline: b90684c3f65b1d6ac95381f8bb5dd2c11ef38822
+
+dimensions:
+  - name: Combat Emphasis
+    slug: combat
+    profile: production-base
+
+  - name: Structural Openness
+    slug: structural-openness
+    profile: production-base
+
+  - name: Darkness / Horror Intensity
+    slug: darkness
+    profile: production-base
+
+  - name: Player Beginner Suitability
+    slug: player-beginner
+    profile: production-base
+
+  - name: Social Interaction Emphasis
+    slug: social
+    profile: phase6-v0.3
+    env_name: AF_SOCIAL_INTERACTION_GUARDRAIL_PROFILE
+    env_value: phase6-v0.3
+
+  - name: Investigation Emphasis
+    slug: investigation
+    profile: phase6-v0.4
+    env_name: AF_INVESTIGATION_GUARDRAIL_PROFILE
+    env_value: phase6-v0.4
