@@ -1,0 +1,46 @@
+version: 1
+name: qwen-sessions-qualification-v0.1
+dimension: "# of Sessions"
+candidate_model: qwen
+model_implementation: qwen3.6:35b-a3b
+criteria_document: criteria.md
+run_order: run_order.txt
+
+blindness:
+  expected_values_absent_from_case_manifests: true
+  adjudication_after_inference: true
+
+execution:
+  local_worker_only: true
+  external_api_cost_usd: 0.0
+  complete_all_cases: true
+  score_triggered_stop: false
+  favorable_reruns: false
+
+fresh_cases:
+  - id: sessions-adv0200
+    adventure_id: ADV-0200
+    coverage: very-short / one-session boundary
+    manifest: experiments/qualification/qualification-qwen-sessions-adv0200-v1.yml
+  - id: sessions-adv0287
+    adventure_id: ADV-0287
+    coverage: short regime
+    manifest: experiments/qualification/qualification-qwen-sessions-adv0287-v1.yml
+  - id: sessions-adv0040
+    adventure_id: ADV-0040
+    coverage: medium regime
+    manifest: experiments/qualification/qualification-qwen-sessions-adv0040-v1.yml
+  - id: sessions-adv0277
+    adventure_id: ADV-0277
+    coverage: short campaign-scale regime
+    manifest: experiments/qualification/qualification-qwen-sessions-adv0277-v1.yml
+  - id: sessions-adv0262
+    adventure_id: ADV-0262
+    coverage: upper-medium regime / bridge to campaign-scale
+    manifest: experiments/qualification/qualification-qwen-sessions-adv0262-v1.yml
+
+supplemental_archived_cases:
+  - adventure_id: ADV-0230
+    note: Reuse the previously completed clean local Sessions evidence after raw-artifact verification; do not spend another inference call merely to duplicate it.
+  - adventure_id: ADV-0053
+    note: Reuse the previously completed clean local Sessions evidence after raw-artifact verification; do not spend another inference call merely to duplicate it.

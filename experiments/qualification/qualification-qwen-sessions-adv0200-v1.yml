@@ -1,0 +1,48 @@
+name: qualification-qwen-sessions-adv0200-v1
+purpose: >
+  Fresh benchmark-blind # of Sessions qualification case for Qwen3.6 35B.
+  Run exactly one canonical adventure on exactly one dimension with one replicate.
+  Accepted normalized-session values and prior local scores are intentionally absent
+  from this manifest and scorer input; adjudication occurs only after output persists.
+dispatch: pool
+
+models:
+  - qwen
+
+dimension: "# of Sessions"
+
+adventures:
+  - ADV-0200
+
+replicates: 1
+
+workers:
+  - mac
+
+required_worker_labels:
+  - local
+
+scorer:
+  repo: ../../../af-cli-scoring-utility
+  mode: positional
+  extra_args: []
+
+qualification_contract:
+  wave: qwen-sessions-v0.1
+  case_role: very-short-one-session-boundary
+  candidate_model: qwen
+  replicate_count: 1
+  blind_expected_value: true
+  no_favorable_rerun: true
+  external_api_cost_usd: 0.0
+
+success_criteria:
+  - Structured scorer output validates and remains grounded to the canonical source unit.
+  - Preserve the single completed inference for post-run Sessions qualification adjudication.
+  - Estimate normalized 2.5--3.0 hour sessions from expected substantive table play, not page count, level span, fictional time, or exhaustive optional content.
+
+stop_conditions:
+  - Numeric outcomes do not terminate this qualification block or the following production batch.
+  - Log isolated operational failure and continue; do not rerun a completed inference to seek a more favorable estimate.
+
+cost_cap_usd: 0.01
