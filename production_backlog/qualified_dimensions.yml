@@ -5,7 +5,7 @@ ollama_model: qwen3.6:35b-a3b
 # This is the scorer commit at which the qualified Social and Investigation
 # prompt profiles were accepted. Descendants are allowed only if the protected
 # implementation stack is unchanged.
-social_investigation_qualified_scorer_baseline: b90684c3f65b1d6ac95381f8bb5dd2c11ef38822
+social_investigation_qualified_scorer_baseline: e49a198b36774d47ef136699573b6db6632032bc
 
 dimensions:
   - name: Combat Emphasis
