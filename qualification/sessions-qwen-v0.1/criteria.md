@@ -23,9 +23,13 @@ Accepted reference values below are used **only after inference** and are intent
 | ADV-0287 — House of Lament | **3** | Short (3--5) | Compact multi-session coverage |
 | ADV-0040 — Expedition to the Barrier Peaks | **7** | Medium (6--11) | Substantial standalone coverage |
 | ADV-0277 — The Wild Beyond the Witchlight | **18** | Short Campaign-scale (12--23) | Campaign-scale practical-agreement test |
-| ADV-0303 — Storm King's Thunder | **26** | Long Campaign-scale (24+) | Long-campaign normalization test |
+| ADV-0262 — Lost Mine of Phandelver | **10** | Medium (6--11) | Upper-Medium duration coverage and bridge toward campaign-scale material |
 
 Two previously completed clean local Sessions cases, **ADV-0230 — Salvage Operation** and **ADV-0053 — Call of the Wild**, may be included as supplemental qualification evidence after their raw artifacts are reverified. Do not rerun them solely to enlarge the sample.
+
+### Deferred long-campaign extension
+
+**ADV-0303 — Storm King's Thunder = 26** remains the frozen AFAO Long Campaign-scale reference, but it is deliberately excluded from this fresh pre-production qualification wave. Repeated Qwen operational/scope problems on the unusually long SKT canonical source make it a confounded and expensive first-line qualification case. A future SKT run should be treated separately as a long-source / Long Campaign-scale reliability extension, not as a prerequisite for this ordinary Sessions qualification decision.
 
 ## Qualification interpretation
 

@@ -34,10 +34,10 @@ fresh_cases:
     adventure_id: ADV-0277
     coverage: short campaign-scale regime
     manifest: experiments/qualification/qualification-qwen-sessions-adv0277-v1.yml
-  - id: sessions-adv0303
-    adventure_id: ADV-0303
-    coverage: long campaign-scale regime
-    manifest: experiments/qualification/qualification-qwen-sessions-adv0303-v1.yml
+  - id: sessions-adv0262
+    adventure_id: ADV-0262
+    coverage: upper-medium regime / bridge to campaign-scale
+    manifest: experiments/qualification/qualification-qwen-sessions-adv0262-v1.yml
 
 supplemental_archived_cases:
   - adventure_id: ADV-0230

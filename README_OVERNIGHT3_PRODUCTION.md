@@ -10,7 +10,9 @@ Before the 123-cell production matrix, the overnight runner executes **five sepa
 - ADV-0287 — House of Lament
 - ADV-0040 — Expedition to the Barrier Peaks
 - ADV-0277 — The Wild Beyond the Witchlight
-- ADV-0303 — Storm King's Thunder
+- ADV-0262 — Lost Mine of Phandelver
+
+**Storm King's Thunder is intentionally excluded from this pre-production qualification wave.** Its 26-session benchmark remains useful as a later Long Campaign-scale extension, but known Qwen long-source reliability/scope problems make it a poor information-per-compute-minute case to run before the production batch.
 
 These five calls are qualification evidence, **not production cells**. They do not alter the frozen 132-cell production matrix or the nine AMC-protected skips. The cohort manifest is `qualification/sessions-qwen-v0.1/manifest.yml`; the frozen product-relevant adjudication rules and accepted reference values are in `qualification/sessions-qwen-v0.1/criteria.md`. Expected values are intentionally absent from the executable case manifests and are applied only during post-run review.
 

@@ -128,7 +128,7 @@ abort "Sessions qualification external cost must be zero" unless plan.dig("execu
 
 cases = plan["fresh_cases"]
 abort "Sessions qualification must contain exactly five fresh cases" unless cases.is_a?(Array) && cases.length == 5
-expected_adventures = %w[ADV-0200 ADV-0287 ADV-0040 ADV-0277 ADV-0303]
+expected_adventures = %w[ADV-0200 ADV-0287 ADV-0040 ADV-0277 ADV-0262]
 abort "Sessions qualification adventure order changed" unless cases.map { |c| c["adventure_id"] } == expected_adventures
 
 expected_paths = cases.map { |c| c["manifest"] }
