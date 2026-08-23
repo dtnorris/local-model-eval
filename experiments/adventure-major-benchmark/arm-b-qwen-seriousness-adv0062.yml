@@ -1,0 +1,38 @@
+name: adventure-major-bench-b-qwen-seriousness-adv0062
+purpose: >
+  Zero-cost AdventureFinder execution-order benchmark. This manifest preserves
+  the existing atomic Phase-5 scoring shape: one local model, one adventure,
+  one dimension, one replicate. Arm B differs from the other arm only in
+  orchestration order and output namespace.
+dispatch: pool
+
+models:
+  - qwen
+
+dimension: Seriousness
+
+adventures:
+  - ADV-0062
+
+replicates: 1
+
+workers:
+  - mac
+
+required_worker_labels:
+  - local
+
+scorer:
+  repo: ../../../af-cli-scoring-utility
+  mode: positional
+  extra_args: []
+
+success_criteria:
+  - Structured scorer output validates and remains grounded to the canonical source unit.
+  - This benchmark measures execution-order efficiency only; do not tune scoring prompts from these runs.
+
+stop_conditions:
+  - Stop the benchmark arm on any operational failure.
+  - Do not interpret timing if an arm fails to complete all six calls.
+
+cost_cap_usd: 0.01
