@@ -1,0 +1,60 @@
+name: nos-two-stage-nemotron-v01-02-adv0287-house-of-lament
+
+purpose: >
+  Collect one fixed diagnostic # of Sessions observation for ADV-0287 The House of Lament
+  using the Nemotron two-stage v0.1 scorer architecture. This case is part of a
+  five-adventure calibration sweep intended to measure scale tracking and
+  run-to-run consistency before any further prompt or estimator changes.
+
+dispatch: pool
+
+models:
+  - nemotron
+
+dimension: "# of Sessions"
+
+adventures:
+  - ADV-0287
+
+replicates: 1
+
+workers:
+  - mac
+
+required_worker_labels:
+  - local
+
+scorer:
+  repo: ../../../af-cli-scoring-utility
+  mode: positional
+  extra_args: []
+
+nos_two_stage_contract:
+  profile:
+    env_name: AF_NOS_TWO_STAGE_PROFILE
+    env_value: nemotron-v0.1
+  architecture: two-stage
+  candidate_model: nemotron
+  replicate_count: 1
+  no_favorable_rerun: true
+  external_api_cost_usd: 0.0
+  calibration_reference_use: post-hoc-only
+  human_normalized_sessions: 3
+  context_note: >
+    Lower-middle control. Clean one-stage Nemotron previously returned 4 with range 3-5.
+
+success_criteria:
+  - Structured scorer output validates and remains grounded to the canonical adventure source unit.
+  - Stage 1 and Stage 2 native request/response artifacts are preserved for qualitative review.
+  - Compare the result post hoc against the human Normalized Sessions reference of 3; the reference must not be supplied to model inference.
+  - Record point estimate, Practical Range, confidence, Path Sensitive, benchmark/identity contamination, and any prohibited generic or additive duration reasoning.
+  - Preserve this single completed sample regardless of whether it agrees with the human reference.
+
+stop_conditions:
+  - Do not execute unless AF_NOS_TWO_STAGE_PROFILE=nemotron-v0.1 is present in the environment inherited by the scorer subprocess.
+  - Do not execute against a dirty or unintended scorer checkout; commit the exact two-stage Nemotron implementation first so LME provenance identifies the tested code.
+  - If deterministic source-boundary, identity-redaction, benchmark-contamination, or structured-output integrity fails, classify the case INVALID rather than as a model miss.
+  - Do not use paid/API inference.
+  - The single planned run completes; do not use --force or add replicates to seek a more favorable result.
+
+cost_cap_usd: 0.01
