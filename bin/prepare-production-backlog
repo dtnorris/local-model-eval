@@ -363,6 +363,10 @@ selected.each_slice(options[:per_pack]).with_index(1) do |pack_adventures, pack_
         File.join(experiment_dir, filename),
         yaml_manifest(queue: queue, adv: adv, dimension: dimension, scorer_rel: scorer_rel)
       )
+      puts format(
+        "WRITE %3d/%d  %s",
+        case_index, required_adventures * dimensions.length, relative_path
+      )
       row = [
         case_index, pack_index, pack_rows.length + 1,
         adv.fetch("id"), adv.fetch("title"), adv.fetch("source_book"),
