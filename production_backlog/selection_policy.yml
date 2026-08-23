@@ -25,18 +25,10 @@ exclude_reserved_production_adventures: true
 # ten-adventure pilot and preserve the same proportions when later queues scale.
 selection_strategy: stratified_page_count_source_diverse
 page_strata:
-  - name: 1-10-pages
+  - name: 1-60-pages
     min_pages: 1
-    max_pages: 10
-    weight: 5
-  - name: 11-30-pages
-    min_pages: 11
-    max_pages: 30
-    weight: 3
-  - name: 31-60-pages
-    min_pages: 31
     max_pages: 60
-    weight: 2
+    weight: 1
 
 # No one source book may supply more than 30% of a queue. For the ten-adventure
 # pilot this is a hard cap of three selections from any source book.
