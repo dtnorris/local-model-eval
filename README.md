@@ -201,3 +201,13 @@ Before adding cloud-provider automation, the repo should first establish:
 ```bash
 rake
 ```
+
+```bash
+env -u AF_NOS_TWO_STAGE_PROFILE \
+  ./run_production_backlog.sh \
+  production_backlog/production-backlog-<number>
+```
+
+```bash
+./pause_production_backlog.sh
+```
