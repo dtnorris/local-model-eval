@@ -1,0 +1,73 @@
+name: nos-direct-glm-v01-02-adv0262-lost-mine-of-phandelver
+
+purpose: >
+  Collect one fixed direct # of Sessions diagnostic observation for ADV-0262
+  Lost Mine of Phandelver using GLM-4.7-Flash. This is the medium-scale
+  discriminator following GLM's clean Lake Monster short-end result. Determine
+  whether direct GLM preserves the calibrated scale from a one-session adventure
+  to an approximately ten-session adventure without introducing a two-stage
+  architecture.
+
+dispatch: pool
+
+models:
+  - glm
+
+dimension: "# of Sessions"
+
+adventures:
+  - ADV-0262
+
+replicates: 1
+
+workers:
+  - mac
+
+required_worker_labels:
+  - local
+
+scorer:
+  repo: ../../../af-cli-scoring-utility
+  mode: positional
+  extra_args: []
+
+nos_direct_contract:
+  architecture: direct
+  candidate_model: glm
+  replicate_count: 1
+  no_favorable_rerun: true
+  external_api_cost_usd: 0.0
+  calibration_reference_use: post-hoc-only
+  human_normalized_sessions: 10
+  prior_case_context: >
+    GLM direct scored ADV-0200 Lake Monster at 1 session with practical range 1-2,
+    matching the human short-end reference. This LMoP case tests whether the model
+    preserves medium-scale duration rather than compressing toward short values.
+  interpretation_gate: >
+    8-12 sessions is a strong scale-preservation pass for this discriminator.
+    7 or 13 is borderline and requires qualitative rationale inspection before
+    continuation. 6 or fewer is material duration compression; 14 or greater is
+    material duration inflation.
+
+success_criteria:
+  - Structured scorer output validates and terminates normally without token-limit or repetition pathology.
+  - The assessment remains grounded to the canonical ADV-0262 adventure source unit.
+  - Compare the result post hoc against the human Normalized Sessions reference of 10; the reference must not be supplied to model inference.
+  - A proposed value from 8 through 12 is a strong numeric scale-preservation pass for this discriminator.
+  - A proposed value of 7 or 13 requires qualitative rationale inspection before authorizing another GLM case.
+  - The rationale does not use page-count, level-span, product-format, actual-play, community-duration, or adventure-identity priors as duration proxies.
+  - The rationale does not assign local session costs to individual bodies, chapters, encounters, rooms, locations, or levels and then accumulate them.
+  - Re-check the Lake Monster yellow flag for incidental page-count reasoning; repeated or materially score-driving page-count use counts against methodology.
+  - Preserve the single completed sample regardless of whether it agrees with the human reference.
+
+stop_conditions:
+  - AF_NOS_TWO_STAGE_PROFILE must remain unset; this experiment tests the ordinary direct scorer only.
+  - If structured-output integrity fails or generation exhibits looping or token-limit pathology, classify the case INVALID and stop.
+  - If the proposed Normalized Sessions value is 6 or fewer, stop the GLM direct NoS audition for material scale compression.
+  - If the proposed Normalized Sessions value is 14 or greater, stop the GLM direct NoS audition for material scale inflation.
+  - If the proposed value is 7 or 13, inspect the rationale before authorizing another case.
+  - If prohibited additive or proxy reasoning materially drives the estimate, stop and classify the substantive method as failed.
+  - Do not use paid or API inference.
+  - Run the single planned sample once; do not use --force or add replicates to seek a more favorable result.
+
+cost_cap_usd: 0.01

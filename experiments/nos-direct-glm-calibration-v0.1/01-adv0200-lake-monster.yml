@@ -1,0 +1,64 @@
+name: nos-direct-glm-v01-01-adv0200-lake-monster
+
+purpose: >
+  Collect one fixed direct # of Sessions diagnostic observation for ADV-0200
+  Lake Monster using GLM-4.7-Flash. This is an architecture discriminator:
+  determine whether GLM can preserve the calibrated one-session short endpoint
+  using the ordinary direct scorer before introducing any two-stage architecture.
+
+dispatch: pool
+
+models:
+  - glm
+
+dimension: "# of Sessions"
+
+adventures:
+  - ADV-0200
+
+replicates: 1
+
+workers:
+  - mac
+
+required_worker_labels:
+  - local
+
+scorer:
+  repo: ../../../af-cli-scoring-utility
+  mode: positional
+  extra_args: []
+
+nos_direct_contract:
+  architecture: direct
+  candidate_model: glm
+  replicate_count: 1
+  no_favorable_rerun: true
+  external_api_cost_usd: 0.0
+  calibration_reference_use: post-hoc-only
+  human_normalized_sessions: 1
+  context_note: >
+    Short-end discriminator. A clean direct result of 1 is a strong pass.
+    A result of 2 requires rationale inspection before continuation.
+    A result of 3 or greater is a substantive short-end failure.
+
+success_criteria:
+  - Structured scorer output validates and terminates normally without token-limit or repetition pathology.
+  - The assessment remains grounded to the canonical adventure source unit.
+  - Compare the result post hoc against the human Normalized Sessions reference of 1; the reference must not be supplied to model inference.
+  - A result of 1 is a strong numeric pass for this discriminator.
+  - A result of 2 is adjacent and requires qualitative rationale inspection before authorizing another GLM case.
+  - The rationale does not use page-count, level-span, product-format, actual-play, community-duration, or adventure-identity priors.
+  - The rationale does not assign local session costs to individual bodies, chapters, encounters, rooms, or locations and then accumulate them.
+  - Preserve the single completed sample regardless of whether it agrees with the human reference.
+
+stop_conditions:
+  - AF_NOS_TWO_STAGE_PROFILE must remain unset; this experiment tests the ordinary direct scorer only.
+  - If structured-output integrity fails or generation exhibits looping or token-limit pathology, classify the case INVALID and stop.
+  - If the proposed Normalized Sessions value is 3 or greater, stop the GLM direct NoS audition after this case.
+  - If the proposed value is 2, inspect the rationale before authorizing another case.
+  - If prohibited additive or proxy reasoning materially drives the estimate, stop and classify the substantive method as failed.
+  - Do not use paid or API inference.
+  - Run the single planned sample once; do not use --force or add replicates to seek a more favorable result.
+
+cost_cap_usd: 0.01
