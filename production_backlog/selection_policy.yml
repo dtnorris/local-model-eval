@@ -1,4 +1,4 @@
-version: 2
+version: 3
 
 # Small falsifiable first pilot: ten new adventures across source-length strata.
 # Completely unscored qualified-dimension rows are preferred rather than filling
@@ -8,7 +8,8 @@ adventures_per_pack: 10
 
 # Long source bodies are intentionally deferred from idle/background compute
 # until the queue mechanism is proven reliable.
-max_page_count: 60
+max_page_count: 30
+# max_page_count: 60
 
 # Require every qualified dimension marked as a selection gate to be blank in
 # the AMC. Catalog dimensions such as Levels may already be populated without
@@ -37,14 +38,14 @@ page_strata:
     min_pages: 11
     max_pages: 30
     weight: 3
-  - name: 31-60-pages
-    min_pages: 31
-    max_pages: 60
-    weight: 2
+#  - name: 31-60-pages
+#    min_pages: 31
+#    max_pages: 60
+#    weight: 2
 
-# No one source book may supply more than 30% of a queue. For the ten-adventure
+# No one source book may supply more than 35% of a queue. For the ten-adventure
 # pilot this is a hard cap of three selections from any source book.
-max_source_share: 0.30
+max_source_share: 0.35
 
 # Source availability must be proven with scorer --preflight before selection.
 require_source_preflight: true
