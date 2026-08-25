@@ -33,11 +33,11 @@ page_strata:
   - name: 3-10-pages
     min_pages: 3
     max_pages: 10
-    weight: 3
+    weight: 7
   - name: 11-30-pages
     min_pages: 11
     max_pages: 30
-    weight: 4
+    weight: 12
 #  - name: 31-60-pages
 #    min_pages: 31
 #    max_pages: 60
