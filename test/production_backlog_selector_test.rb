@@ -87,6 +87,64 @@ class ProductionBacklogSelectorTest < Minitest::Test
     )
   end
 
+  def test_zero_weight_stratum_preserves_coverage_without_selection
+    policy = {
+      "selection_strategy" => "stratified_page_count_source_diverse",
+      "max_source_share" => 0.35,
+      "page_strata" => [
+        { "name" => "1-2-pages", "min_pages" => 1, "max_pages" => 2, "weight" => 0 },
+        { "name" => "3-10-pages", "min_pages" => 3, "max_pages" => 10, "weight" => 16 },
+        { "name" => "11-30-pages", "min_pages" => 11, "max_pages" => 30, "weight" => 11 },
+        { "name" => "31-60-pages", "min_pages" => 31, "max_pages" => 60, "weight" => 4 },
+        { "name" => "61-160-pages", "min_pages" => 61, "max_pages" => 160, "weight" => 3 }
+      ]
+    }
+
+    eligible = []
+    add_candidates(eligible, "1-2-pages", [1, 2], 4, 900)
+    add_candidates(eligible, "3-10-pages", [3, 6, 10], 18, 1000)
+    add_candidates(eligible, "11-30-pages", [11, 20, 30], 13, 1100)
+    add_candidates(eligible, "31-60-pages", [31, 45, 60], 6, 1200)
+    add_candidates(eligible, "61-160-pages", [61, 124, 160], 5, 1300)
+
+    preflighted_short = 0
+
+    result = ProductionBacklogSelector.select(
+      eligible: eligible,
+      required: 34,
+      policy: policy,
+      max_pages: 160,
+      preflight: lambda do |record|
+        preflighted_short += 1 if Integer(record.fetch("page_count")) <= 2
+        [true, ""]
+      end
+    )
+
+    assert_equal(
+      {
+        "1-2-pages" => 0,
+        "3-10-pages" => 16,
+        "11-30-pages" => 11,
+        "31-60-pages" => 4,
+        "61-160-pages" => 3
+      },
+      result.fetch(:strata).to_h { |stratum| [stratum.fetch("name"), stratum.fetch("quota")] }
+    )
+
+    selected_counts =
+      result.fetch(:selected)
+            .group_by { |record| record.fetch("page_stratum") }
+            .transform_values(&:length)
+
+    assert_equal 0, selected_counts.fetch("1-2-pages", 0)
+    assert_equal 16, selected_counts.fetch("3-10-pages")
+    assert_equal 11, selected_counts.fetch("11-30-pages")
+    assert_equal 4, selected_counts.fetch("31-60-pages")
+    assert_equal 3, selected_counts.fetch("61-160-pages")
+    assert_equal 0, preflighted_short
+    assert_equal 34, result.fetch(:selected).length
+  end
+
   private
 
   def add_candidates(records, _stratum, pages, count, seed)

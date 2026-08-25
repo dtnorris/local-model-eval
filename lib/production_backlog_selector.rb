@@ -161,7 +161,7 @@ module ProductionBacklogSelector
       raise SelectionError, "page stratum name must not be empty" if stratum.fetch("name").empty?
       raise SelectionError, "page stratum minimum must be >= 1" if stratum.fetch("min_pages") < 1
       raise SelectionError, "page stratum maximum must be >= minimum" if stratum.fetch("max_pages") < stratum.fetch("min_pages")
-      raise SelectionError, "page stratum weight must be >= 1" if stratum.fetch("weight") < 1
+      raise SelectionError, "page stratum weight must be >= 0" if stratum.fetch("weight") < 0
     end
 
     coverage = Hash.new(0)
@@ -188,6 +188,8 @@ module ProductionBacklogSelector
 
   def allocate_quotas(strata, required)
     total_weight = strata.sum { |stratum| stratum.fetch("weight") }
+    raise SelectionError, "page_strata total weight must be >= 1" if total_weight < 1
+
     allocations = {}
     remainders = []
 

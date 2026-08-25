@@ -8,7 +8,7 @@ adventures_per_pack: 10
 
 # Long source bodies are intentionally deferred from idle/background compute
 # until the queue mechanism is proven reliable.
-max_page_count: 30
+max_page_count: 160
 # max_page_count: 60
 
 # Require every qualified dimension marked as a selection gate to be blank in
@@ -26,25 +26,33 @@ exclude_reserved_production_adventures: true
 # ten-adventure pilot and preserve the same proportions when later queues scale.
 selection_strategy: stratified_page_count_source_diverse
 page_strata:
+  # Runnable 1-2 page production pool exhausted after backlog 006.
   - name: 1-2-pages
     min_pages: 1
     max_pages: 2
-    weight: 1
+    weight: 0
+
+  # Exhaust remaining runnable production inventory through 160 pages.
   - name: 3-10-pages
     min_pages: 3
     max_pages: 10
-    weight: 7
+    weight: 16
+
   - name: 11-30-pages
     min_pages: 11
     max_pages: 30
-    weight: 12
-#  - name: 31-60-pages
-#    min_pages: 31
-#    max_pages: 60
-#    weight: 2
+    weight: 11
 
-# No one source book may supply more than 35% of a queue. For the ten-adventure
-# pilot this is a hard cap of three selections from any source book.
+  - name: 31-60-pages
+    min_pages: 31
+    max_pages: 60
+    weight: 4
+
+  - name: 61-160-pages
+    min_pages: 61
+    max_pages: 160
+    weight: 3
+
 max_source_share: 0.35
 
 # Source availability must be proven with scorer --preflight before selection.
