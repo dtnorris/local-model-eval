@@ -1,0 +1,48 @@
+name: nos-slope5-granite-v1
+
+purpose: >
+  Cheap one-prompt NoS slope audition for granite4:32b-a9b-h. Test whether the
+  model can preserve the human-adjudicated scale from very short through
+  upper-mid duration without calibration, exemplars, or reruns.
+
+dispatch: pool
+
+models:
+  - granite
+
+dimension: "# of Sessions"
+
+adventures:
+  - ADV-0200  # Lake Monster — human 1
+  - ADV-0287  # House of Lament — human 3
+  - ADV-0034  # Tomb of Horrors — human 4
+  - ADV-0040  # Expedition to the Barrier Peaks — human 7
+  - ADV-0262  # Lost Mine of Phandelver — human 10
+
+replicates: 1
+
+workers:
+  - mac_alt
+
+required_worker_labels:
+  - alternate-endpoint
+
+scorer:
+  repo: ../../af-cli-scoring-utility
+  mode: positional
+  extra_args: []
+
+success_criteria:
+  - Preserve the basic human slope 1 -> 3 -> 4 -> 7 -> 10.
+  - Lake Monster remains very low, ideally 1-2 sessions.
+  - House and Tomb remain lower-mid, ideally no higher than 5.
+  - Barrier is materially above House/Tomb, ideally around 6-8.
+  - LMoP reaches the high end, ideally 8 or greater.
+  - Structured output validates and uses the canonical source unit.
+
+stop_conditions:
+  - Any structured-output or canonical-source failure is recorded as a failed job; do not rerun to seek a better result.
+  - Complete exactly one inference per adventure.
+  - Do not tune the prompt or model settings during this sweep.
+
+cost_cap_usd: 0.01
