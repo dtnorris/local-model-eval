@@ -1,0 +1,351 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "csv"
+require "digest"
+require "fileutils"
+require "json"
+require "open3"
+require "optparse"
+require "pathname"
+require "tmpdir"
+require "time"
+require "yaml"
+
+ROOT = File.expand_path("..", __dir__)
+SCORER_REPO = File.expand_path(ENV.fetch("AF_SCORER_REPO", "../af-cli-scoring-utility"), ROOT)
+QUALIFIED_PATH = File.join(ROOT, "production_backlog", "qualified_number_of_sessions.yml")
+DIMENSION = "# of Sessions"
+
+def abort_with(message)
+  warn "ERROR: #{message}"
+  exit 1
+end
+
+def blank?(value)
+  value.nil? || value.to_s.strip.empty?
+end
+
+def integer_or_nil(value)
+  return nil if blank?(value)
+  Integer(Float(value))
+rescue ArgumentError, TypeError
+  nil
+end
+
+def canonical_header(value)
+  header = value.to_s.strip
+  header == "ADV - ID" ? "Adventure ID" : header
+end
+
+def git_head(repo)
+  out, _err, status = Open3.capture3("git", "-C", repo, "rev-parse", "HEAD")
+  status.success? ? out.strip : nil
+end
+
+def scorer_catalog_path(scorer_repo)
+  require File.join(scorer_repo, "lib", "af_scoring", "errors")
+  require File.join(scorer_repo, "lib", "af_scoring", "config")
+  AFScoring::Config.new(project_root: scorer_repo).catalog_path
+end
+
+def reserved_nos_pairs(root, current_queue:)
+  reserved = {}
+  Dir.glob(File.join(root, "production_backlog", "**", "*case_index.csv")).sort.each do |path|
+    relative = path.delete_prefix("#{root}/")
+    next if relative.start_with?("production_backlog/#{current_queue}/")
+
+    begin
+      rows = CSV.read(path, headers: true, encoding: "UTF-8")
+      next unless rows.headers&.include?("adventure_id") && rows.headers&.include?("dimension")
+      rows.each do |row|
+        next unless row["dimension"].to_s.strip == DIMENSION
+        id = row["adventure_id"].to_s.strip
+        reserved[id] ||= "case_index:#{relative}" unless id.empty?
+      end
+    rescue CSV::MalformedCSVError => e
+      warn "WARNING: could not read #{path}: #{e.message}"
+    end
+  end
+  reserved
+end
+
+def source_preflight(scorer_repo, adventure_id, ollama_model)
+  Dir.mktmpdir("af-nos-preflight") do |dir|
+    rendered = File.join(dir, "preflight.json")
+    command = [
+      File.join(scorer_repo, "bin", "af-score"),
+      "--model", ollama_model,
+      "--dimension", DIMENSION,
+      "--preflight",
+      "--render-preflight", rendered,
+      adventure_id
+    ]
+    stdout, stderr, status = Open3.capture3(*command, chdir: scorer_repo)
+    return [status.success?, [stdout, stderr].join("\n").strip]
+  end
+end
+
+def yaml_manifest(queue:, adv:, scorer_rel:, qualification:)
+  <<~YAML
+    name: #{queue}-qwen27-nos-adv#{adv.fetch("id").split("-").last.downcase}-v1
+    purpose: >
+      Interruptible AdventureFinder local production scoring. Produce one proposed
+      # of Sessions assessment for canonical #{adv.fetch("id")} using the locally
+      qualified qwen3.6:27b clean blind NoS path. The target is within the frozen
+      Page Count < 100 qualification domain and had a blank accepted AMC value when
+      this queue was generated.
+    dispatch: pool
+
+    models:
+      - #{qualification.fetch("model_alias")}
+
+    dimension: "#{qualification.fetch("dimension")}"
+
+    adventures:
+      - #{adv.fetch("id")}
+
+    replicates: 1
+
+    workers:
+      - mac
+
+    required_worker_labels:
+      - local
+
+    scorer:
+      repo: #{scorer_rel}
+      mode: positional
+      extra_args: []
+
+    production_contract:
+      contract_type: #{qualification.fetch("contract_type")}
+      disposition: local-qualified-background
+      queue: #{queue}
+      candidate_model: #{qualification.fetch("model_alias")}
+      qualified_profile: #{qualification.fetch("profile")}
+      qualified_scorer_baseline: #{qualification.fetch("qualified_scorer_baseline")}
+      max_page_count_exclusive: #{qualification.fetch("max_page_count_exclusive")}
+      replicate_count: 1
+      no_favorable_rerun: true
+      external_api_cost_usd: 0.0
+
+    success_criteria:
+      - Structured scorer output validates and remains grounded to the canonical adventure source unit.
+      - Use the frozen clean blind # of Sessions profile with qwen3.6:27b.
+      - Preserve the single completed sample as a proposed production assessment pending QC/ingestion.
+      - Do not use an existing accepted score or calibration target as expected-answer context.
+
+    stop_conditions:
+      - Do not rerun a completed case to seek a more favorable sample.
+      - Queue-level repeated operational failures trigger the background runner circuit breaker.
+
+    cost_cap_usd: 0.01
+  YAML
+end
+
+abort_with("missing qualification contract #{QUALIFIED_PATH}") unless File.file?(QUALIFIED_PATH)
+qualification = YAML.safe_load_file(QUALIFIED_PATH)
+
+options = { queue: nil, pack_size: 50, force: false }
+OptionParser.new do |opts|
+  opts.banner = "Usage: bin/prepare-production-backlog-nos --queue NAME [options]"
+  opts.on("--queue NAME", "Queue name (required)") { |v| options[:queue] = v }
+  opts.on("--pack-size N", Integer, "Manifest count per operational pack (default 50)") { |v| options[:pack_size] = v }
+  opts.on("--force", "Replace an unstarted queue with the same name") { options[:force] = true }
+end.parse!
+
+queue = options[:queue].to_s
+abort_with("--queue is required") if queue.empty?
+abort_with("invalid queue name #{queue.inspect}") unless queue.match?(/\A[a-z0-9][a-z0-9._-]*\z/)
+abort_with("--pack-size must be >= 1") if options[:pack_size] < 1
+abort_with("scorer checkout not found: #{SCORER_REPO}") unless File.directory?(File.join(SCORER_REPO, ".git"))
+abort_with("qualification contract type changed") unless qualification.fetch("contract_type") == "nos_local_qualified_v1"
+abort_with("qualification dimension changed") unless qualification.fetch("dimension") == DIMENSION
+abort_with("production replicate contract changed") unless Integer(qualification.fetch("replicates")) == 1
+abort_with("qualification boundary must remain exclusive <100") unless Integer(qualification.fetch("max_page_count_exclusive")) == 100
+
+queue_dir = File.join(ROOT, "production_backlog", queue)
+experiment_dir = File.join(ROOT, "experiments", queue)
+if File.exist?(queue_dir) || File.exist?(experiment_dir)
+  abort_with("queue already exists; use --force to replace it") unless options[:force]
+  prior_output = Dir.glob(File.join(ROOT, "output", "#{queue}-qwen27-nos-*", "runs", "*", "metadata.json"))
+  abort_with("refusing --force because inference output already exists for #{queue}") unless prior_output.empty?
+end
+
+catalog_path = scorer_catalog_path(SCORER_REPO)
+contract_catalog = qualification.fetch("catalog")
+expected_filename = contract_catalog.fetch("filename")
+expected_sha = contract_catalog.fetch("sha256")
+abort_with("configured AMC filename is #{File.basename(catalog_path)}; expected #{expected_filename}") unless File.basename(catalog_path) == expected_filename
+abort_with("configured AMC does not exist: #{catalog_path}") unless File.file?(catalog_path)
+actual_sha = Digest::SHA256.file(catalog_path).hexdigest
+abort_with("AMC SHA mismatch: #{actual_sha}; expected #{expected_sha}") unless actual_sha == expected_sha
+
+require File.join(SCORER_REPO, "lib", "af_scoring", "errors")
+require File.join(SCORER_REPO, "lib", "af_scoring", "xlsx_reader")
+rows = AFScoring::XlsxReader.new(catalog_path).rows(sheet_name: "Adventure Catalog")
+abort_with("AMC Adventure Catalog sheet is empty") if rows.empty?
+headers = rows.shift.map { |v| canonical_header(v) }
+required_headers = ["Adventure ID", "Adventure Title", "Source Book", "Book Publisher", "Page Count", "Start Page", "End Page", qualification.fetch("catalog_column")]
+missing = required_headers - headers
+abort_with("AMC missing required columns: #{missing.join(', ')}") unless missing.empty?
+
+reserved = reserved_nos_pairs(ROOT, current_queue: queue)
+audit = []
+candidates = []
+under_limit = 0
+prepopulated_under_limit = 0
+
+rows.each do |row|
+  values = headers.zip(row).to_h
+  id = values["Adventure ID"].to_s.strip
+  next if id.empty?
+  page_count = integer_or_nil(values["Page Count"])
+  start_page = integer_or_nil(values["Start Page"])
+  end_page = integer_or_nil(values["End Page"])
+  page_count ||= (end_page - start_page + 1) if start_page && end_page && end_page >= start_page
+
+  record = {
+    "id" => id,
+    "title" => values["Adventure Title"].to_s,
+    "source_book" => values["Source Book"].to_s,
+    "publisher" => values["Book Publisher"].to_s,
+    "page_count" => page_count,
+    "start_page" => start_page,
+    "end_page" => end_page
+  }
+
+  reason = nil
+  if page_count.nil? || page_count <= 0
+    reason = "page_count_missing"
+  elsif page_count >= Integer(qualification.fetch("max_page_count_exclusive"))
+    reason = "outside_qualified_page_domain"
+  else
+    under_limit += 1
+    if !blank?(values[qualification.fetch("catalog_column")])
+      prepopulated_under_limit += 1
+      reason = "accepted_number_of_sessions_present"
+    elsif reserved.key?(id)
+      reason = "reserved_nos_pair:#{reserved.fetch(id)}"
+    end
+  end
+
+  if reason
+    audit << record.merge("decision" => "REJECT", "reason" => reason)
+  else
+    candidates << record
+  end
+end
+
+expected_total = Integer(contract_catalog.fetch("expected_total_adventures"))
+expected_under = Integer(contract_catalog.fetch("expected_under_page_limit"))
+expected_prepop = Integer(contract_catalog.fetch("expected_prepopulated_under_page_limit"))
+expected_eligible = Integer(contract_catalog.fetch("expected_eligible_blank"))
+abort_with("AMC adventure count #{rows.length}; expected #{expected_total}") unless rows.length == expected_total
+abort_with("under-100 count #{under_limit}; expected #{expected_under}") unless under_limit == expected_under
+abort_with("prepopulated under-100 NoS count #{prepopulated_under_limit}; expected #{expected_prepop}") unless prepopulated_under_limit == expected_prepop
+abort_with("eligible blank NoS count #{candidates.length}; expected #{expected_eligible}; reservations=#{reserved.length}") unless candidates.length == expected_eligible
+
+$stdout.sync = true
+source_failures = []
+candidates.each_with_index do |record, index|
+  puts format("PREFLIGHT %3d/%d  %-9s  %3d pages  %s", index + 1, candidates.length, record.fetch("id"), record.fetch("page_count"), record.fetch("title"))
+  ok, detail = source_preflight(SCORER_REPO, record.fetch("id"), qualification.fetch("ollama_model"))
+  if ok
+    puts format("PASS      %3d/%d  %-9s  %s", index + 1, candidates.length, record.fetch("id"), record.fetch("title"))
+  else
+    puts format("REJECT    %3d/%d  %-9s  %s", index + 1, candidates.length, record.fetch("id"), record.fetch("title"))
+    source_failures << record.merge("detail" => detail)
+  end
+end
+
+unless source_failures.empty?
+  warn
+  warn "ERROR: #{source_failures.length} qualified-domain adventure(s) failed zero-inference source preflight."
+  source_failures.each { |r| warn "  #{r.fetch('id')} — #{r.fetch('title')}: #{r.fetch('detail')}" }
+  abort_with("B008 must remain exhaustive; no queue was written")
+end
+
+FileUtils.rm_rf(queue_dir) if options[:force]
+FileUtils.rm_rf(experiment_dir) if options[:force]
+FileUtils.mkdir_p(queue_dir)
+FileUtils.mkdir_p(experiment_dir)
+
+selected = candidates
+selected.each { |record| audit << record.merge("decision" => "SELECT", "reason" => "blank_nos_under_100_source_preflight_pass") }
+qualification_sha = Digest::SHA256.file(QUALIFIED_PATH).hexdigest
+snapshot = {
+  "version" => 1,
+  "contract_type" => qualification.fetch("contract_type"),
+  "queue" => queue,
+  "generated_at" => Time.now.iso8601,
+  "local_model_eval_commit" => git_head(ROOT),
+  "scorer_commit" => git_head(SCORER_REPO),
+  "scorer_repo_path" => Pathname.new(SCORER_REPO).relative_path_from(Pathname.new(ROOT)).to_s,
+  "qualification_contract_path" => Pathname.new(QUALIFIED_PATH).relative_path_from(Pathname.new(ROOT)).to_s,
+  "qualification_contract_sha256" => qualification_sha,
+  "qualification_contract" => qualification,
+  "catalog_path" => catalog_path,
+  "catalog_sha256" => actual_sha,
+  "dimension" => DIMENSION,
+  "profile" => qualification.fetch("profile"),
+  "model_alias" => qualification.fetch("model_alias"),
+  "ollama_model" => qualification.fetch("ollama_model"),
+  "max_page_count_exclusive" => qualification.fetch("max_page_count_exclusive"),
+  "pack_size" => options[:pack_size],
+  "expected_calls" => selected.length,
+  "selected_adventures" => selected
+}
+File.write(File.join(queue_dir, "snapshot.yml"), YAML.dump(snapshot))
+
+audit_headers = %w[adventure_id adventure_title source_book publisher page_count decision reason]
+CSV.open(File.join(queue_dir, "candidate_audit.csv"), "w") do |csv|
+  csv << audit_headers
+  audit.sort_by { |r| r["id"] }.each do |r|
+    csv << [r["id"], r["title"], r["source_book"], r["publisher"], r["page_count"], r["decision"], r["reason"]]
+  end
+end
+
+case_headers = %w[case_index pack_index pack_case_index adventure_id adventure_title source_book publisher page_count dimension profile manifest_path]
+case_rows = []
+all_run_paths = []
+scorer_rel = Pathname.new(SCORER_REPO).relative_path_from(Pathname.new(experiment_dir)).to_s
+
+selected.each_slice(options[:pack_size]).with_index(1) do |pack_adventures, pack_index|
+  pack_rows = []
+  pack_paths = []
+  pack_adventures.each_with_index do |adv, pack_offset|
+    case_index = case_rows.length + 1
+    filename = "#{queue}-qwen27-nos-adv#{adv.fetch('id').split('-').last.downcase}-v1.yml"
+    relative_path = File.join("experiments", queue, filename)
+    File.write(File.join(experiment_dir, filename), yaml_manifest(queue: queue, adv: adv, scorer_rel: scorer_rel, qualification: qualification))
+    row = [case_index, pack_index, pack_offset + 1, adv.fetch("id"), adv.fetch("title"), adv.fetch("source_book"), adv.fetch("publisher"), adv.fetch("page_count"), DIMENSION, qualification.fetch("profile"), relative_path]
+    case_rows << row
+    pack_rows << row
+    pack_paths << relative_path
+    all_run_paths << relative_path
+    puts format("WRITE %3d/%d  %s", case_index, selected.length, relative_path)
+  end
+  pack_name = format("pack-%03d", pack_index)
+  CSV.open(File.join(queue_dir, "#{pack_name}_case_index.csv"), "w") { |csv| csv << case_headers; pack_rows.each { |row| csv << row } }
+  File.write(File.join(queue_dir, "#{pack_name}_run_order.txt"), pack_paths.join("\n") + "\n")
+end
+
+CSV.open(File.join(queue_dir, "case_index.csv"), "w") { |csv| csv << case_headers; case_rows.each { |row| csv << row } }
+File.write(File.join(queue_dir, "run_order.txt"), all_run_paths.join("\n") + "\n")
+
+puts
+puts "NOS PRODUCTION BACKLOG PREPARED — NO INFERENCE WAS RUN"
+puts "Queue: production_backlog/#{queue}"
+puts "AMC: #{expected_filename} / #{actual_sha}"
+puts "Qualified domain: Page Count < #{qualification.fetch('max_page_count_exclusive')}"
+puts "Adventures/calls: #{selected.length}"
+puts "Packs: #{(selected.length.to_f / options[:pack_size]).ceil} (pack size #{options[:pack_size]})"
+puts "Model: #{qualification.fetch('model_alias')} => #{qualification.fetch('ollama_model')}"
+puts "Dimension: #{DIMENSION}"
+puts "Scorer checkout: #{SCORER_REPO}"
+puts "External/API inference cost: $0"
+puts
+puts "Next:"
+puts "  ./verify_production_backlog_nos.sh production_backlog/#{queue}"

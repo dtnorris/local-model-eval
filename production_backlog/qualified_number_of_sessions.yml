@@ -1,0 +1,36 @@
+version: 1
+contract_type: nos_local_qualified_v1
+dimension: "# of Sessions"
+slug: nos
+profile: nos-clean-blind-v1
+catalog_column: Number of Sessions
+model_alias: qwen27
+ollama_model: qwen3.6:27b
+qualified_scorer_baseline: 4fcd7fe84d56354a2bc22d9b815b9f170d7223ad
+afao_version: "1.6"
+max_page_count_exclusive: 100
+replicates: 1
+external_api_cost_usd: 0.0
+no_favorable_rerun: true
+catalog:
+  filename: 5e_Adventure_Master_Catalog_2.9.xlsx
+  sha256: 450774315756e2d6a8950782e5441a80bfbd4f077d7fe29fb8fac00107562995
+  expected_total_adventures: 330
+  expected_under_page_limit: 321
+  expected_prepopulated_under_page_limit: 8
+  expected_eligible_blank: 313
+protected_scorer_files:
+  - lib/af_scoring/afao.rb
+  - lib/af_scoring/cli.rb
+  - lib/af_scoring/dimension_groups.rb
+  - lib/af_scoring/models.rb
+  - lib/af_scoring/normalizer.rb
+  - lib/af_scoring/prompt_builder.rb
+  - lib/af_scoring/providers/base.rb
+  - lib/af_scoring/providers/ollama_provider.rb
+  - lib/af_scoring/runner.rb
+  - lib/af_scoring/schema_builder.rb
+  - lib/af_scoring/scoring_target.rb
+  - lib/af_scoring/source_document.rb
+  - lib/af_scoring/source_resolver.rb
+  - lib/af_scoring/validator.rb
