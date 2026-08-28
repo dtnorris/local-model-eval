@@ -1,0 +1,2241 @@
+---
+version: 1
+contract_type: nos_local_qualified_v1
+queue: production-backlog-008
+generated_at: '2026-08-27T22:06:55-04:00'
+local_model_eval_commit: c826fdff7d15bef64357375e35210579d1cbec13
+scorer_commit: cc549202608f076bf487a0cb0bb391b6787fc72b
+scorer_repo_path: "../af-cli-scoring-utility"
+qualification_contract_path: production_backlog/qualified_number_of_sessions.yml
+qualification_contract_sha256: 91e26dc3d22d2f8c3f16f986edc3d183c388996599000c7072caf2a56d56a02f
+qualification_contract:
+  version: 1
+  contract_type: nos_local_qualified_v1
+  dimension: "# of Sessions"
+  slug: nos
+  profile: nos-clean-blind-v1
+  catalog_column: Number of Sessions
+  model_alias: qwen27
+  ollama_model: qwen3.6:27b
+  qualified_scorer_baseline: 4fcd7fe84d56354a2bc22d9b815b9f170d7223ad
+  afao_version: '1.6'
+  max_page_count_exclusive: 100
+  replicates: 1
+  external_api_cost_usd: 0.0
+  no_favorable_rerun: true
+  catalog:
+    filename: 5e_Adventure_Master_Catalog_2.9.1.xlsx
+    sha256: ccf7c3086a899e5ff4905414a2d6d4328287b8b427d35943164698469f09b41b
+    expected_total_adventures: 330
+    expected_under_page_limit: 321
+    expected_prepopulated_under_page_limit: 9
+    expected_eligible_blank: 312
+  protected_scorer_files:
+  - lib/af_scoring/afao.rb
+  - lib/af_scoring/cli.rb
+  - lib/af_scoring/dimension_groups.rb
+  - lib/af_scoring/models.rb
+  - lib/af_scoring/normalizer.rb
+  - lib/af_scoring/prompt_builder.rb
+  - lib/af_scoring/providers/base.rb
+  - lib/af_scoring/providers/ollama_provider.rb
+  - lib/af_scoring/runner.rb
+  - lib/af_scoring/schema_builder.rb
+  - lib/af_scoring/scoring_target.rb
+  - lib/af_scoring/source_document.rb
+  - lib/af_scoring/source_resolver.rb
+  - lib/af_scoring/validator.rb
+catalog_path: "/Users/davidnorris/code/af-xlsx-data-sources/5e_Adventure_Master_Catalog_2.9.1.xlsx"
+catalog_sha256: ccf7c3086a899e5ff4905414a2d6d4328287b8b427d35943164698469f09b41b
+dimension: "# of Sessions"
+profile: nos-clean-blind-v1
+model_alias: qwen27
+ollama_model: qwen3.6:27b
+max_page_count_exclusive: 100
+pack_size: 50
+expected_calls: 312
+selected_adventures:
+- id: ADV-0288
+  title: A Friend in Need
+  source_book: 'Waterdeep: Dragon Heist'
+  publisher: Wizards of the Coast
+  page_count: 10
+  start_page: 21
+  end_page: 30
+- id: ADV-0278
+  title: Witchlight Carnival
+  source_book: The Wild Beyond the Witchlight
+  publisher: Wizards of the Coast
+  page_count: 33
+  start_page: 23
+  end_page: 55
+- id: ADV-0031
+  title: White Plume Mountain
+  source_book: Tales from the Yawning Portal
+  publisher: Wizards of the Coast
+  page_count: 14
+  start_page: 95
+  end_page: 108
+- id: ADV-0128
+  title: Disinterred Danger
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 20
+  end_page: 20
+- id: ADV-0129
+  title: The Drowning Forest
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 21
+  end_page: 21
+- id: ADV-0130
+  title: The Lost Dawn
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 22
+  end_page: 22
+- id: ADV-0127
+  title: The Tenebrous Stone
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 19
+  end_page: 19
+- id: ADV-0131
+  title: Wolves of Amphail
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 23
+  end_page: 23
+- id: ADV-0133
+  title: Safe House Standoff
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 25
+  end_page: 25
+- id: ADV-0134
+  title: Tears Fall
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 26
+  end_page: 26
+- id: ADV-0136
+  title: Well of Lies
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 28
+  end_page: 28
+- id: ADV-0137
+  title: The Raid on Noanar's Hold
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 29
+  end_page: 29
+- id: ADV-0143
+  title: Echoes of the Shaking Plague
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 35
+  end_page: 35
+- id: ADV-0144
+  title: The Ashen Faithful
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 36
+  end_page: 36
+- id: ADV-0145
+  title: Silk and Suffering
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 37
+  end_page: 37
+- id: ADV-0146
+  title: The Flying Fortress
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 38
+  end_page: 38
+- id: ADV-0147
+  title: The Foehammer Horn
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 39
+  end_page: 39
+- id: ADV-0148
+  title: The Blight on Soubar
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 40
+  end_page: 40
+- id: ADV-0149
+  title: Mystery of Myth Rodarnum
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 40
+  end_page: 40
+- id: ADV-0151
+  title: Dread March of the Bone Titan
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 42
+  end_page: 42
+- id: ADV-0152
+  title: Heart of Fire
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 43
+  end_page: 43
+- id: ADV-0153
+  title: The Tomb of Damara
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 86
+  end_page: 86
+- id: ADV-0154
+  title: Restoring Freedale
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 87
+  end_page: 87
+- id: ADV-0157
+  title: Retaking the Terror
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 125
+  end_page: 125
+- id: ADV-0158
+  title: Dougan's Hell
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 126
+  end_page: 126
+- id: ADV-0159
+  title: What Wakes Below
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 127
+  end_page: 127
+- id: ADV-0161
+  title: Gods Long Forgotten
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 157
+  end_page: 157
+- id: ADV-0311
+  title: Quest for the Giant Relics
+  source_book: Storm King's Thunder
+  publisher: Wizards of the Coast
+  page_count: 2
+  start_page: 130
+  end_page: 131
+- id: ADV-0244
+  title: Camp Carrionclay
+  source_book: 'Dragonlance: Shadow of the Dragon Queen'
+  publisher: Wizards of the Coast
+  page_count: 2
+  start_page: 129
+  end_page: 130
+- id: ADV-0199
+  title: Nature Spirits
+  source_book: 'Icewind Dale: Rime of the Frostmaiden'
+  publisher: Wizards of the Coast
+  page_count: 2
+  start_page: 25
+  end_page: 26
+- id: ADV-0274
+  title: Feeder Trenches
+  source_book: 'Phandelver and Below: The Shattered Obelisk'
+  publisher: Wizards of the Coast
+  page_count: 3
+  start_page: 161
+  end_page: 163
+- id: ADV-0210
+  title: Angajuk's Bell
+  source_book: 'Icewind Dale: Rime of the Frostmaiden'
+  publisher: Wizards of the Coast
+  page_count: 3
+  start_page: 114
+  end_page: 116
+- id: ADV-0319
+  title: The Grand Dame
+  source_book: Storm King's Thunder
+  publisher: Wizards of the Coast
+  page_count: 4
+  start_page: 216
+  end_page: 219
+- id: ADV-0240
+  title: Blue Phoenix Shrine
+  source_book: 'Dragonlance: Shadow of the Dragon Queen'
+  publisher: Wizards of the Coast
+  page_count: 4
+  start_page: 113
+  end_page: 116
+- id: ADV-0253
+  title: Secrets in Sedgemoor
+  source_book: 'Strixhaven: A Curriculum of Chaos'
+  publisher: Wizards of the Coast
+  page_count: 4
+  start_page: 92
+  end_page: 95
+- id: ADV-0291
+  title: 'Encounter 2: Mistshore'
+  source_book: 'Waterdeep: Dragon Heist'
+  publisher: Wizards of the Coast
+  page_count: 4
+  start_page: 65
+  end_page: 68
+- id: ADV-0280
+  title: Free Sir Talavar
+  source_book: The Wild Beyond the Witchlight
+  publisher: Wizards of the Coast
+  page_count: 4
+  start_page: 68
+  end_page: 71
+- id: ADV-0242
+  title: Wakenreth
+  source_book: 'Dragonlance: Shadow of the Dragon Queen'
+  publisher: Wizards of the Coast
+  page_count: 4
+  start_page: 120
+  end_page: 123
+- id: ADV-0243
+  title: Bluemaw Cave
+  source_book: 'Dragonlance: Shadow of the Dragon Queen'
+  publisher: Wizards of the Coast
+  page_count: 4
+  start_page: 123
+  end_page: 126
+- id: ADV-0212
+  title: Cackling Chasm
+  source_book: 'Icewind Dale: Rime of the Frostmaiden'
+  publisher: Wizards of the Coast
+  page_count: 4
+  start_page: 121
+  end_page: 124
+- id: ADV-0213
+  title: Cave of the Berserkers
+  source_book: 'Icewind Dale: Rime of the Frostmaiden'
+  publisher: Wizards of the Coast
+  page_count: 4
+  start_page: 124
+  end_page: 127
+- id: ADV-0275
+  title: Labyrinth of Eyes
+  source_book: 'Phandelver and Below: The Shattered Obelisk'
+  publisher: Wizards of the Coast
+  page_count: 4
+  start_page: 164
+  end_page: 167
+- id: ADV-0292
+  title: 'Encounter 4: Mausoleum'
+  source_book: 'Waterdeep: Dragon Heist'
+  publisher: Wizards of the Coast
+  page_count: 4
+  start_page: 69
+  end_page: 72
+- id: ADV-0246
+  title: Temple of Paladine
+  source_book: 'Dragonlance: Shadow of the Dragon Queen'
+  publisher: Wizards of the Coast
+  page_count: 4
+  start_page: 149
+  end_page: 152
+- id: ADV-0216
+  title: Jarlmoot
+  source_book: 'Icewind Dale: Rime of the Frostmaiden'
+  publisher: Wizards of the Coast
+  page_count: 4
+  start_page: 137
+  end_page: 140
+- id: ADV-0221
+  title: Wyrmdoom Crag
+  source_book: 'Icewind Dale: Rime of the Frostmaiden'
+  publisher: Wizards of the Coast
+  page_count: 4
+  start_page: 166
+  end_page: 169
+- id: ADV-0293
+  title: 'Encounter 6: Theater'
+  source_book: 'Waterdeep: Dragon Heist'
+  publisher: Wizards of the Coast
+  page_count: 4
+  start_page: 73
+  end_page: 76
+- id: ADV-0023
+  title: Cloakwood Forest
+  source_book: Heroes of Baldur's Gate
+  publisher: Arcanum Worlds
+  page_count: 5
+  start_page: 46
+  end_page: 50
+- id: ADV-0255
+  title: The Scriptoria Collections
+  source_book: 'Strixhaven: A Curriculum of Chaos'
+  publisher: Wizards of the Coast
+  page_count: 5
+  start_page: 114
+  end_page: 118
+- id: ADV-0076
+  title: Werewolf Den
+  source_book: Curse of Strahd
+  publisher: Wizards of the Coast
+  page_count: 5
+  start_page: 201
+  end_page: 205
+- id: ADV-0238
+  title: Wheelwatch Outpost
+  source_book: 'Dragonlance: Shadow of the Dragon Queen'
+  publisher: Wizards of the Coast
+  page_count: 5
+  start_page: 89
+  end_page: 93
+- id: ADV-0305
+  title: Dripping Caves
+  source_book: Storm King's Thunder
+  publisher: Wizards of the Coast
+  page_count: 5
+  start_page: 28
+  end_page: 32
+- id: ADV-0256
+  title: Fate at Furygale
+  source_book: 'Strixhaven: A Curriculum of Chaos'
+  publisher: Wizards of the Coast
+  page_count: 5
+  start_page: 130
+  end_page: 134
+- id: ADV-0072
+  title: Van Richten's Tower
+  source_book: Curse of Strahd
+  publisher: Wizards of the Coast
+  page_count: 6
+  start_page: 167
+  end_page: 172
+- id: ADV-0024
+  title: The Cloakwood Mines
+  source_book: Heroes of Baldur's Gate
+  publisher: Arcanum Worlds
+  page_count: 6
+  start_page: 51
+  end_page: 56
+- id: ADV-0266
+  title: Cragmaw Castle
+  source_book: 'Phandelver and Below: The Shattered Obelisk'
+  publisher: Wizards of the Coast
+  page_count: 6
+  start_page: 58
+  end_page: 63
+- id: ADV-0014
+  title: Expert Treasure Hunters
+  source_book: Shire Adventures
+  publisher: Free League Publishing
+  page_count: 6
+  start_page: 64
+  end_page: 69
+- id: ADV-0330
+  title: Slitherswamp
+  source_book: 'Waterdeep: Dungeon of the Mad Mage'
+  publisher: Wizards of the Coast
+  page_count: 8
+  start_page: 109
+  end_page: 116
+- id: ADV-0090
+  title: Mother Knows Best
+  source_book: The Game Master's Book of Random Encounters
+  publisher: Topix Media Lab
+  page_count: 8
+  start_page: 24
+  end_page: 31
+- id: ADV-0333
+  title: Troglodyte Warrens
+  source_book: 'Waterdeep: Dungeon of the Mad Mage'
+  publisher: Wizards of the Coast
+  page_count: 8
+  start_page: 151
+  end_page: 158
+- id: ADV-0118
+  title: Before the Storm
+  source_book: Dragon Delves
+  publisher: Wizards of the Coast
+  page_count: 10
+  start_page: 129
+  end_page: 138
+- id: ADV-0175
+  title: Wages of Vice
+  source_book: Journeys Through the Radiant Citadel
+  publisher: Wizards of the Coast
+  page_count: 10
+  start_page: 66
+  end_page: 75
+- id: ADV-0091
+  title: Special Delivery
+  source_book: The Game Master's Book of Random Encounters
+  publisher: Topix Media Lab
+  page_count: 10
+  start_page: 32
+  end_page: 41
+- id: ADV-0179
+  title: In the Mists of Manivarsha
+  source_book: Journeys Through the Radiant Citadel
+  publisher: Wizards of the Coast
+  page_count: 10
+  start_page: 120
+  end_page: 129
+- id: ADV-0093
+  title: The Tomb of the Forgotten Paladin
+  source_book: The Game Master's Book of Random Encounters
+  publisher: Topix Media Lab
+  page_count: 10
+  start_page: 58
+  end_page: 67
+- id: ADV-0326
+  title: Twisted Caverns
+  source_book: 'Waterdeep: Dungeon of the Mad Mage'
+  publisher: Wizards of the Coast
+  page_count: 10
+  start_page: 59
+  end_page: 68
+- id: ADV-0177
+  title: Gold for Fools and Princes
+  source_book: Journeys Through the Radiant Citadel
+  publisher: Wizards of the Coast
+  page_count: 11
+  start_page: 92
+  end_page: 102
+- id: ADV-0271
+  title: Crypt of the Talhund
+  source_book: 'Phandelver and Below: The Shattered Obelisk'
+  publisher: Wizards of the Coast
+  page_count: 11
+  start_page: 117
+  end_page: 127
+- id: ADV-0178
+  title: Trail of Destruction
+  source_book: Journeys Through the Radiant Citadel
+  publisher: Wizards of the Coast
+  page_count: 11
+  start_page: 106
+  end_page: 116
+- id: ADV-0272
+  title: Gibbet Crossing
+  source_book: 'Phandelver and Below: The Shattered Obelisk'
+  publisher: Wizards of the Coast
+  page_count: 11
+  start_page: 127
+  end_page: 137
+- id: ADV-0314
+  title: Berg of the Frost Giants
+  source_book: Storm King's Thunder
+  publisher: Wizards of the Coast
+  page_count: 12
+  start_page: 155
+  end_page: 166
+- id: ADV-0114
+  title: The Will of Orcus
+  source_book: Dragon Delves
+  publisher: Wizards of the Coast
+  page_count: 12
+  start_page: 49
+  end_page: 60
+- id: ADV-0089
+  title: Presto Change-o
+  source_book: The Game Master's Book of Random Encounters
+  publisher: Topix Media Lab
+  page_count: 12
+  start_page: 12
+  end_page: 23
+- id: ADV-0334
+  title: Maze Level
+  source_book: 'Waterdeep: Dungeon of the Mad Mage'
+  publisher: Wizards of the Coast
+  page_count: 12
+  start_page: 159
+  end_page: 170
+- id: ADV-0176
+  title: Sins of Our Elders
+  source_book: Journeys Through the Radiant Citadel
+  publisher: Wizards of the Coast
+  page_count: 12
+  start_page: 78
+  end_page: 89
+- id: ADV-0338
+  title: Crystal Labyrinth / Stardock
+  source_book: 'Waterdeep: Dungeon of the Mad Mage'
+  publisher: Wizards of the Coast
+  page_count: 12
+  start_page: 209
+  end_page: 220
+- id: ADV-0088
+  title: Eve of Ruin
+  source_book: 'Vecna: Eve of Ruin'
+  publisher: Wizards of the Coast
+  page_count: 13
+  start_page: 191
+  end_page: 203
+- id: ADV-0231
+  title: Isle of the Abbey
+  source_book: Ghosts of Saltmarsh
+  publisher: Wizards of the Coast
+  page_count: 13
+  start_page: 97
+  end_page: 109
+- id: ADV-0021
+  title: Baldur's Gate, Southwest District
+  source_book: Heroes of Baldur's Gate
+  publisher: Arcanum Worlds
+  page_count: 13
+  start_page: 19
+  end_page: 31
+- id: ADV-0115
+  title: For Whom the Void Calls
+  source_book: Dragon Delves
+  publisher: Wizards of the Coast
+  page_count: 13
+  start_page: 65
+  end_page: 77
+- id: ADV-0249
+  title: The Flying Citadel
+  source_book: 'Dragonlance: Shadow of the Dragon Queen'
+  publisher: Wizards of the Coast
+  page_count: 14
+  start_page: 171
+  end_page: 184
+- id: ADV-0009
+  title: Kings of Little Kingdoms
+  source_book: Tales From Eriador
+  publisher: Free League Publishing
+  page_count: 14
+  start_page: 45
+  end_page: 58
+- id: ADV-0018
+  title: Hold My Beer
+  source_book: The Game Master's Book of Legendary Dragons
+  publisher: Media Lab Books
+  page_count: 14
+  start_page: 184
+  end_page: 197
+- id: ADV-0022
+  title: Beneath Baldur's Gate
+  source_book: Heroes of Baldur's Gate
+  publisher: Arcanum Worlds
+  page_count: 14
+  start_page: 32
+  end_page: 45
+- id: ADV-0304
+  title: A Great Upheaval
+  source_book: Storm King's Thunder
+  publisher: Wizards of the Coast
+  page_count: 14
+  start_page: 19
+  end_page: 32
+- id: ADV-0095
+  title: One Last Job
+  source_book: The Game Master's Book of Random Encounters
+  publisher: Topix Media Lab
+  page_count: 14
+  start_page: 78
+  end_page: 91
+- id: ADV-0289
+  title: Fireball
+  source_book: 'Waterdeep: Dragon Heist'
+  publisher: Wizards of the Coast
+  page_count: 14
+  start_page: 43
+  end_page: 56
+- id: ADV-0269
+  title: Zorzula's Rest
+  source_book: 'Phandelver and Below: The Shattered Obelisk'
+  publisher: Wizards of the Coast
+  page_count: 14
+  start_page: 88
+  end_page: 101
+- id: ADV-0316
+  title: Castle of the Cloud Giants
+  source_book: Storm King's Thunder
+  publisher: Wizards of the Coast
+  page_count: 14
+  start_page: 187
+  end_page: 200
+- id: ADV-0171
+  title: The Lost Library of Lethchauntos
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 15
+  start_page: 227
+  end_page: 241
+- id: ADV-0044
+  title: The Golden Acorn Heist
+  source_book: Labyrinth Adventures
+  publisher: Kobold Press
+  page_count: 15
+  start_page: 57
+  end_page: 71
+- id: ADV-0010
+  title: Not To Strike Without Need
+  source_book: Tales From Eriador
+  publisher: Free League Publishing
+  page_count: 16
+  start_page: 59
+  end_page: 74
+- id: ADV-0002
+  title: The Sea-prince of the Shore
+  source_book: Trials of Saruman
+  publisher: Free League Publishing
+  page_count: 16
+  start_page: 41
+  end_page: 56
+- id: ADV-0042
+  title: Chasing the Inferno
+  source_book: Labyrinth Adventures
+  publisher: Kobold Press
+  page_count: 16
+  start_page: 25
+  end_page: 40
+- id: ADV-0299
+  title: Spring Madness
+  source_book: 'Waterdeep: Dragon Heist'
+  publisher: Wizards of the Coast
+  page_count: 16
+  start_page: 99
+  end_page: 114
+- id: ADV-0071
+  title: Argynvostholt
+  source_book: Curse of Strahd
+  publisher: Wizards of the Coast
+  page_count: 17
+  start_page: 129
+  end_page: 145
+- id: ADV-0007
+  title: A Troll-hole, if Ever There Was One
+  source_book: Tales From Eriador
+  publisher: Free League Publishing
+  page_count: 18
+  start_page: 9
+  end_page: 26
+- id: ADV-0003
+  title: The Disaster of the Gladden Fields
+  source_book: Trials of Saruman
+  publisher: Free League Publishing
+  page_count: 18
+  start_page: 57
+  end_page: 74
+- id: ADV-0233
+  title: Tammeraut's Fate
+  source_book: Ghosts of Saltmarsh
+  publisher: Wizards of the Coast
+  page_count: 21
+  start_page: 141
+  end_page: 161
+- id: ADV-0285
+  title: Motherhorn
+  source_book: The Wild Beyond the Witchlight
+  publisher: Wizards of the Coast
+  page_count: 21
+  start_page: 149
+  end_page: 169
+- id: ADV-0228
+  title: The Sinister Secret of Saltmarsh
+  source_book: Ghosts of Saltmarsh
+  publisher: Wizards of the Coast
+  page_count: 23
+  start_page: 37
+  end_page: 59
+- id: ADV-0028
+  title: The Sunless Citadel
+  source_book: Tales from the Yawning Portal
+  publisher: Wizards of the Coast
+  page_count: 24
+  start_page: 9
+  end_page: 32
+- id: ADV-0019
+  title: Dragon Hunt
+  source_book: The Game Master's Book of Legendary Dragons
+  publisher: Media Lab Books
+  page_count: 24
+  start_page: 198
+  end_page: 221
+- id: ADV-0236
+  title: When Home Burns
+  source_book: 'Dragonlance: Shadow of the Dragon Queen'
+  publisher: Wizards of the Coast
+  page_count: 25
+  start_page: 51
+  end_page: 75
+- id: ADV-0064
+  title: The Sunken Temple of Sirenholm
+  source_book: The Prophecy of Nine Omens Trilogy
+  publisher: Midnight Tower
+  page_count: 36
+  start_page: 78
+  end_page: 113
+- id: ADV-0251
+  title: Campus Kerfuffle
+  source_book: 'Strixhaven: A Curriculum of Chaos'
+  publisher: Wizards of the Coast
+  page_count: 36
+  start_page: 60
+  end_page: 95
+- id: ADV-0286
+  title: Palace of Heart's Desire
+  source_book: The Wild Beyond the Witchlight
+  publisher: Wizards of the Coast
+  page_count: 37
+  start_page: 171
+  end_page: 207
+- id: ADV-0054
+  title: Deeper into the Woods
+  source_book: Hunter's Full Moon Trilogy
+  publisher: Midnight Tower
+  page_count: 38
+  start_page: 54
+  end_page: 91
+- id: ADV-0069
+  title: Castle Ravenloft
+  source_book: Curse of Strahd
+  publisher: Wizards of the Coast
+  page_count: 40
+  start_page: 49
+  end_page: 88
+- id: ADV-0057
+  title: Find the Lost Expedition
+  source_book: Secrets of the Drow Trilogy
+  publisher: Midnight Tower
+  page_count: 40
+  start_page: 44
+  end_page: 83
+- id: ADV-0065
+  title: Heart of Darkness
+  source_book: Battle for the Realm Trilogy
+  publisher: Midnight Tower
+  page_count: 48
+  start_page: 4
+  end_page: 51
+- id: ADV-0168
+  title: Blood Night
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 223
+  end_page: 223
+- id: ADV-0132
+  title: The Eyes of At'ar
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 24
+  end_page: 24
+- id: ADV-0150
+  title: A Restless Eternity
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 41
+  end_page: 41
+- id: ADV-0135
+  title: Shadow of the Watch
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 27
+  end_page: 27
+- id: ADV-0162
+  title: The Dallabad Curse
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 158
+  end_page: 158
+- id: ADV-0169
+  title: Clockwork Memories
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 224
+  end_page: 224
+- id: ADV-0170
+  title: The Shadow Parliament
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 225
+  end_page: 225
+- id: ADV-0198
+  title: Cold-Hearted Killer
+  source_book: 'Icewind Dale: Rime of the Frostmaiden'
+  publisher: Wizards of the Coast
+  page_count: 3
+  start_page: 22
+  end_page: 24
+- id: ADV-0013
+  title: A Conspiracy Most Cracked
+  source_book: Shire Adventures
+  publisher: Free League Publishing
+  page_count: 7
+  start_page: 57
+  end_page: 63
+- id: ADV-0335
+  title: Trobriand's Graveyard
+  source_book: 'Waterdeep: Dungeon of the Mad Mage'
+  publisher: Wizards of the Coast
+  page_count: 8
+  start_page: 171
+  end_page: 178
+- id: ADV-0327
+  title: Wyllowwood
+  source_book: 'Waterdeep: Dungeon of the Mad Mage'
+  publisher: Wizards of the Coast
+  page_count: 12
+  start_page: 69
+  end_page: 80
+- id: ADV-0345
+  title: Mad Wizard's Lair
+  source_book: 'Waterdeep: Dungeon of the Mad Mage'
+  publisher: Wizards of the Coast
+  page_count: 14
+  start_page: 289
+  end_page: 302
+- id: ADV-0046
+  title: Into Dreamland
+  source_book: Labyrinth Adventures
+  publisher: Kobold Press
+  page_count: 14
+  start_page: 91
+  end_page: 104
+- id: ADV-0223
+  title: Sunblight
+  source_book: 'Icewind Dale: Rime of the Frostmaiden'
+  publisher: Wizards of the Coast
+  page_count: 15
+  start_page: 171
+  end_page: 185
+- id: ADV-0092
+  title: An Actor's Life
+  source_book: The Game Master's Book of Random Encounters
+  publisher: Topix Media Lab
+  page_count: 16
+  start_page: 42
+  end_page: 57
+- id: ADV-0189
+  title: Tockworth's Clockworks
+  source_book: Keys from the Golden Vault
+  publisher: Wizards of the Coast
+  page_count: 16
+  start_page: 71
+  end_page: 86
+- id: ADV-0337
+  title: Obstacle Course
+  source_book: 'Waterdeep: Dungeon of the Mad Mage'
+  publisher: Wizards of the Coast
+  page_count: 16
+  start_page: 193
+  end_page: 208
+- id: ADV-0185
+  title: The Murkmire Malevolence
+  source_book: Keys from the Golden Vault
+  publisher: Wizards of the Coast
+  page_count: 16
+  start_page: 11
+  end_page: 26
+- id: ADV-0195
+  title: Affair on the Concordant Express
+  source_book: Keys from the Golden Vault
+  publisher: Wizards of the Coast
+  page_count: 16
+  start_page: 161
+  end_page: 176
+- id: ADV-0248
+  title: Siege of Kalaman
+  source_book: 'Dragonlance: Shadow of the Dragon Queen'
+  publisher: Wizards of the Coast
+  page_count: 27
+  start_page: 161
+  end_page: 187
+- id: ADV-0232
+  title: The Final Enemy
+  source_book: Ghosts of Saltmarsh
+  publisher: Wizards of the Coast
+  page_count: 29
+  start_page: 111
+  end_page: 139
+- id: ADV-0227
+  title: Doom of Ythryn
+  source_book: 'Icewind Dale: Rime of the Frostmaiden'
+  publisher: Wizards of the Coast
+  page_count: 30
+  start_page: 231
+  end_page: 260
+- id: ADV-0257
+  title: The Magister's Masquerade
+  source_book: 'Strixhaven: A Curriculum of Chaos'
+  publisher: Wizards of the Coast
+  page_count: 31
+  start_page: 125
+  end_page: 155
+- id: ADV-0056
+  title: Troubles in Winterhold
+  source_book: Secrets of the Drow Trilogy
+  publisher: Midnight Tower
+  page_count: 40
+  start_page: 4
+  end_page: 43
+- id: ADV-0279
+  title: Burly's Plan / The Heist
+  source_book: The Wild Beyond the Witchlight
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 51
+  end_page: 51
+- id: ADV-0283
+  title: Fey Beacons
+  source_book: The Wild Beyond the Witchlight
+  publisher: Wizards of the Coast
+  page_count: 2
+  start_page: 143
+  end_page: 144
+- id: ADV-0237
+  title: The First Mission
+  source_book: 'Dragonlance: Shadow of the Dragon Queen'
+  publisher: Wizards of the Coast
+  page_count: 3
+  start_page: 86
+  end_page: 88
+- id: ADV-0027
+  title: Return to Baldur's Gate
+  source_book: Heroes of Baldur's Gate
+  publisher: Arcanum Worlds
+  page_count: 3
+  start_page: 68
+  end_page: 70
+- id: ADV-0201
+  title: Foaming Mugs
+  source_book: 'Icewind Dale: Rime of the Frostmaiden'
+  publisher: Wizards of the Coast
+  page_count: 3
+  start_page: 34
+  end_page: 36
+- id: ADV-0070
+  title: Old Bonegrinder
+  source_book: Curse of Strahd
+  publisher: Wizards of the Coast
+  page_count: 4
+  start_page: 125
+  end_page: 128
+- id: ADV-0015
+  title: Most Excellent Fireworks
+  source_book: Shire Adventures
+  publisher: Free League Publishing
+  page_count: 4
+  start_page: 70
+  end_page: 73
+- id: ADV-0075
+  title: Yester Hill
+  source_book: Curse of Strahd
+  publisher: Wizards of the Coast
+  page_count: 4
+  start_page: 197
+  end_page: 200
+- id: ADV-0026
+  title: The Nest
+  source_book: Heroes of Baldur's Gate
+  publisher: Arcanum Worlds
+  page_count: 5
+  start_page: 63
+  end_page: 67
+- id: ADV-0016
+  title: Involuntary Postmen
+  source_book: Shire Adventures
+  publisher: Free League Publishing
+  page_count: 5
+  start_page: 74
+  end_page: 78
+- id: ADV-0284
+  title: Brigganock Mine
+  source_book: The Wild Beyond the Witchlight
+  publisher: Wizards of the Coast
+  page_count: 5
+  start_page: 145
+  end_page: 149
+- id: ADV-0020
+  title: Hell Hath Fury
+  source_book: The Game Master's Book of Legendary Dragons
+  publisher: Media Lab Books
+  page_count: 10
+  start_page: 222
+  end_page: 231
+- id: ADV-0173
+  title: Written in Blood
+  source_book: Journeys Through the Radiant Citadel
+  publisher: Wizards of the Coast
+  page_count: 11
+  start_page: 34
+  end_page: 44
+- id: ADV-0267
+  title: Wave Echo Cave
+  source_book: 'Phandelver and Below: The Shattered Obelisk'
+  publisher: Wizards of the Coast
+  page_count: 11
+  start_page: 65
+  end_page: 75
+- id: ADV-0112
+  title: Death at Sunset
+  source_book: Dragon Delves
+  publisher: Wizards of the Coast
+  page_count: 12
+  start_page: 12
+  end_page: 23
+- id: ADV-0121
+  title: Dragons of the Sandstone City
+  source_book: Dragon Delves
+  publisher: Wizards of the Coast
+  page_count: 12
+  start_page: 181
+  end_page: 192
+- id: ADV-0323
+  title: Dungeon Level
+  source_book: 'Waterdeep: Dungeon of the Mad Mage'
+  publisher: Wizards of the Coast
+  page_count: 14
+  start_page: 13
+  end_page: 26
+- id: ADV-0074
+  title: Amber Temple
+  source_book: Curse of Strahd
+  publisher: Wizards of the Coast
+  page_count: 16
+  start_page: 181
+  end_page: 196
+- id: ADV-0282
+  title: Loomlurch
+  source_book: The Wild Beyond the Witchlight
+  publisher: Wizards of the Coast
+  page_count: 18
+  start_page: 113
+  end_page: 130
+- id: ADV-0234
+  title: The Styes
+  source_book: Ghosts of Saltmarsh
+  publisher: Wizards of the Coast
+  page_count: 23
+  start_page: 163
+  end_page: 185
+- id: ADV-0229
+  title: Danger at Dunwater
+  source_book: Ghosts of Saltmarsh
+  publisher: Wizards of the Coast
+  page_count: 25
+  start_page: 61
+  end_page: 85
+- id: ADV-0276
+  title: Beyond a Lightless Star
+  source_book: 'Phandelver and Below: The Shattered Obelisk'
+  publisher: Wizards of the Coast
+  page_count: 32
+  start_page: 169
+  end_page: 200
+- id: ADV-0030
+  title: The Hidden Shrine of Tamoachan
+  source_book: Tales from the Yawning Portal
+  publisher: Wizards of the Coast
+  page_count: 34
+  start_page: 61
+  end_page: 94
+- id: ADV-0033
+  title: Against the Giants
+  source_book: Tales from the Yawning Portal
+  publisher: Wizards of the Coast
+  page_count: 46
+  start_page: 165
+  end_page: 210
+- id: ADV-0122
+  title: The Curse on Humble Hill
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 14
+  end_page: 14
+- id: ADV-0123
+  title: Robber Baron
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 15
+  end_page: 15
+- id: ADV-0124
+  title: The Siege of Shalespire Priory
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 16
+  end_page: 16
+- id: ADV-0125
+  title: The Weeping Goddess
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 17
+  end_page: 17
+- id: ADV-0126
+  title: Fury Grove
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 18
+  end_page: 18
+- id: ADV-0138
+  title: In for a Penny
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 30
+  end_page: 30
+- id: ADV-0139
+  title: Hell Ship
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 31
+  end_page: 31
+- id: ADV-0140
+  title: The Summerlight Ceremony
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 32
+  end_page: 32
+- id: ADV-0141
+  title: The Vault of Velsharoon
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 33
+  end_page: 33
+- id: ADV-0142
+  title: Dragon Orb
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 34
+  end_page: 34
+- id: ADV-0156
+  title: The Cost of Warmth
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 124
+  end_page: 124
+- id: ADV-0163
+  title: The Rushdown Well
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 187
+  end_page: 187
+- id: ADV-0164
+  title: Message in a Bottle
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 188
+  end_page: 188
+- id: ADV-0165
+  title: Wreck of the Silverhand
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 189
+  end_page: 189
+- id: ADV-0166
+  title: The Treaty of Ostoria
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 189
+  end_page: 189
+- id: ADV-0167
+  title: Tide of Teeth
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 222
+  end_page: 222
+- id: ADV-0155
+  title: The Temple of Transmutation
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 2
+  start_page: 88
+  end_page: 89
+- id: ADV-0160
+  title: Calim Crossing
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 2
+  start_page: 156
+  end_page: 157
+- id: ADV-0320
+  title: The Morkoth
+  source_book: Storm King's Thunder
+  publisher: Wizards of the Coast
+  page_count: 4
+  start_page: 221
+  end_page: 224
+- id: ADV-0295
+  title: 'Encounter 8: Courthouse'
+  source_book: 'Waterdeep: Dragon Heist'
+  publisher: Wizards of the Coast
+  page_count: 4
+  start_page: 80
+  end_page: 83
+- id: ADV-0296
+  title: 'Encounter 9: Cellar Complex'
+  source_book: 'Waterdeep: Dragon Heist'
+  publisher: Wizards of the Coast
+  page_count: 4
+  start_page: 83
+  end_page: 86
+- id: ADV-0241
+  title: Sunward Fortress
+  source_book: 'Dragonlance: Shadow of the Dragon Queen'
+  publisher: Wizards of the Coast
+  page_count: 5
+  start_page: 116
+  end_page: 120
+- id: ADV-0306
+  title: Tower of Zephyros
+  source_book: Storm King's Thunder
+  publisher: Wizards of the Coast
+  page_count: 5
+  start_page: 32
+  end_page: 36
+- id: ADV-0290
+  title: 'Encounter 1: Alley'
+  source_book: 'Waterdeep: Dragon Heist'
+  publisher: Wizards of the Coast
+  page_count: 5
+  start_page: 61
+  end_page: 65
+- id: ADV-0294
+  title: 'Encounter 7: Old Tower'
+  source_book: 'Waterdeep: Dragon Heist'
+  publisher: Wizards of the Coast
+  page_count: 5
+  start_page: 76
+  end_page: 80
+- id: ADV-0297
+  title: 'Encounter 10: Converted Windmill'
+  source_book: 'Waterdeep: Dragon Heist'
+  publisher: Wizards of the Coast
+  page_count: 5
+  start_page: 86
+  end_page: 90
+- id: ADV-0025
+  title: The Shadow Druids
+  source_book: Heroes of Baldur's Gate
+  publisher: Arcanum Worlds
+  page_count: 6
+  start_page: 57
+  end_page: 62
+- id: ADV-0203
+  title: The Unseen
+  source_book: 'Icewind Dale: Rime of the Frostmaiden'
+  publisher: Wizards of the Coast
+  page_count: 6
+  start_page: 47
+  end_page: 52
+- id: ADV-0204
+  title: Holed Up
+  source_book: 'Icewind Dale: Rime of the Frostmaiden'
+  publisher: Wizards of the Coast
+  page_count: 6
+  start_page: 53
+  end_page: 58
+- id: ADV-0205
+  title: Toil and Trouble
+  source_book: 'Icewind Dale: Rime of the Frostmaiden'
+  publisher: Wizards of the Coast
+  page_count: 6
+  start_page: 62
+  end_page: 67
+- id: ADV-0206
+  title: The Mead Must Flow
+  source_book: 'Icewind Dale: Rime of the Frostmaiden'
+  publisher: Wizards of the Coast
+  page_count: 6
+  start_page: 73
+  end_page: 78
+- id: ADV-0207
+  title: The White Moose
+  source_book: 'Icewind Dale: Rime of the Frostmaiden'
+  publisher: Wizards of the Coast
+  page_count: 6
+  start_page: 80
+  end_page: 85
+- id: ADV-0208
+  title: Mountain Climb
+  source_book: 'Icewind Dale: Rime of the Frostmaiden'
+  publisher: Wizards of the Coast
+  page_count: 6
+  start_page: 87
+  end_page: 92
+- id: ADV-0209
+  title: A Beautiful Mine
+  source_book: 'Icewind Dale: Rime of the Frostmaiden'
+  publisher: Wizards of the Coast
+  page_count: 6
+  start_page: 94
+  end_page: 99
+- id: ADV-0211
+  title: Black Cabin
+  source_book: 'Icewind Dale: Rime of the Frostmaiden'
+  publisher: Wizards of the Coast
+  page_count: 6
+  start_page: 116
+  end_page: 121
+- id: ADV-0214
+  title: Dark Duchess
+  source_book: 'Icewind Dale: Rime of the Frostmaiden'
+  publisher: Wizards of the Coast
+  page_count: 6
+  start_page: 127
+  end_page: 132
+- id: ADV-0215
+  title: Id Ascendant
+  source_book: 'Icewind Dale: Rime of the Frostmaiden'
+  publisher: Wizards of the Coast
+  page_count: 6
+  start_page: 132
+  end_page: 137
+- id: ADV-0217
+  title: Karkolohk
+  source_book: 'Icewind Dale: Rime of the Frostmaiden'
+  publisher: Wizards of the Coast
+  page_count: 6
+  start_page: 140
+  end_page: 145
+- id: ADV-0220
+  title: Skytower Shelter
+  source_book: 'Icewind Dale: Rime of the Frostmaiden'
+  publisher: Wizards of the Coast
+  page_count: 6
+  start_page: 161
+  end_page: 166
+- id: ADV-0321
+  title: Doom of the Desert
+  source_book: Storm King's Thunder
+  publisher: Wizards of the Coast
+  page_count: 6
+  start_page: 225
+  end_page: 230
+- id: ADV-0260
+  title: Clue in the Bayou
+  source_book: 'Strixhaven: A Curriculum of Chaos'
+  publisher: Wizards of the Coast
+  page_count: 6
+  start_page: 160
+  end_page: 165
+- id: ADV-0247
+  title: Threshold of the Heavens
+  source_book: 'Dragonlance: Shadow of the Dragon Queen'
+  publisher: Wizards of the Coast
+  page_count: 7
+  start_page: 153
+  end_page: 159
+- id: ADV-0224
+  title: Destruction's Light
+  source_book: 'Icewind Dale: Rime of the Frostmaiden'
+  publisher: Wizards of the Coast
+  page_count: 7
+  start_page: 187
+  end_page: 193
+- id: ADV-0263
+  title: Cragmaw Hideout
+  source_book: 'Phandelver and Below: The Shattered Obelisk'
+  publisher: Wizards of the Coast
+  page_count: 7
+  start_page: 19
+  end_page: 25
+- id: ADV-0017
+  title: To Soothe a Savage Beast
+  source_book: Shire Adventures
+  publisher: Free League Publishing
+  page_count: 7
+  start_page: 79
+  end_page: 85
+- id: ADV-0307
+  title: Bryn Shander
+  source_book: Storm King's Thunder
+  publisher: Wizards of the Coast
+  page_count: 7
+  start_page: 38
+  end_page: 44
+- id: ADV-0258
+  title: Midnight at Lorehold
+  source_book: 'Strixhaven: A Curriculum of Chaos'
+  publisher: Wizards of the Coast
+  page_count: 7
+  start_page: 149
+  end_page: 155
+- id: ADV-0261
+  title: Fortress Badlands
+  source_book: 'Strixhaven: A Curriculum of Chaos'
+  publisher: Wizards of the Coast
+  page_count: 7
+  start_page: 166
+  end_page: 172
+- id: ADV-0073
+  title: Wizard of Wines
+  source_book: Curse of Strahd
+  publisher: Wizards of the Coast
+  page_count: 8
+  start_page: 173
+  end_page: 180
+- id: ADV-0202
+  title: Black Swords
+  source_book: 'Icewind Dale: Rime of the Frostmaiden'
+  publisher: Wizards of the Coast
+  page_count: 8
+  start_page: 38
+  end_page: 45
+- id: ADV-0218
+  title: Lost Spire of Netheril
+  source_book: 'Icewind Dale: Rime of the Frostmaiden'
+  publisher: Wizards of the Coast
+  page_count: 8
+  start_page: 145
+  end_page: 152
+- id: ADV-0219
+  title: Revel's End
+  source_book: 'Icewind Dale: Rime of the Frostmaiden'
+  publisher: Wizards of the Coast
+  page_count: 8
+  start_page: 154
+  end_page: 161
+- id: ADV-0265
+  title: Ruins of Thundertree
+  source_book: 'Phandelver and Below: The Shattered Obelisk'
+  publisher: Wizards of the Coast
+  page_count: 8
+  start_page: 50
+  end_page: 57
+- id: ADV-0312
+  title: Den of the Hill Giants
+  source_book: Storm King's Thunder
+  publisher: Wizards of the Coast
+  page_count: 8
+  start_page: 137
+  end_page: 144
+- id: ADV-0239
+  title: The Lord's Arrival
+  source_book: 'Dragonlance: Shadow of the Dragon Queen'
+  publisher: Wizards of the Coast
+  page_count: 9
+  start_page: 95
+  end_page: 103
+- id: ADV-0252
+  title: Campus Daredevils
+  source_book: 'Strixhaven: A Curriculum of Chaos'
+  publisher: Wizards of the Coast
+  page_count: 9
+  start_page: 78
+  end_page: 86
+- id: ADV-0298
+  title: Vault of Dragons
+  source_book: 'Waterdeep: Dragon Heist'
+  publisher: Wizards of the Coast
+  page_count: 9
+  start_page: 90
+  end_page: 98
+- id: ADV-0077
+  title: Death House
+  source_book: Curse of Strahd
+  publisher: Wizards of the Coast
+  page_count: 10
+  start_page: 211
+  end_page: 220
+- id: ADV-0264
+  title: Redbrands' Hideout
+  source_book: 'Phandelver and Below: The Shattered Obelisk'
+  publisher: Wizards of the Coast
+  page_count: 10
+  start_page: 36
+  end_page: 45
+- id: ADV-0270
+  title: Talhundereth
+  source_book: 'Phandelver and Below: The Shattered Obelisk'
+  publisher: Wizards of the Coast
+  page_count: 10
+  start_page: 108
+  end_page: 117
+- id: ADV-0308
+  title: Goldenfields
+  source_book: Storm King's Thunder
+  publisher: Wizards of the Coast
+  page_count: 10
+  start_page: 44
+  end_page: 53
+- id: ADV-0309
+  title: Triboar
+  source_book: Storm King's Thunder
+  publisher: Wizards of the Coast
+  page_count: 10
+  start_page: 53
+  end_page: 62
+- id: ADV-0313
+  title: Canyon of the Stone Giants
+  source_book: Storm King's Thunder
+  publisher: Wizards of the Coast
+  page_count: 10
+  start_page: 145
+  end_page: 154
+- id: ADV-0318
+  title: Caught in the Tentacles
+  source_book: Storm King's Thunder
+  publisher: Wizards of the Coast
+  page_count: 10
+  start_page: 215
+  end_page: 224
+- id: ADV-0094
+  title: Nature vs. Nurture
+  source_book: The Game Master's Book of Random Encounters
+  publisher: Topix Media Lab
+  page_count: 10
+  start_page: 68
+  end_page: 77
+- id: ADV-0096
+  title: The Portal Prison
+  source_book: The Game Master's Book of Random Encounters
+  publisher: Topix Media Lab
+  page_count: 10
+  start_page: 92
+  end_page: 101
+- id: ADV-0339
+  title: Seadeeps
+  source_book: 'Waterdeep: Dungeon of the Mad Mage'
+  publisher: Wizards of the Coast
+  page_count: 10
+  start_page: 221
+  end_page: 230
+- id: ADV-0341
+  title: Caverns of Ooze
+  source_book: 'Waterdeep: Dungeon of the Mad Mage'
+  publisher: Wizards of the Coast
+  page_count: 10
+  start_page: 243
+  end_page: 252
+- id: ADV-0180
+  title: Between Tangled Roots
+  source_book: Journeys Through the Radiant Citadel
+  publisher: Wizards of the Coast
+  page_count: 12
+  start_page: 134
+  end_page: 145
+- id: ADV-0194
+  title: Heart of Ashes
+  source_book: Keys from the Golden Vault
+  publisher: Wizards of the Coast
+  page_count: 12
+  start_page: 149
+  end_page: 160
+- id: ADV-0340
+  title: Vanrakdoom
+  source_book: 'Waterdeep: Dungeon of the Mad Mage'
+  publisher: Wizards of the Coast
+  page_count: 12
+  start_page: 231
+  end_page: 242
+- id: ADV-0342
+  title: Runestone Caverns
+  source_book: 'Waterdeep: Dungeon of the Mad Mage'
+  publisher: Wizards of the Coast
+  page_count: 12
+  start_page: 253
+  end_page: 264
+- id: ADV-0343
+  title: Terminus Level
+  source_book: 'Waterdeep: Dungeon of the Mad Mage'
+  publisher: Wizards of the Coast
+  page_count: 12
+  start_page: 265
+  end_page: 276
+- id: ADV-0344
+  title: Shadowdusk Hold
+  source_book: 'Waterdeep: Dungeon of the Mad Mage'
+  publisher: Wizards of the Coast
+  page_count: 12
+  start_page: 277
+  end_page: 288
+- id: ADV-0119
+  title: Shivering Death
+  source_book: Dragon Delves
+  publisher: Wizards of the Coast
+  page_count: 13
+  start_page: 145
+  end_page: 157
+- id: ADV-0172
+  title: Salted Legacy
+  source_book: Journeys Through the Radiant Citadel
+  publisher: Wizards of the Coast
+  page_count: 13
+  start_page: 18
+  end_page: 30
+- id: ADV-0197
+  title: Fire and Darkness
+  source_book: Keys from the Golden Vault
+  publisher: Wizards of the Coast
+  page_count: 13
+  start_page: 195
+  end_page: 207
+- id: ADV-0113
+  title: Baker's Doesn't
+  source_book: Dragon Delves
+  publisher: Wizards of the Coast
+  page_count: 14
+  start_page: 29
+  end_page: 42
+- id: ADV-0120
+  title: A Copper for a Song
+  source_book: Dragon Delves
+  publisher: Wizards of the Coast
+  page_count: 14
+  start_page: 163
+  end_page: 176
+- id: ADV-0183
+  title: Buried Dynasty
+  source_book: Journeys Through the Radiant Citadel
+  publisher: Wizards of the Coast
+  page_count: 14
+  start_page: 186
+  end_page: 199
+- id: ADV-0186
+  title: The Stygian Gambit
+  source_book: Keys from the Golden Vault
+  publisher: Wizards of the Coast
+  page_count: 14
+  start_page: 27
+  end_page: 40
+- id: ADV-0187
+  title: Reach for the Stars
+  source_book: Keys from the Golden Vault
+  publisher: Wizards of the Coast
+  page_count: 14
+  start_page: 41
+  end_page: 54
+- id: ADV-0192
+  title: Vidorant's Vault
+  source_book: Keys from the Golden Vault
+  publisher: Wizards of the Coast
+  page_count: 14
+  start_page: 119
+  end_page: 132
+- id: ADV-0317
+  title: Hold of the Storm Giants
+  source_book: Storm King's Thunder
+  publisher: Wizards of the Coast
+  page_count: 14
+  start_page: 201
+  end_page: 214
+- id: ADV-0328
+  title: Lost Level
+  source_book: 'Waterdeep: Dungeon of the Mad Mage'
+  publisher: Wizards of the Coast
+  page_count: 14
+  start_page: 81
+  end_page: 94
+- id: ADV-0329
+  title: Maddgoth's Castle
+  source_book: 'Waterdeep: Dungeon of the Mad Mage'
+  publisher: Wizards of the Coast
+  page_count: 14
+  start_page: 95
+  end_page: 108
+- id: ADV-0336
+  title: Arcturiadoom
+  source_book: 'Waterdeep: Dungeon of the Mad Mage'
+  publisher: Wizards of the Coast
+  page_count: 14
+  start_page: 179
+  end_page: 192
+- id: ADV-0174
+  title: The Fiend of Hollow Mine
+  source_book: Journeys Through the Radiant Citadel
+  publisher: Wizards of the Coast
+  page_count: 15
+  start_page: 48
+  end_page: 62
+- id: ADV-0182
+  title: The Nightsea's Succor
+  source_book: Journeys Through the Radiant Citadel
+  publisher: Wizards of the Coast
+  page_count: 15
+  start_page: 168
+  end_page: 182
+- id: ADV-0273
+  title: Illithinoch
+  source_book: 'Phandelver and Below: The Shattered Obelisk'
+  publisher: Wizards of the Coast
+  page_count: 15
+  start_page: 146
+  end_page: 160
+- id: ADV-0116
+  title: The Dragon of Najkir
+  source_book: Dragon Delves
+  publisher: Wizards of the Coast
+  page_count: 16
+  start_page: 83
+  end_page: 98
+- id: ADV-0226
+  title: Caves of Hunger
+  source_book: 'Icewind Dale: Rime of the Frostmaiden'
+  publisher: Wizards of the Coast
+  page_count: 16
+  start_page: 215
+  end_page: 230
+- id: ADV-0188
+  title: Prisoner 13
+  source_book: Keys from the Golden Vault
+  publisher: Wizards of the Coast
+  page_count: 16
+  start_page: 55
+  end_page: 70
+- id: ADV-0190
+  title: Masterpiece Imbroglio
+  source_book: Keys from the Golden Vault
+  publisher: Wizards of the Coast
+  page_count: 16
+  start_page: 87
+  end_page: 102
+- id: ADV-0191
+  title: Axe from the Grave
+  source_book: Keys from the Golden Vault
+  publisher: Wizards of the Coast
+  page_count: 16
+  start_page: 103
+  end_page: 118
+- id: ADV-0193
+  title: Shard of the Accursed
+  source_book: Keys from the Golden Vault
+  publisher: Wizards of the Coast
+  page_count: 16
+  start_page: 133
+  end_page: 148
+- id: ADV-0043
+  title: Song of the Void
+  source_book: Labyrinth Adventures
+  publisher: Kobold Press
+  page_count: 16
+  start_page: 41
+  end_page: 56
+- id: ADV-0049
+  title: In the Court of the Clockwork Queen
+  source_book: Labyrinth Adventures
+  publisher: Kobold Press
+  page_count: 16
+  start_page: 142
+  end_page: 157
+- id: ADV-0310
+  title: Eye of the All-Father
+  source_book: Storm King's Thunder
+  publisher: Wizards of the Coast
+  page_count: 16
+  start_page: 121
+  end_page: 136
+- id: ADV-0087
+  title: The War of Pandesmos
+  source_book: 'Vecna: Eve of Ruin'
+  publisher: Wizards of the Coast
+  page_count: 16
+  start_page: 175
+  end_page: 190
+- id: ADV-0081
+  title: The Lambent Zenith's Last Voyage
+  source_book: 'Vecna: Eve of Ruin'
+  publisher: Wizards of the Coast
+  page_count: 16
+  start_page: 57
+  end_page: 72
+- id: ADV-0300
+  title: Hell of a Summer
+  source_book: 'Waterdeep: Dragon Heist'
+  publisher: Wizards of the Coast
+  page_count: 16
+  start_page: 115
+  end_page: 130
+- id: ADV-0301
+  title: Maestro's Fall
+  source_book: 'Waterdeep: Dragon Heist'
+  publisher: Wizards of the Coast
+  page_count: 16
+  start_page: 131
+  end_page: 146
+- id: ADV-0302
+  title: Winter Wizardry
+  source_book: 'Waterdeep: Dragon Heist'
+  publisher: Wizards of the Coast
+  page_count: 16
+  start_page: 147
+  end_page: 162
+- id: ADV-0324
+  title: Arcane Chambers
+  source_book: 'Waterdeep: Dungeon of the Mad Mage'
+  publisher: Wizards of the Coast
+  page_count: 16
+  start_page: 27
+  end_page: 42
+- id: ADV-0325
+  title: Sargauth Level
+  source_book: 'Waterdeep: Dungeon of the Mad Mage'
+  publisher: Wizards of the Coast
+  page_count: 16
+  start_page: 43
+  end_page: 58
+- id: ADV-0332
+  title: Muiral's Gauntlet
+  source_book: 'Waterdeep: Dungeon of the Mad Mage'
+  publisher: Wizards of the Coast
+  page_count: 16
+  start_page: 135
+  end_page: 150
+- id: ADV-0181
+  title: Shadow of the Sun
+  source_book: Journeys Through the Radiant Citadel
+  publisher: Wizards of the Coast
+  page_count: 17
+  start_page: 148
+  end_page: 164
+- id: ADV-0184
+  title: Orchids of the Invisible Mountain
+  source_book: Journeys Through the Radiant Citadel
+  publisher: Wizards of the Coast
+  page_count: 17
+  start_page: 202
+  end_page: 218
+- id: ADV-0050
+  title: Champion of Undeath
+  source_book: Labyrinth Adventures
+  publisher: Kobold Press
+  page_count: 17
+  start_page: 158
+  end_page: 174
+- id: ADV-0225
+  title: Auril's Abode
+  source_book: 'Icewind Dale: Rime of the Frostmaiden'
+  publisher: Wizards of the Coast
+  page_count: 18
+  start_page: 197
+  end_page: 214
+- id: ADV-0196
+  title: Party at Paliset Hall
+  source_book: Keys from the Golden Vault
+  publisher: Wizards of the Coast
+  page_count: 18
+  start_page: 177
+  end_page: 194
+- id: ADV-0041
+  title: The Lost Book of Mektar
+  source_book: Labyrinth Adventures
+  publisher: Kobold Press
+  page_count: 18
+  start_page: 7
+  end_page: 24
+- id: ADV-0048
+  title: Threading Rava's Needle
+  source_book: Labyrinth Adventures
+  publisher: Kobold Press
+  page_count: 18
+  start_page: 124
+  end_page: 141
+- id: ADV-0008
+  title: Messing About in Boats
+  source_book: Tales From Eriador
+  publisher: Free League Publishing
+  page_count: 18
+  start_page: 27
+  end_page: 44
+- id: ADV-0011
+  title: Wonder of the Northern World
+  source_book: Tales From Eriador
+  publisher: Free League Publishing
+  page_count: 18
+  start_page: 75
+  end_page: 92
+- id: ADV-0005
+  title: The Quest of Moria
+  source_book: Trials of Saruman
+  publisher: Free League Publishing
+  page_count: 18
+  start_page: 97
+  end_page: 114
+- id: ADV-0085
+  title: Tomb of Wayward Souls
+  source_book: 'Vecna: Eve of Ruin'
+  publisher: Wizards of the Coast
+  page_count: 18
+  start_page: 131
+  end_page: 148
+- id: ADV-0083
+  title: Death House
+  source_book: 'Vecna: Eve of Ruin'
+  publisher: Wizards of the Coast
+  page_count: 18
+  start_page: 93
+  end_page: 110
+- id: ADV-0331
+  title: Dweomercore
+  source_book: 'Waterdeep: Dungeon of the Mad Mage'
+  publisher: Wizards of the Coast
+  page_count: 18
+  start_page: 117
+  end_page: 134
+- id: ADV-0117
+  title: The Forbidden Vale
+  source_book: Dragon Delves
+  publisher: Wizards of the Coast
+  page_count: 19
+  start_page: 105
+  end_page: 123
+- id: ADV-0045
+  title: Missing Darkness
+  source_book: Labyrinth Adventures
+  publisher: Kobold Press
+  page_count: 19
+  start_page: 72
+  end_page: 90
+- id: ADV-0047
+  title: A Clockwork Mind
+  source_book: Labyrinth Adventures
+  publisher: Kobold Press
+  page_count: 19
+  start_page: 105
+  end_page: 123
+- id: ADV-0051
+  title: Maze Runner
+  source_book: Labyrinth Adventures
+  publisher: Kobold Press
+  page_count: 19
+  start_page: 175
+  end_page: 193
+- id: ADV-0052
+  title: What Dwells Beneath
+  source_book: Labyrinth Adventures
+  publisher: Kobold Press
+  page_count: 20
+  start_page: 194
+  end_page: 213
+- id: ADV-0315
+  title: Forge of the Fire Giants
+  source_book: Storm King's Thunder
+  publisher: Wizards of the Coast
+  page_count: 20
+  start_page: 167
+  end_page: 186
+- id: ADV-0001
+  title: The Beast of Dunland
+  source_book: Trials of Saruman
+  publisher: Free League Publishing
+  page_count: 20
+  start_page: 21
+  end_page: 40
+- id: ADV-0084
+  title: Night of Blue Fire
+  source_book: 'Vecna: Eve of Ruin'
+  publisher: Wizards of the Coast
+  page_count: 20
+  start_page: 111
+  end_page: 130
+- id: ADV-0086
+  title: The Dragon Queen's Pride
+  source_book: 'Vecna: Eve of Ruin'
+  publisher: Wizards of the Coast
+  page_count: 20
+  start_page: 149
+  end_page: 168
+- id: ADV-0079
+  title: Return from Neverdeath Graveyard
+  source_book: 'Vecna: Eve of Ruin'
+  publisher: Wizards of the Coast
+  page_count: 20
+  start_page: 17
+  end_page: 36
+- id: ADV-0080
+  title: The Wizards Three
+  source_book: 'Vecna: Eve of Ruin'
+  publisher: Wizards of the Coast
+  page_count: 20
+  start_page: 37
+  end_page: 56
+- id: ADV-0082
+  title: The Ruined Colossus
+  source_book: 'Vecna: Eve of Ruin'
+  publisher: Wizards of the Coast
+  page_count: 20
+  start_page: 73
+  end_page: 92
+- id: ADV-0012
+  title: The Quest of Amon Guruthos
+  source_book: Tales From Eriador
+  publisher: Free League Publishing
+  page_count: 22
+  start_page: 93
+  end_page: 114
+- id: ADV-0004
+  title: There Let Them Lie Until the End
+  source_book: Trials of Saruman
+  publisher: Free League Publishing
+  page_count: 22
+  start_page: 75
+  end_page: 96
+- id: ADV-0061
+  title: Enter Drakenberg Castle
+  source_book: Rise of the Ice Dragons Trilogy
+  publisher: Midnight Tower
+  page_count: 23
+  start_page: 82
+  end_page: 104
+- id: ADV-0281
+  title: Downfall
+  source_book: The Wild Beyond the Witchlight
+  publisher: Wizards of the Coast
+  page_count: 24
+  start_page: 74
+  end_page: 97
+- id: ADV-0259
+  title: A Reckoning in Ruins
+  source_book: 'Strixhaven: A Curriculum of Chaos'
+  publisher: Wizards of the Coast
+  page_count: 25
+  start_page: 157
+  end_page: 181
+- id: ADV-0245
+  title: City of Lost Names
+  source_book: 'Dragonlance: Shadow of the Dragon Queen'
+  publisher: Wizards of the Coast
+  page_count: 26
+  start_page: 135
+  end_page: 160
+- id: ADV-0037
+  title: Beyond the Crystal Cave
+  source_book: Quests from the Infinite Staircase
+  publisher: Wizards of the Coast
+  page_count: 26
+  start_page: 76
+  end_page: 101
+- id: ADV-0038
+  title: Pharaoh
+  source_book: Quests from the Infinite Staircase
+  publisher: Wizards of the Coast
+  page_count: 26
+  start_page: 102
+  end_page: 127
+- id: ADV-0254
+  title: Hunt for Mage Tower
+  source_book: 'Strixhaven: A Curriculum of Chaos'
+  publisher: Wizards of the Coast
+  page_count: 27
+  start_page: 97
+  end_page: 123
+- id: ADV-0006
+  title: The Ithil-stone
+  source_book: Trials of Saruman
+  publisher: Free League Publishing
+  page_count: 27
+  start_page: 115
+  end_page: 141
+- id: ADV-0055
+  title: Under the Black Mountains
+  source_book: Hunter's Full Moon Trilogy
+  publisher: Midnight Tower
+  page_count: 28
+  start_page: 94
+  end_page: 121
+- id: ADV-0039
+  title: The Lost Caverns of Tsojcanth
+  source_book: Quests from the Infinite Staircase
+  publisher: Wizards of the Coast
+  page_count: 28
+  start_page: 128
+  end_page: 155
+- id: ADV-0029
+  title: The Forge of Fury
+  source_book: Tales from the Yawning Portal
+  publisher: Wizards of the Coast
+  page_count: 28
+  start_page: 33
+  end_page: 60
+- id: ADV-0036
+  title: When a Star Falls
+  source_book: Quests from the Infinite Staircase
+  publisher: Wizards of the Coast
+  page_count: 30
+  start_page: 46
+  end_page: 75
+- id: ADV-0035
+  title: The Lost City
+  source_book: Quests from the Infinite Staircase
+  publisher: Wizards of the Coast
+  page_count: 31
+  start_page: 15
+  end_page: 45
+- id: ADV-0059
+  title: The Frozen Labyrinth
+  source_book: Rise of the Ice Dragons Trilogy
+  publisher: Midnight Tower
+  page_count: 34
+  start_page: 4
+  end_page: 37
+- id: ADV-0058
+  title: The Spider Queen's Ritual
+  source_book: Secrets of the Drow Trilogy
+  publisher: Midnight Tower
+  page_count: 41
+  start_page: 84
+  end_page: 124
+- id: ADV-0060
+  title: The Quest for the Last Orbstone
+  source_book: Rise of the Ice Dragons Trilogy
+  publisher: Midnight Tower
+  page_count: 44
+  start_page: 38
+  end_page: 81
+- id: ADV-0063
+  title: Sea Monsters Ahead, Captain!
+  source_book: The Prophecy of Nine Omens Trilogy
+  publisher: Midnight Tower
+  page_count: 44
+  start_page: 34
+  end_page: 77
+- id: ADV-0066
+  title: Three Witches and a Missing Princess
+  source_book: Battle for the Realm Trilogy
+  publisher: Midnight Tower
+  page_count: 52
+  start_page: 52
+  end_page: 103
+- id: ADV-0067
+  title: At the Gate to the Abyss
+  source_book: Battle for the Realm Trilogy
+  publisher: Midnight Tower
+  page_count: 53
+  start_page: 104
+  end_page: 156

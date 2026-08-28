@@ -1,0 +1,13 @@
+case_index,pack_index,pack_case_index,adventure_id,adventure_title,source_book,publisher,page_count,dimension,profile,manifest_path
+301,7,1,ADV-0006,The Ithil-stone,Trials of Saruman,Free League Publishing,27,# of Sessions,nos-clean-blind-v1,experiments/production-backlog-008/production-backlog-008-qwen27-nos-adv0006-v1.yml
+302,7,2,ADV-0055,Under the Black Mountains,Hunter's Full Moon Trilogy,Midnight Tower,28,# of Sessions,nos-clean-blind-v1,experiments/production-backlog-008/production-backlog-008-qwen27-nos-adv0055-v1.yml
+303,7,3,ADV-0039,The Lost Caverns of Tsojcanth,Quests from the Infinite Staircase,Wizards of the Coast,28,# of Sessions,nos-clean-blind-v1,experiments/production-backlog-008/production-backlog-008-qwen27-nos-adv0039-v1.yml
+304,7,4,ADV-0029,The Forge of Fury,Tales from the Yawning Portal,Wizards of the Coast,28,# of Sessions,nos-clean-blind-v1,experiments/production-backlog-008/production-backlog-008-qwen27-nos-adv0029-v1.yml
+305,7,5,ADV-0036,When a Star Falls,Quests from the Infinite Staircase,Wizards of the Coast,30,# of Sessions,nos-clean-blind-v1,experiments/production-backlog-008/production-backlog-008-qwen27-nos-adv0036-v1.yml
+306,7,6,ADV-0035,The Lost City,Quests from the Infinite Staircase,Wizards of the Coast,31,# of Sessions,nos-clean-blind-v1,experiments/production-backlog-008/production-backlog-008-qwen27-nos-adv0035-v1.yml
+307,7,7,ADV-0059,The Frozen Labyrinth,Rise of the Ice Dragons Trilogy,Midnight Tower,34,# of Sessions,nos-clean-blind-v1,experiments/production-backlog-008/production-backlog-008-qwen27-nos-adv0059-v1.yml
+308,7,8,ADV-0058,The Spider Queen's Ritual,Secrets of the Drow Trilogy,Midnight Tower,41,# of Sessions,nos-clean-blind-v1,experiments/production-backlog-008/production-backlog-008-qwen27-nos-adv0058-v1.yml
+309,7,9,ADV-0060,The Quest for the Last Orbstone,Rise of the Ice Dragons Trilogy,Midnight Tower,44,# of Sessions,nos-clean-blind-v1,experiments/production-backlog-008/production-backlog-008-qwen27-nos-adv0060-v1.yml
+310,7,10,ADV-0063,"Sea Monsters Ahead, Captain!",The Prophecy of Nine Omens Trilogy,Midnight Tower,44,# of Sessions,nos-clean-blind-v1,experiments/production-backlog-008/production-backlog-008-qwen27-nos-adv0063-v1.yml
+311,7,11,ADV-0066,Three Witches and a Missing Princess,Battle for the Realm Trilogy,Midnight Tower,52,# of Sessions,nos-clean-blind-v1,experiments/production-backlog-008/production-backlog-008-qwen27-nos-adv0066-v1.yml
+312,7,12,ADV-0067,At the Gate to the Abyss,Battle for the Realm Trilogy,Midnight Tower,53,# of Sessions,nos-clean-blind-v1,experiments/production-backlog-008/production-backlog-008-qwen27-nos-adv0067-v1.yml

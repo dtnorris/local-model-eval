@@ -13,12 +13,12 @@ replicates: 1
 external_api_cost_usd: 0.0
 no_favorable_rerun: true
 catalog:
-  filename: 5e_Adventure_Master_Catalog_2.9.xlsx
-  sha256: 450774315756e2d6a8950782e5441a80bfbd4f077d7fe29fb8fac00107562995
+  filename: 5e_Adventure_Master_Catalog_2.9.1.xlsx
+  sha256: ccf7c3086a899e5ff4905414a2d6d4328287b8b427d35943164698469f09b41b
   expected_total_adventures: 330
   expected_under_page_limit: 321
-  expected_prepopulated_under_page_limit: 8
-  expected_eligible_blank: 313
+  expected_prepopulated_under_page_limit: 9
+  expected_eligible_blank: 312
 protected_scorer_files:
   - lib/af_scoring/afao.rb
   - lib/af_scoring/cli.rb

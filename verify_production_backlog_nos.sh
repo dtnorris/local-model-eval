@@ -174,9 +174,10 @@ rows = AFScoring::XlsxReader.new(catalog_path).rows(sheet_name: "Adventure Catal
 headers = rows.shift.map { |v| v.to_s.strip == "ADV - ID" ? "Adventure ID" : v.to_s.strip }
 blank = ->(v) { v.nil? || v.to_s.strip.empty? }
 int = ->(v) { begin Integer(Float(v)) rescue nil end }
-under = []; prepop = []; eligible = []
+under = []; prepop = []; eligible = []; catalog_ids = []
 rows.each do |row|
   values = headers.zip(row).to_h; id = values["Adventure ID"].to_s.strip; next if id.empty?
+  catalog_ids << id
   pages = int.call(values["Page Count"])
   s = int.call(values["Start Page"]); e = int.call(values["End Page"])
   pages ||= (e - s + 1) if s && e && e >= s
@@ -185,7 +186,9 @@ rows.each do |row|
   if blank.call(values[q.fetch("catalog_column")]); eligible << id; else prepop << id; end
 end
 contract = q.fetch("catalog")
-abort "AMC row count #{rows.length}; expected #{contract.fetch('expected_total_adventures')}" unless rows.length == Integer(contract.fetch("expected_total_adventures"))
+duplicates = catalog_ids.tally.select { |_id, count| count > 1 }
+abort "AMC duplicate Adventure IDs: #{duplicates.keys.join(', ')}" unless duplicates.empty?
+abort "AMC adventure count #{catalog_ids.length}; expected #{contract.fetch('expected_total_adventures')}" unless catalog_ids.length == Integer(contract.fetch("expected_total_adventures"))
 abort "under-100 count #{under.length}; expected #{contract.fetch('expected_under_page_limit')}" unless under.length == Integer(contract.fetch("expected_under_page_limit"))
 abort "prepopulated NoS count #{prepop.length}; expected #{contract.fetch('expected_prepopulated_under_page_limit')}" unless prepop.length == Integer(contract.fetch("expected_prepopulated_under_page_limit"))
 abort "eligible blank NoS count #{eligible.length}; expected #{contract.fetch('expected_eligible_blank')}" unless eligible.length == Integer(contract.fetch("expected_eligible_blank"))
@@ -194,7 +197,7 @@ abort "B008 is not exhaustive or AMC order changed" unless selected == eligible
 index_ids = CSV.read(index_path, headers: true, encoding: "UTF-8").map { |r| r["adventure_id"] }
 abort "case index no longer matches exhaustive AMC population" unless index_ids == eligible
 puts "AMC population: PASS"
-puts "  total adventures: #{rows.length}"
+puts "  total adventures: #{catalog_ids.length}"
 puts "  Page Count <100: #{under.length}"
 puts "  accepted NoS already present: #{prepop.length}"
 puts "  B008 blank eligible: #{eligible.length}"

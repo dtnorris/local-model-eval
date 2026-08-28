@@ -1,0 +1,53 @@
+name: production-backlog-008-qwen27-nos-adv0181-v1
+purpose: >
+  Interruptible AdventureFinder local production scoring. Produce one proposed
+  # of Sessions assessment for canonical ADV-0181 using the locally
+  qualified qwen3.6:27b clean blind NoS path. The target is within the frozen
+  Page Count < 100 qualification domain and had a blank accepted AMC value when
+  this queue was generated.
+dispatch: pool
+
+models:
+  - qwen27
+
+dimension: "# of Sessions"
+
+adventures:
+  - ADV-0181
+
+replicates: 1
+
+workers:
+  - mac
+
+required_worker_labels:
+  - local
+
+scorer:
+  repo: ../../../af-cli-scoring-utility
+  mode: positional
+  extra_args: []
+
+production_contract:
+  contract_type: nos_local_qualified_v1
+  disposition: local-qualified-background
+  queue: production-backlog-008
+  candidate_model: qwen27
+  qualified_profile: nos-clean-blind-v1
+  qualified_scorer_baseline: 4fcd7fe84d56354a2bc22d9b815b9f170d7223ad
+  max_page_count_exclusive: 100
+  replicate_count: 1
+  no_favorable_rerun: true
+  external_api_cost_usd: 0.0
+
+success_criteria:
+  - Structured scorer output validates and remains grounded to the canonical adventure source unit.
+  - Use the frozen clean blind # of Sessions profile with qwen3.6:27b.
+  - Preserve the single completed sample as a proposed production assessment pending QC/ingestion.
+  - Do not use an existing accepted score or calibration target as expected-answer context.
+
+stop_conditions:
+  - Do not rerun a completed case to seek a more favorable sample.
+  - Queue-level repeated operational failures trigger the background runner circuit breaker.
+
+cost_cap_usd: 0.01

@@ -196,11 +196,13 @@ audit = []
 candidates = []
 under_limit = 0
 prepopulated_under_limit = 0
+catalog_ids = []
 
 rows.each do |row|
   values = headers.zip(row).to_h
   id = values["Adventure ID"].to_s.strip
   next if id.empty?
+  catalog_ids << id
   page_count = integer_or_nil(values["Page Count"])
   start_page = integer_or_nil(values["Start Page"])
   end_page = integer_or_nil(values["End Page"])
@@ -242,7 +244,9 @@ expected_total = Integer(contract_catalog.fetch("expected_total_adventures"))
 expected_under = Integer(contract_catalog.fetch("expected_under_page_limit"))
 expected_prepop = Integer(contract_catalog.fetch("expected_prepopulated_under_page_limit"))
 expected_eligible = Integer(contract_catalog.fetch("expected_eligible_blank"))
-abort_with("AMC adventure count #{rows.length}; expected #{expected_total}") unless rows.length == expected_total
+duplicate_ids = catalog_ids.tally.select { |_id, count| count > 1 }
+abort_with("AMC duplicate Adventure IDs: #{duplicate_ids.keys.join(', ')}") unless duplicate_ids.empty?
+abort_with("AMC adventure count #{catalog_ids.length}; expected #{expected_total}") unless catalog_ids.length == expected_total
 abort_with("under-100 count #{under_limit}; expected #{expected_under}") unless under_limit == expected_under
 abort_with("prepopulated under-100 NoS count #{prepopulated_under_limit}; expected #{expected_prepop}") unless prepopulated_under_limit == expected_prepop
 abort_with("eligible blank NoS count #{candidates.length}; expected #{expected_eligible}; reservations=#{reserved.length}") unless candidates.length == expected_eligible
