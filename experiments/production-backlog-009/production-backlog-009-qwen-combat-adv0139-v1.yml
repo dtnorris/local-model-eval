@@ -1,0 +1,50 @@
+name: production-backlog-009-qwen-combat-adv0139-v1
+purpose: >
+  Interruptible AdventureFinder background production scoring. Produce one
+  proposed assessment for canonical ADV-0139 on the locally
+  qualified AFAO dimension Combat Emphasis, using Qwen3.6 35B-A3B
+  with one replicate. The queue was selected from blank qualified-dimension
+  AMC cells and frozen before inference.
+dispatch: pool
+
+models:
+  - qwen
+
+dimension: Combat Emphasis
+
+adventures:
+  - ADV-0139
+
+replicates: 1
+
+workers:
+  - mac
+
+required_worker_labels:
+  - local
+
+scorer:
+  repo: ../../../af-cli-scoring-utility
+  mode: positional
+  extra_args: []
+
+production_contract:
+  disposition: local-qualified-background
+  queue: production-backlog-009
+  candidate_model: qwen
+  qualified_profile: production-base
+  replicate_count: 1
+  no_favorable_rerun: true
+  external_api_cost_usd: 0.0
+
+success_criteria:
+  - Structured scorer output validates and remains grounded to the canonical adventure source unit.
+  - Use the frozen locally qualified profile for Combat Emphasis.
+  - Preserve the single completed sample as a proposed production assessment pending QC/ingestion.
+  - Do not use an existing accepted score or calibration target as expected-answer context.
+
+stop_conditions:
+  - Do not rerun a completed case to seek a more favorable sample.
+  - Queue-level repeated operational failures trigger the background runner circuit breaker.
+
+cost_cap_usd: 0.01

@@ -1,0 +1,794 @@
+---
+version: 1
+queue: production-backlog-009
+generated_at: '2026-08-28T07:16:10-04:00'
+local_model_eval_commit: 27257e8633d9d92b7d7ff8f3ad54c60536986782
+scorer_commit: 92e33740bf25522b7cac5d59b2b8c80c8674e371
+scorer_repo_path: "../af-cli-scoring-utility"
+catalog_path: "/Users/davidnorris/code/af-xlsx-data-sources/5e_Adventure_Master_Catalog_2.12.xlsx"
+catalog_sha256: 006f00625111b980a845120540c069d6f0083a8c5026ea0db582425dca93b350
+model_alias: qwen
+ollama_model: qwen3.6:35b-a3b
+packs: 2
+adventures_per_pack: 21
+max_page_count: 160
+selection_strategy: stratified_page_count_source_diverse
+max_source_share: 0.35
+max_adventures_per_source_book: 15
+page_strata:
+- name: 1-2-pages
+  min_pages: 1
+  max_pages: 2
+  weight: 11
+  quota: 11
+- name: 3-10-pages
+  min_pages: 3
+  max_pages: 10
+  weight: 5
+  quota: 5
+- name: 11-30-pages
+  min_pages: 11
+  max_pages: 30
+  weight: 23
+  quota: 23
+- name: 31-60-pages
+  min_pages: 31
+  max_pages: 60
+  weight: 3
+  quota: 3
+- name: 61-160-pages
+  min_pages: 61
+  max_pages: 160
+  weight: 0
+  quota: 0
+qualified_dimensions: &1
+- name: Levels
+  slug: levels
+  profile: levels-v2.1
+  catalog_columns:
+  - Level Start
+  - Level End
+  selection_gate: false
+- name: Combat Emphasis
+  slug: combat
+  profile: production-base
+- name: Structural Openness
+  slug: structural-openness
+  profile: production-base
+- name: Darkness / Horror Intensity
+  slug: darkness
+  profile: production-base
+- name: Player Beginner Suitability
+  slug: player-beginner
+  profile: production-base
+- name: Social Interaction Emphasis
+  slug: social
+  profile: phase6-v0.3
+  env_name: AF_SOCIAL_INTERACTION_GUARDRAIL_PROFILE
+  env_value: phase6-v0.3
+- name: Investigation Emphasis
+  slug: investigation
+  profile: phase6-v0.4
+  env_name: AF_INVESTIGATION_GUARDRAIL_PROFILE
+  env_value: phase6-v0.4
+qualification_contract:
+  version: 1
+  model_alias: qwen
+  ollama_model: qwen3.6:35b-a3b
+  social_investigation_qualified_scorer_baseline: e49a198b36774d47ef136699573b6db6632032bc
+  dimensions: *1
+selected_adventures:
+- id: ADV-0122
+  title: The Curse on Humble Hill
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 14
+  end_page: 14
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 1-2-pages
+- id: ADV-0320
+  title: The Morkoth
+  source_book: Storm King's Thunder
+  publisher: Wizards of the Coast
+  page_count: 4
+  start_page: 221
+  end_page: 224
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 3-10-pages
+- id: ADV-0194
+  title: Heart of Ashes
+  source_book: Keys from the Golden Vault
+  publisher: Wizards of the Coast
+  page_count: 12
+  start_page: 149
+  end_page: 160
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 11-30-pages
+- id: ADV-0035
+  title: The Lost City
+  source_book: Quests from the Infinite Staircase
+  publisher: Wizards of the Coast
+  page_count: 31
+  start_page: 15
+  end_page: 45
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 31-60-pages
+- id: ADV-0123
+  title: Robber Baron
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 15
+  end_page: 15
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 1-2-pages
+- id: ADV-0295
+  title: 'Encounter 8: Courthouse'
+  source_book: 'Waterdeep: Dragon Heist'
+  publisher: Wizards of the Coast
+  page_count: 4
+  start_page: 80
+  end_page: 83
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 3-10-pages
+- id: ADV-0226
+  title: Caves of Hunger
+  source_book: 'Icewind Dale: Rime of the Frostmaiden'
+  publisher: Wizards of the Coast
+  page_count: 16
+  start_page: 215
+  end_page: 230
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 11-30-pages
+- id: ADV-0059
+  title: The Frozen Labyrinth
+  source_book: Rise of the Ice Dragons Trilogy
+  publisher: Midnight Tower
+  page_count: 34
+  start_page: 4
+  end_page: 37
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 31-60-pages
+- id: ADV-0124
+  title: The Siege of Shalespire Priory
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 16
+  end_page: 16
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 1-2-pages
+- id: ADV-0270
+  title: Talhundereth
+  source_book: 'Phandelver and Below: The Shattered Obelisk'
+  publisher: Wizards of the Coast
+  page_count: 10
+  start_page: 108
+  end_page: 117
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 3-10-pages
+- id: ADV-0081
+  title: The Lambent Zenith's Last Voyage
+  source_book: 'Vecna: Eve of Ruin'
+  publisher: Wizards of the Coast
+  page_count: 16
+  start_page: 57
+  end_page: 72
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 11-30-pages
+- id: ADV-0060
+  title: The Quest for the Last Orbstone
+  source_book: Rise of the Ice Dragons Trilogy
+  publisher: Midnight Tower
+  page_count: 44
+  start_page: 38
+  end_page: 81
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 31-60-pages
+- id: ADV-0125
+  title: The Weeping Goddess
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 17
+  end_page: 17
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 1-2-pages
+- id: ADV-0296
+  title: 'Encounter 9: Cellar Complex'
+  source_book: 'Waterdeep: Dragon Heist'
+  publisher: Wizards of the Coast
+  page_count: 4
+  start_page: 83
+  end_page: 86
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 3-10-pages
+- id: ADV-0001
+  title: The Beast of Dunland
+  source_book: Trials of Saruman
+  publisher: Free League Publishing
+  page_count: 20
+  start_page: 21
+  end_page: 40
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 11-30-pages
+- id: ADV-0126
+  title: Fury Grove
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 18
+  end_page: 18
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 1-2-pages
+- id: ADV-0318
+  title: Caught in the Tentacles
+  source_book: Storm King's Thunder
+  publisher: Wizards of the Coast
+  page_count: 10
+  start_page: 215
+  end_page: 224
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 3-10-pages
+- id: ADV-0061
+  title: Enter Drakenberg Castle
+  source_book: Rise of the Ice Dragons Trilogy
+  publisher: Midnight Tower
+  page_count: 23
+  start_page: 82
+  end_page: 104
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 11-30-pages
+- id: ADV-0138
+  title: In for a Penny
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 30
+  end_page: 30
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 1-2-pages
+- id: ADV-0245
+  title: City of Lost Names
+  source_book: 'Dragonlance: Shadow of the Dragon Queen'
+  publisher: Wizards of the Coast
+  page_count: 26
+  start_page: 135
+  end_page: 160
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 11-30-pages
+- id: ADV-0139
+  title: Hell Ship
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 31
+  end_page: 31
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 1-2-pages
+- id: ADV-0186
+  title: The Stygian Gambit
+  source_book: Keys from the Golden Vault
+  publisher: Wizards of the Coast
+  page_count: 14
+  start_page: 27
+  end_page: 40
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 11-30-pages
+- id: ADV-0140
+  title: The Summerlight Ceremony
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 32
+  end_page: 32
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 1-2-pages
+- id: ADV-0087
+  title: The War of Pandesmos
+  source_book: 'Vecna: Eve of Ruin'
+  publisher: Wizards of the Coast
+  page_count: 16
+  start_page: 175
+  end_page: 190
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 11-30-pages
+- id: ADV-0141
+  title: The Vault of Velsharoon
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 33
+  end_page: 33
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 1-2-pages
+- id: ADV-0225
+  title: Auril's Abode
+  source_book: 'Icewind Dale: Rime of the Frostmaiden'
+  publisher: Wizards of the Coast
+  page_count: 18
+  start_page: 197
+  end_page: 214
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 11-30-pages
+- id: ADV-0142
+  title: Dragon Orb
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 34
+  end_page: 34
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 1-2-pages
+- id: ADV-0187
+  title: Reach for the Stars
+  source_book: Keys from the Golden Vault
+  publisher: Wizards of the Coast
+  page_count: 14
+  start_page: 41
+  end_page: 54
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 11-30-pages
+- id: ADV-0156
+  title: The Cost of Warmth
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 124
+  end_page: 124
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 1-2-pages
+- id: ADV-0083
+  title: Death House
+  source_book: 'Vecna: Eve of Ruin'
+  publisher: Wizards of the Coast
+  page_count: 18
+  start_page: 93
+  end_page: 110
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 11-30-pages
+- id: ADV-0192
+  title: Vidorant's Vault
+  source_book: Keys from the Golden Vault
+  publisher: Wizards of the Coast
+  page_count: 14
+  start_page: 119
+  end_page: 132
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 11-30-pages
+- id: ADV-0085
+  title: Tomb of Wayward Souls
+  source_book: 'Vecna: Eve of Ruin'
+  publisher: Wizards of the Coast
+  page_count: 18
+  start_page: 131
+  end_page: 148
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 11-30-pages
+- id: ADV-0188
+  title: Prisoner 13
+  source_book: Keys from the Golden Vault
+  publisher: Wizards of the Coast
+  page_count: 16
+  start_page: 55
+  end_page: 70
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 11-30-pages
+- id: ADV-0079
+  title: Return from Neverdeath Graveyard
+  source_book: 'Vecna: Eve of Ruin'
+  publisher: Wizards of the Coast
+  page_count: 20
+  start_page: 17
+  end_page: 36
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 11-30-pages
+- id: ADV-0190
+  title: Masterpiece Imbroglio
+  source_book: Keys from the Golden Vault
+  publisher: Wizards of the Coast
+  page_count: 16
+  start_page: 87
+  end_page: 102
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 11-30-pages
+- id: ADV-0080
+  title: The Wizards Three
+  source_book: 'Vecna: Eve of Ruin'
+  publisher: Wizards of the Coast
+  page_count: 20
+  start_page: 37
+  end_page: 56
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 11-30-pages
+- id: ADV-0191
+  title: Axe from the Grave
+  source_book: Keys from the Golden Vault
+  publisher: Wizards of the Coast
+  page_count: 16
+  start_page: 103
+  end_page: 118
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 11-30-pages
+- id: ADV-0082
+  title: The Ruined Colossus
+  source_book: 'Vecna: Eve of Ruin'
+  publisher: Wizards of the Coast
+  page_count: 20
+  start_page: 73
+  end_page: 92
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 11-30-pages
+- id: ADV-0193
+  title: Shard of the Accursed
+  source_book: Keys from the Golden Vault
+  publisher: Wizards of the Coast
+  page_count: 16
+  start_page: 133
+  end_page: 148
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 11-30-pages
+- id: ADV-0084
+  title: Night of Blue Fire
+  source_book: 'Vecna: Eve of Ruin'
+  publisher: Wizards of the Coast
+  page_count: 20
+  start_page: 111
+  end_page: 130
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 11-30-pages
+- id: ADV-0196
+  title: Party at Paliset Hall
+  source_book: Keys from the Golden Vault
+  publisher: Wizards of the Coast
+  page_count: 18
+  start_page: 177
+  end_page: 194
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 11-30-pages
+- id: ADV-0086
+  title: The Dragon Queen's Pride
+  source_book: 'Vecna: Eve of Ruin'
+  publisher: Wizards of the Coast
+  page_count: 20
+  start_page: 149
+  end_page: 168
+  populated_qualified_dimensions: []
+  runnable_qualified_dimensions:
+  - Levels
+  - Combat Emphasis
+  - Structural Openness
+  - Darkness / Horror Intensity
+  - Player Beginner Suitability
+  - Social Interaction Emphasis
+  - Investigation Emphasis
+  page_stratum: 11-30-pages

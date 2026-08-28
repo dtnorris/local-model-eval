@@ -70,16 +70,25 @@ def scorer_catalog_path(scorer_repo)
   AFScoring::Config.new(project_root: scorer_repo).catalog_path
 end
 
-def reserved_adventure_ids(root)
+def reserved_adventure_ids(root, dimension_names:)
   ids = {}
 
   Dir.glob(File.join(root, "**", "*case_index.csv")).sort.each do |path|
     begin
       rows = CSV.read(path, headers: true, encoding: "UTF-8")
       next unless rows.headers&.include?("adventure_id")
+      dimension_aware = rows.headers.include?("dimension")
+
       rows.each do |row|
         id = row["adventure_id"].to_s.strip
-        ids[id] = "case_index:#{path.delete_prefix("#{root}/")}" unless id.empty?
+        next if id.empty?
+
+        if dimension_aware
+          dimension = row["dimension"].to_s.strip
+          next unless dimension.empty? || dimension_names.include?(dimension)
+        end
+
+        ids[id] = "case_index:#{path.delete_prefix("#{root}/")}"
       end
     rescue CSV::MalformedCSVError => e
       warn "WARNING: could not read #{path}: #{e.message}"
@@ -91,6 +100,10 @@ def reserved_adventure_ids(root)
       metadata = JSON.parse(File.read(path))
       id = metadata["adventure"].to_s.strip
       next if id.empty?
+
+      dimension = metadata["dimension"].to_s.strip
+      next unless dimension.empty? || dimension_names.include?(dimension)
+
       ids[id] ||= "local_output:#{path.delete_prefix("#{root}/")}"
     rescue JSON::ParserError
       next
@@ -236,7 +249,7 @@ required_headers = [
 missing = required_headers - headers
 abort_with("AMC missing required columns: #{missing.join(', ')}") unless missing.empty?
 
-reserved = reserved_adventure_ids(ROOT)
+reserved = reserved_adventure_ids(ROOT, dimension_names: dimension_names)
 audit = []
 eligible = []
 
