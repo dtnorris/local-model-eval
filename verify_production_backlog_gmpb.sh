@@ -116,7 +116,9 @@ rows.each do |row|
   abort "wrong scorer mode in #{path}" unless data.dig("scorer", "mode") == "positional"
   extra = data.dig("scorer", "extra_args")
   abort "wrong scorer args in #{path}" unless extra.is_a?(Array) && extra.length == 2 && extra[0] == "--config"
-  manifest_runtime = File.expand_path(extra[1].to_s, scorer_repo)
+  expected_runtime_arg = "${LME_REPO}/#{qualified.fetch("runtime_config_path")}"
+  abort "non-portable runtime config arg in #{path}: #{extra[1].inspect}" unless extra[1] == expected_runtime_arg
+  manifest_runtime = File.expand_path(extra[1].sub("${LME_REPO}", repo_root))
   abort "wrong runtime config in #{path}: #{manifest_runtime}" unless manifest_runtime == runtime_abs
   contract = data.fetch("production_contract")
   abort "wrong production contract in #{path}" unless contract["contract_type"] == qualified.fetch("contract_type")

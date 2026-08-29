@@ -132,7 +132,7 @@ def validate_preflight_contract!(fingerprint, qualification, adventure_id)
   abort_with("#{adventure_id} rendered runtime contract mismatch: #{failures.join(', ')}")
 end
 
-def yaml_manifest(queue:, adv:, scorer_rel:, runtime_config_rel:, qualification:)
+def yaml_manifest(queue:, adv:, scorer_rel:, runtime_config_arg:, qualification:)
   <<~YAML
     name: #{queue}-gemma-gmpb-adv#{adv.fetch("id").split("-").last.downcase}-v1
     purpose: >
@@ -163,7 +163,7 @@ def yaml_manifest(queue:, adv:, scorer_rel:, runtime_config_rel:, qualification:
       mode: positional
       extra_args:
         - --config
-        - #{runtime_config_rel}
+        - #{runtime_config_arg}
 
     production_contract:
       contract_type: #{qualification.fetch("contract_type")}
@@ -390,7 +390,7 @@ case_headers = %w[case_index pack_index pack_case_index adventure_id adventure_t
 case_rows = []
 all_run_paths = []
 scorer_rel = Pathname.new(SCORER_REPO).relative_path_from(Pathname.new(experiment_dir)).to_s
-runtime_config_rel = Pathname.new(RUNTIME_CONFIG_PATH).relative_path_from(Pathname.new(SCORER_REPO)).to_s
+runtime_config_arg = '${LME_REPO}/' + qualification.fetch("runtime_config_path")
 
 selected.each_slice(options[:pack_size]).with_index(1) do |pack_adventures, pack_index|
   pack_rows = []
@@ -405,7 +405,7 @@ selected.each_slice(options[:pack_size]).with_index(1) do |pack_adventures, pack
         queue: queue,
         adv: adv,
         scorer_rel: scorer_rel,
-        runtime_config_rel: runtime_config_rel,
+        runtime_config_arg: runtime_config_arg,
         qualification: qualification
       )
     )
