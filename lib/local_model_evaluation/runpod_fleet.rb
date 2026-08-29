@@ -8,7 +8,9 @@ module LocalModelEvaluation
     MAX_WORKERS = 5
     GPU_ID = "NVIDIA A40"
     GPU_MEMORY_GB = 48
-    CLOUD = "COMMUNITY"
+    DEFAULT_CLOUD = "COMMUNITY"
+    SUPPORTED_CLOUDS = %w[COMMUNITY SECURE].freeze
+    CLOUD = DEFAULT_CLOUD # Backward-compatible alias; new code should use preflight.cloud.
     IMAGE = "runpod/pytorch:1.0.2-cu1281-torch280-ubuntu2404"
     CONTAINER_DISK_GB = 30
     VOLUME_GB = 60
@@ -22,6 +24,7 @@ module LocalModelEvaluation
     Preflight = Struct.new(
       :worker_count,
       :gpu,
+      :cloud,
       :availability,
       :hourly_rate,
       :fleet_hourly_rate,
@@ -111,8 +114,9 @@ module LocalModelEvaluation
 
     attr_reader :env_file
 
-    def preflight(worker_count:, max_fleet_hourly_usd: DEFAULT_MAX_FLEET_HOURLY_USD)
+    def preflight(worker_count:, cloud: DEFAULT_CLOUD, max_fleet_hourly_usd: DEFAULT_MAX_FLEET_HOURLY_USD)
       worker_count = validate_worker_count(worker_count)
+      cloud = normalize_cloud(cloud)
       max_fleet_hourly_usd = positive_float(max_fleet_hourly_usd, "max fleet hourly cost")
       desired_names = (1..worker_count).map { |index| worker_name(index) }
       duplicates = @client.list_pods.select { |pod| desired_names.include?(pod["name"]) }
@@ -121,15 +125,15 @@ module LocalModelEvaluation
         raise Error, "refusing to create duplicate managed pods: #{names}; destroy the existing fleet first"
       end
 
-      gpu = @client.list_gpu_types(cloud: CLOUD, count: 1).find { |candidate| candidate["id"] == GPU_ID }
+      gpu = @client.list_gpu_types(cloud:, count: 1).find { |candidate| candidate["id"] == GPU_ID }
       raise Error, "RunPod catalog did not return #{GPU_ID}" unless gpu
       raise Error, "#{GPU_ID} reports only #{gpu['memory']} GB VRAM; #{GPU_MEMORY_GB} GB is required" if gpu["memory"].to_i < GPU_MEMORY_GB
-      raise Error, "#{GPU_ID} is not available on #{CLOUD} cloud" unless gpu[CLOUD.downcase] == true
+      raise Error, "#{GPU_ID} is not available on #{cloud} cloud" unless gpu[cloud.downcase] == true
 
       availability = gpu["availability"].to_s
-      raise Error, "#{GPU_ID} #{CLOUD} availability is #{availability.empty? ? 'unknown' : availability}" if availability.empty? || availability == "NONE"
+      raise Error, "#{GPU_ID} #{cloud} availability is #{availability.empty? ? 'unknown' : availability}" if availability.empty? || availability == "NONE"
 
-      rate = positive_float(gpu.dig("price", CLOUD.downcase), "#{GPU_ID} #{CLOUD} hourly rate")
+      rate = positive_float(gpu.dig("price", cloud.downcase), "#{GPU_ID} #{cloud} hourly rate")
       fleet_rate = rate * worker_count
       if fleet_rate > max_fleet_hourly_usd
         raise Error, format(
@@ -142,6 +146,7 @@ module LocalModelEvaluation
       Preflight.new(
         worker_count:,
         gpu:,
+        cloud:,
         availability:,
         hourly_rate: rate,
         fleet_hourly_rate: fleet_rate,
@@ -165,13 +170,17 @@ module LocalModelEvaluation
       lines.join("\n")
     end
 
-    def create(worker_count:, ssh_public_key:, preflight: nil,
+    def create(worker_count:, ssh_public_key:, preflight: nil, cloud: DEFAULT_CLOUD,
                max_fleet_hourly_usd: DEFAULT_MAX_FLEET_HOURLY_USD,
                wait_seconds: DEFAULT_WAIT_SECONDS, poll_seconds: DEFAULT_POLL_SECONDS)
       worker_count = validate_worker_count(worker_count)
-      preflight ||= self.preflight(worker_count:, max_fleet_hourly_usd:)
+      cloud = normalize_cloud(cloud)
+      preflight ||= self.preflight(worker_count:, cloud:, max_fleet_hourly_usd:)
       if preflight.worker_count != worker_count
         raise Error, "preflight worker count does not match requested worker count"
+      end
+      if preflight.cloud != cloud
+        raise Error, "preflight cloud #{preflight.cloud} does not match requested cloud #{cloud}"
       end
 
       max_fleet_hourly_usd = positive_float(max_fleet_hourly_usd, "max fleet hourly cost")
@@ -184,7 +193,7 @@ module LocalModelEvaluation
 
       begin
         (1..worker_count).each do |index|
-          pod = @client.create_pod(create_body(index, ssh_public_key))
+          pod = @client.create_pod(create_body(index, ssh_public_key, cloud))
           pod_id = pod["id"].to_s
           raise Error, "RunPod create response for #{worker_name(index)} did not include a pod id" if pod_id.empty?
 
@@ -192,7 +201,7 @@ module LocalModelEvaluation
           @out.puts "Created #{worker_name(index)}: #{pod_id}"
         end
 
-        workers = wait_until_ready(created, wait_seconds:, poll_seconds:)
+        workers = wait_until_ready(created, cloud:, wait_seconds:, poll_seconds:)
         actual_fleet_rate = workers.sum(&:hourly_rate)
         if actual_fleet_rate > max_fleet_hourly_usd
           raise Error, format(
@@ -261,7 +270,7 @@ module LocalModelEvaluation
 
     private
 
-    def create_body(index, ssh_public_key)
+    def create_body(index, ssh_public_key, cloud)
       {
         "name" => worker_name(index),
         "image" => IMAGE,
@@ -274,7 +283,7 @@ module LocalModelEvaluation
             "path" => VOLUME_MOUNT_PATH
           }
         },
-        "cloud" => CLOUD,
+        "cloud" => cloud,
         "gpu" => {
           "id" => GPU_ID,
           "count" => 1
@@ -282,7 +291,7 @@ module LocalModelEvaluation
       }
     end
 
-    def wait_until_ready(created, wait_seconds:, poll_seconds:)
+    def wait_until_ready(created, cloud:, wait_seconds:, poll_seconds:)
       pending = created.to_h
       ready = {}
       deadline = @clock.call + wait_seconds
@@ -291,7 +300,7 @@ module LocalModelEvaluation
         pending.keys.each do |index|
           pod_id = pending.fetch(index)
           pod = @client.get_pod(pod_id)
-          validate_pod!(pod, index, pod_id)
+          validate_pod!(pod, index, pod_id, cloud:)
 
           status = pod["status"].to_s
           raise Error, "#{worker_name(index)} entered terminal status #{status}" if %w[ERROR TERMINATED].include?(status)
@@ -330,9 +339,10 @@ module LocalModelEvaluation
       ready.keys.sort.map { |index| ready.fetch(index) }
     end
 
-    def validate_pod!(pod, index, pod_id)
+    def validate_pod!(pod, index, pod_id, cloud:)
       expected_name = worker_name(index)
       raise Error, "pod #{pod_id} name mismatch: expected #{expected_name.inspect}, got #{pod['name'].inspect}" unless pod["name"] == expected_name
+      raise Error, "#{expected_name} cloud mismatch: expected #{cloud}, got #{pod['cloud'].inspect}" unless pod["cloud"] == cloud
 
       gpu = pod["gpu"] || {}
       unless gpu["id"] == GPU_ID && gpu["count"].to_i == 1
@@ -426,6 +436,13 @@ module LocalModelEvaluation
 
     def validate_worker_index(index)
       raise Error, "worker index must be between 1 and #{MAX_WORKERS}" unless index.between?(1, MAX_WORKERS)
+    end
+
+    def normalize_cloud(value)
+      cloud = value.to_s.upcase
+      return cloud if SUPPORTED_CLOUDS.include?(cloud)
+
+      raise Error, "cloud must be one of: #{SUPPORTED_CLOUDS.join(', ')}"
     end
 
     def positive_float(value, label, allow_zero: false)

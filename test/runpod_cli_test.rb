@@ -46,6 +46,7 @@ class RunpodCliTest < Minitest::Test
 
     assert status.success?, stderr
     assert_includes stdout, "RunPod fleet preflight"
+    assert_includes stdout, "Cloud: COMMUNITY"
     assert_includes stdout, "Workers: 5"
     assert_includes stdout, "Projected fleet rate: $1.7500/hr"
     assert_includes stdout, "Projected 10-minute cost: $0.2917"
@@ -57,6 +58,43 @@ class RunpodCliTest < Minitest::Test
     assert_equal ["GET", "GET"], received.map { |r| r.fetch(:method) }
     assert_equal ["/v2/pods", "/v2/catalog/gpus"], received.map { |r| r.fetch(:path) }
     assert received.all? { |r| r.fetch(:authorization) == "Bearer rpa_test_only" }
+    catalog_query = URI.decode_www_form(received.last.fetch(:query).to_s).to_h
+    assert_equal "COMMUNITY", catalog_query.fetch("cloud")
+  ensure
+    server&.close
+    thread&.join(2)
+  end
+
+  def test_create_dry_run_accepts_explicit_secure_without_fallback
+    requests = Queue.new
+    server, thread = start_fake_runpod(requests)
+    port = server.addr[1]
+    env = {
+      "RUNPOD_API_KEY" => "rpa_test_only",
+      "RUNPOD_API_BASE_URL" => "http://127.0.0.1:#{port}/v2",
+      "RUNPOD_MAX_FLEET_HOURLY_USD" => "3.00"
+    }
+
+    stdout, stderr, status = Open3.capture3(
+      env,
+      RbConfig.ruby,
+      File.join(REPO_ROOT, "bin", "lme"),
+      "runpod-create",
+      "--workers", "5",
+      "--cloud", "SECURE",
+      "--dry-run",
+      "--ssh-public-key", @public_key,
+      chdir: REPO_ROOT
+    )
+
+    assert status.success?, stderr
+    assert_includes stdout, "Cloud: SECURE"
+    assert_includes stdout, "Projected fleet rate: $2.2000/hr"
+    assert_includes stdout, "Dry run PASS."
+
+    received = 2.times.map { Timeout.timeout(2) { requests.pop } }
+    catalog_query = URI.decode_www_form(received.last.fetch(:query).to_s).to_h
+    assert_equal "SECURE", catalog_query.fetch("cloud")
   ensure
     server&.close
     thread&.join(2)

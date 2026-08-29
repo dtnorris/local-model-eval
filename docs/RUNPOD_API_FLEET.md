@@ -22,24 +22,30 @@ Always start with:
 bin/lme runpod-create --workers 5 --dry-run
 ```
 
-The dry run performs only read-only RunPod API calls plus local prerequisite validation. It refuses duplicate managed pod names, verifies the pinned A40 has at least 48 GB VRAM and COMMUNITY availability, and prints the current catalog price, fleet hourly rate, projected 10-minute/30-minute cost, and hourly safety cap. No pod is created.
+The dry run performs only read-only RunPod API calls plus local prerequisite validation. It refuses duplicate managed pod names, verifies the pinned A40 has at least 48 GB VRAM on the explicitly selected cloud tier, and prints the current catalog price, fleet hourly rate, projected 10-minute/30-minute cost, and hourly safety cap. No pod is created.
 
-The default fleet safety cap is `$3.00/hr`; override it downward or upward explicitly with `--max-hourly-usd` or `RUNPOD_MAX_FLEET_HOURLY_USD`. LME never silently switches from COMMUNITY to a more expensive cloud tier or from A40 to another GPU.
+`COMMUNITY` remains the default because it is the cheaper tier. LME never silently falls back from COMMUNITY to SECURE. If the read-only COMMUNITY preflight proves unavailable, explicitly test SECURE with:
+
+```bash
+bin/lme runpod-create --workers 5 --cloud SECURE --dry-run
+```
+
+The default fleet safety cap is `$3.00/hr`; override it downward or upward explicitly with `--max-hourly-usd` or `RUNPOD_MAX_FLEET_HOURLY_USD`. LME never silently switches cloud tiers or substitutes another GPU.
 
 ## Create the fleet
 
 After reviewing a clean dry run:
 
 ```bash
-bin/lme runpod-create --workers 5
+bin/lme runpod-create --workers 5 --cloud SECURE
 ```
 
-The command asks for confirmation before the first paid mutation. `--yes` exists for deliberate non-interactive use.
+Use the same explicit cloud tier that passed the immediately preceding dry run. Omitting `--cloud` always returns to the cheaper `COMMUNITY` default. The command asks for confirmation before the first paid mutation. `--yes` exists for deliberate non-interactive use.
 
 The provisioner pins:
 
 - 1x `NVIDIA A40` per worker;
-- `COMMUNITY` cloud;
+- selected `COMMUNITY` or `SECURE` cloud, with no automatic fallback;
 - `runpod/pytorch:1.0.2-cu1281-torch280-ubuntu2404`;
 - 30 GB container disk;
 - 60 GB persistent storage mounted at `/workspace`;

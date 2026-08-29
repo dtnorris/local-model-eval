@@ -95,10 +95,44 @@ class RunpodFleetTest < Minitest::Test
 
     assert_equal 5, result.worker_count
     assert_equal "NVIDIA A40", result.gpu.fetch("id")
+    assert_equal "COMMUNITY", result.cloud
     assert_equal "HIGH", result.availability
     assert_in_delta 0.44, result.hourly_rate, 0.0001
     assert_in_delta 2.20, result.fleet_hourly_rate, 0.0001
     assert_equal [["COMMUNITY", 1]], @client.catalog_calls
+    assert_empty @client.created_bodies
+  end
+
+  def test_preflight_uses_secure_only_when_explicitly_requested
+    result = @fleet.preflight(worker_count: 5, cloud: "secure", max_fleet_hourly_usd: 4.0)
+
+    assert_equal "SECURE", result.cloud
+    assert_in_delta 0.69, result.hourly_rate, 0.0001
+    assert_in_delta 3.45, result.fleet_hourly_rate, 0.0001
+    assert_equal [["SECURE", 1]], @client.catalog_calls
+    assert_empty @client.created_bodies
+  end
+
+  def test_preflight_never_silently_falls_back_from_community_to_secure
+    @client.gpu_types.first["community"] = false
+    @client.gpu_types.first["secure"] = true
+
+    error = assert_raises(LocalModelEvaluation::RunpodFleet::Error) do
+      @fleet.preflight(worker_count: 1)
+    end
+
+    assert_includes error.message, "not available on COMMUNITY cloud"
+    assert_equal [["COMMUNITY", 1]], @client.catalog_calls
+    assert_empty @client.created_bodies
+  end
+
+  def test_preflight_rejects_unknown_cloud_before_any_api_call
+    error = assert_raises(LocalModelEvaluation::RunpodFleet::Error) do
+      @fleet.preflight(worker_count: 1, cloud: "AUTO")
+    end
+
+    assert_includes error.message, "cloud must be one of: COMMUNITY, SECURE"
+    assert_empty @client.catalog_calls
     assert_empty @client.created_bodies
   end
 
@@ -160,6 +194,42 @@ class RunpodFleetTest < Minitest::Test
     refute_includes env, "RUNPOD_BURST_1_HOST=stale.example"
   end
 
+  def test_secure_create_preserves_explicit_tier_in_request_and_readiness
+    @client.create_responses = [{ "id" => "pod_secure" }]
+    @client.pod_details = {
+      "pod_secure" => ready_pod(1, "pod_secure", "198.51.100.21", 22021, 0.69, cloud: "SECURE")
+    }
+    preflight = @fleet.preflight(worker_count: 1, cloud: "SECURE", max_fleet_hourly_usd: 1.0)
+
+    workers = @fleet.create(
+      worker_count: 1,
+      cloud: "SECURE",
+      ssh_public_key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAITest test@example",
+      preflight:,
+      max_fleet_hourly_usd: 1.0
+    )
+
+    assert_equal "SECURE", @client.created_bodies.first.fetch("cloud")
+    assert_equal 1, workers.length
+    assert_empty @client.deleted_ids
+  end
+
+  def test_create_rejects_preflight_for_a_different_cloud_before_paid_mutation
+    preflight = @fleet.preflight(worker_count: 1, cloud: "SECURE", max_fleet_hourly_usd: 1.0)
+
+    error = assert_raises(LocalModelEvaluation::RunpodFleet::Error) do
+      @fleet.create(
+        worker_count: 1,
+        cloud: "COMMUNITY",
+        ssh_public_key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAITest test@example",
+        preflight:
+      )
+    end
+
+    assert_includes error.message, "preflight cloud SECURE does not match requested cloud COMMUNITY"
+    assert_empty @client.created_bodies
+  end
+
   def test_partial_create_failure_rolls_back_and_leaves_env_unchanged
     original = File.read(@env_path)
     @client.create_responses = [{ "id" => "pod_a" }]
@@ -193,6 +263,27 @@ class RunpodFleetTest < Minitest::Test
       )
     end
 
+    assert_equal ["pod_a"], @client.deleted_ids
+    assert_equal original, File.read(@env_path)
+  end
+
+  def test_wrong_cloud_during_readiness_rolls_back_every_created_pod
+    original = File.read(@env_path)
+    @client.create_responses = [{ "id" => "pod_a" }]
+    @client.pod_details = {
+      "pod_a" => ready_pod(1, "pod_a", "198.51.100.11", 22011, 0.44, cloud: "SECURE")
+    }
+    preflight = @fleet.preflight(worker_count: 1)
+
+    error = assert_raises(LocalModelEvaluation::RunpodFleet::Error) do
+      @fleet.create(
+        worker_count: 1,
+        ssh_public_key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAITest test@example",
+        preflight:
+      )
+    end
+
+    assert_includes error.message, "cloud mismatch"
     assert_equal ["pod_a"], @client.deleted_ids
     assert_equal original, File.read(@env_path)
   end
@@ -275,11 +366,12 @@ class RunpodFleetTest < Minitest::Test
 
   private
 
-  def ready_pod(index, pod_id, host, port, cost)
+  def ready_pod(index, pod_id, host, port, cost, cloud: "COMMUNITY")
     {
       "id" => pod_id,
       "name" => "af-lme-burst-#{index}",
       "status" => "RUNNING",
+      "cloud" => cloud,
       "gpu" => { "id" => "NVIDIA A40", "count" => 1 },
       "cost" => cost,
       "runtime" => {

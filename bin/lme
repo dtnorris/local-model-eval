@@ -100,6 +100,7 @@ end
 def runpod_create_options(argv)
   opts = {
     workers: nil,
+    cloud: LocalModelEvaluation::RunpodFleet::DEFAULT_CLOUD,
     dry_run: false,
     yes: false,
     max_hourly_usd: ENV.fetch("RUNPOD_MAX_FLEET_HOURLY_USD", LocalModelEvaluation::RunpodFleet::DEFAULT_MAX_FLEET_HOURLY_USD),
@@ -109,6 +110,7 @@ def runpod_create_options(argv)
   }
   OptionParser.new do |o|
     o.on("--workers N", Integer, "Number of burst workers (1-5)") { |v| opts[:workers] = v }
+    o.on("--cloud TIER", "RunPod cloud tier: COMMUNITY or SECURE (default: COMMUNITY)") { |v| opts[:cloud] = v }
     o.on("--dry-run", "Read-only availability/cost/prerequisite check") { opts[:dry_run] = true }
     o.on("--yes", "Skip the paid-create confirmation prompt") { opts[:yes] = true }
     o.on("--max-hourly-usd USD", Float, "Fail closed above this total fleet hourly rate") { |v| opts[:max_hourly_usd] = v }
@@ -190,13 +192,14 @@ when "runpod-create"
   begin
     preflight = fleet.preflight(
       worker_count: opts[:workers],
+      cloud: opts[:cloud],
       max_fleet_hourly_usd: opts[:max_hourly_usd]
     )
     ssh_public_key = fleet.read_ssh_public_key(opts[:ssh_public_key])
 
     puts "RunPod fleet preflight"
     puts "  GPU: #{preflight.gpu.fetch('id')} (#{preflight.gpu.fetch('memory')} GB VRAM)"
-    puts "  Cloud: #{LocalModelEvaluation::RunpodFleet::CLOUD}"
+    puts "  Cloud: #{preflight.cloud}"
     puts "  Availability: #{preflight.availability}"
     puts "  Workers: #{preflight.worker_count}"
     puts format("  Catalog rate: $%.4f/hr per worker", preflight.hourly_rate)
@@ -213,12 +216,13 @@ when "runpod-create"
     end
 
     confirm_or_abort(
-      format("Create %d paid RunPod worker(s) at a projected $%.4f/hr total?", preflight.worker_count, preflight.fleet_hourly_rate),
+      format("Create %d paid RunPod %s worker(s) at a projected $%.4f/hr total?", preflight.worker_count, preflight.cloud, preflight.fleet_hourly_rate),
       assume_yes: opts[:yes]
     )
 
     workers = fleet.create(
       worker_count: opts[:workers],
+      cloud: opts[:cloud],
       ssh_public_key:,
       preflight:,
       max_fleet_hourly_usd: opts[:max_hourly_usd],
@@ -325,7 +329,7 @@ else
     Usage:
       bin/lme plan EXPERIMENT.yml
       bin/lme worker-check [EXPERIMENT.yml]
-      bin/lme runpod-create --workers N [--dry-run|--yes] [--max-hourly-usd USD]
+      bin/lme runpod-create --workers N [--cloud COMMUNITY|SECURE] [--dry-run|--yes] [--max-hourly-usd USD]
       bin/lme runpod-destroy --workers 1-5 [--yes]
       bin/lme start EXPERIMENT.yml [--rerun-failed|--force]
       bin/lme status EXPERIMENT.yml
