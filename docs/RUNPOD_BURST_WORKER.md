@@ -6,7 +6,7 @@ This runbook captures the manually validated RunPod/Ollama path for AdventureFin
 
 `local-model-eval` remains the Mac-side control plane. `af-cli-scoring-utility`, the canonical source corpus, prompt construction, structured-output validation, and result artifacts remain on the Mac. A RunPod worker only runs Ollama plus the requested model weights.
 
-The current automation deliberately **does not provision or terminate RunPod pods**. We first validate two-worker LME concurrency using already-created pods. Provider API automation is justified only after that gate passes.
+The two-worker LME concurrency gate has passed, so LME now includes bounded RunPod REST API v2 provisioning and teardown. Provisioning remains separate from Ollama bootstrap, tunnels, worker checks, and scoring; see `docs/RUNPOD_API_FLEET.md`.
 
 ## Validated worker class
 
@@ -182,4 +182,4 @@ Stop after this gate if LME does not actually parallelize. Do not create workers
 
 ## Cost boundary
 
-The purpose of this automation is to reduce repeated setup burden, not to justify larger spend. A second A40 is enough to answer the next question. Five-worker provisioning and provider API automation remain gated on successful two-worker concurrency evidence.
+The purpose of this automation is to reduce repeated setup burden, not to justify larger spend. Two-worker A40 concurrency has passed, so the bounded five-worker A40 gate is the next qualified experiment. Do not expand beyond five workers or move to a more expensive GPU/cloud tier without new benchmark evidence.
