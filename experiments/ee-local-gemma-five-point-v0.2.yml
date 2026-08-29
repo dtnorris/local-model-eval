@@ -1,0 +1,56 @@
+name: ee-local/gemma-five-point-v0.2
+
+purpose: >
+  Diagnose Gemma4 26B application of ee-reset-v0.2 across the frozen
+  five-point Exploration Emphasis benchmark slope using five concurrent
+  RunPod A40 workers. Each adventure is scored exactly once with no reruns.
+
+dispatch: pool
+
+models:
+  - gemma
+
+dimension: Exploration Emphasis
+
+adventures:
+  - ADV-0169
+  - ADV-0062
+  - ADV-0053
+  - ADV-0262
+  - ADV-0034
+
+replicates: 1
+
+workers:
+  - burst_1
+  - burst_2
+  - burst_3
+  - burst_4
+  - burst_5
+
+required_worker_labels:
+  - remote
+  - burst
+  - nvidia
+  - a40
+  - 48gb
+
+scorer:
+  repo: ${AF_EE_SCORER_REPO}
+  mode: positional
+  extra_args: []
+
+success_criteria:
+  - All five adventures are scored exactly once with normal structured output.
+  - Pool dispatch uses all five eligible burst workers concurrently.
+  - No failed case is rerun to obtain a more favorable score.
+  - The resulting five-point curve is adjudicated only after all five outputs are preserved.
+
+stop_conditions:
+  - Any worker is unavailable or missing gemma4:26b.
+  - Any worker fails full-context GPU-residency verification.
+  - Worker model digests differ.
+  - LME fails to distribute the five jobs across the five-worker pool.
+  - The configured soft scoring-runtime cost cap is reached before another job can be dispatched.
+
+cost_cap_usd: 0.50

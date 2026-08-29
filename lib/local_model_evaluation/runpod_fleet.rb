@@ -2,6 +2,7 @@
 
 require "fileutils"
 require "set"
+require_relative "runpod_fleet_state"
 
 module LocalModelEvaluation
   class RunpodFleet
@@ -104,19 +105,25 @@ module LocalModelEvaluation
       end
     end
 
-    def initialize(client:, env_path:, out: $stdout, sleeper: nil, clock: nil)
+    def initialize(client:, env_path:, out: $stdout, sleeper: nil, clock: nil, state_root: nil, wall_clock: nil)
       @client = client
+      env_path = File.expand_path(env_path)
       @env_file = EnvFile.new(env_path)
+      @fleet_state = RunpodFleetState.new(
+        root: state_root || File.join(File.dirname(env_path), "output", "runpod-fleets"),
+        clock: wall_clock
+      )
       @out = out
       @sleeper = sleeper || ->(seconds) { sleep seconds }
       @clock = clock || -> { Process.clock_gettime(Process::CLOCK_MONOTONIC) }
     end
 
-    attr_reader :env_file
+    attr_reader :env_file, :fleet_state
 
     def preflight(worker_count:, cloud: DEFAULT_CLOUD, max_fleet_hourly_usd: DEFAULT_MAX_FLEET_HOURLY_USD)
       worker_count = validate_worker_count(worker_count)
       cloud = normalize_cloud(cloud)
+      with_fleet_state { @fleet_state.assert_no_active! }
       max_fleet_hourly_usd = positive_float(max_fleet_hourly_usd, "max fleet hourly cost")
       desired_names = (1..worker_count).map { |index| worker_name(index) }
       duplicates = @client.list_pods.select { |pod| desired_names.include?(pod["name"]) }
@@ -190,6 +197,7 @@ module LocalModelEvaluation
 
       created = []
       workers = []
+      fleet_record = nil
 
       begin
         (1..worker_count).each do |index|
@@ -211,9 +219,27 @@ module LocalModelEvaluation
           )
         end
 
-        write_worker_env(workers)
+        fleet_record = with_fleet_state do
+          @fleet_state.activate(
+            workers:,
+            cloud:,
+            gpu_id: GPU_ID,
+            image: IMAGE
+          )
+        end
+        write_worker_env(workers, fleet_record:)
+        @out.puts "Current fleet: #{fleet_record.fetch('fleet_id')}"
+        @out.puts "Fleet-scoped artifacts: #{@fleet_state.fleet_dir(fleet_record.fetch('fleet_id'))}"
         workers
       rescue Interrupt, StandardError
+        if fleet_record
+          begin
+            @fleet_state.discard(fleet_record["fleet_id"])
+          rescue RunpodFleetState::Error => e
+            @out.puts "WARNING: could not discard failed fleet state: #{e.message}"
+          end
+          remove_worker_env(workers.map(&:index), clear_fleet: true)
+        end
         rollback(created)
         raise
       end
@@ -262,7 +288,11 @@ module LocalModelEvaluation
         end
       end
 
-      remove_worker_env(cleared) unless cleared.empty?
+      unless cleared.empty?
+        fleet_record = with_fleet_state { @fleet_state.mark_destroyed(cleared) }
+        clear_fleet = fleet_record && fleet_record["status"] == "destroyed"
+        remove_worker_env(cleared, clear_fleet:)
+      end
       raise Error, "one or more pods were not deleted: #{errors.join('; ')}" unless errors.empty?
 
       cleared
@@ -364,8 +394,12 @@ module LocalModelEvaluation
       { host:, port: }
     end
 
-    def write_worker_env(workers)
-      updates = {}
+    def write_worker_env(workers, fleet_record:)
+      fleet_id = fleet_record.fetch("fleet_id")
+      updates = {
+        "LME_RUNPOD_FLEET_ID" => fleet_id,
+        "LME_RUNPOD_FLEET_DIR" => @fleet_state.fleet_dir(fleet_id)
+      }
       workers.each do |worker|
         index = worker.index
         updates["LME_BURST_#{index}_URL"] = "http://127.0.0.1:#{11_440 + index}"
@@ -378,10 +412,11 @@ module LocalModelEvaluation
       @out.puts "Updated #{@env_file.path} with RunPod worker routing."
     end
 
-    def remove_worker_env(indices)
+    def remove_worker_env(indices, clear_fleet: false)
       keys = indices.flat_map do |index|
         %w[POD_ID HOST SSH_PORT HOURLY_RATE].map { |suffix| env_key(index, suffix) }
       end
+      keys.concat(%w[LME_RUNPOD_FLEET_ID LME_RUNPOD_FLEET_DIR]) if clear_fleet
       @env_file.update({}, remove: keys)
     end
 
@@ -453,6 +488,12 @@ module LocalModelEvaluation
       number
     rescue ArgumentError, TypeError
       raise Error, "#{label} must be numeric"
+    end
+
+    def with_fleet_state
+      yield
+    rescue RunpodFleetState::Error => e
+      raise Error, e.message
     end
 
     def validate_public_key_value!(value)
