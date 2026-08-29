@@ -186,6 +186,9 @@ when "worker-check"
   end
   exit(failed ? 1 : 0)
 
+when "runpod-status"
+  exec RbConfig.ruby, File.join(ROOT, "bin", "lme-runpod-status"), *ARGV
+
 when "runpod-bootstrap"
   exec RbConfig.ruby, File.join(ROOT, "bin", "lme-runpod-bootstrap"), *ARGV
 
@@ -332,6 +335,7 @@ else
     Usage:
       bin/lme plan EXPERIMENT.yml
       bin/lme worker-check [EXPERIMENT.yml]
+      bin/lme runpod-status
       bin/lme runpod-bootstrap --workers 1-5 --model MODEL [options]
       bin/lme runpod-create --workers N [--cloud COMMUNITY|SECURE] [--dry-run|--yes] [--max-hourly-usd USD]
       bin/lme runpod-destroy --workers 1-5 [--yes]
