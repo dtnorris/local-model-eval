@@ -1,0 +1,526 @@
+# frozen_string_literal: true
+
+require "fileutils"
+require "json"
+require "securerandom"
+require "time"
+
+module LocalModelEvaluation
+  class RunpodBootstrap
+    DEFAULT_HEARTBEAT_SECONDS = 10.0
+    DEFAULT_POLL_SECONDS = 0.25
+    LOG_TAIL_BYTES = 131_072
+    TERMINATION_GRACE_SECONDS = 3.0
+
+    class Error < StandardError; end
+
+    def initialize(fleet_state:, remote_setup_path:, repo_root:, out: $stdout,
+                   wall_clock: nil, monotonic_clock: nil, sleeper: nil)
+      @fleet_state = fleet_state
+      @remote_setup_path = File.expand_path(remote_setup_path)
+      @repo_root = File.expand_path(repo_root)
+      @out = out
+      @wall_clock = wall_clock || -> { Time.now.utc }
+      @monotonic_clock = monotonic_clock || -> { Process.clock_gettime(Process::CLOCK_MONOTONIC) }
+      @sleeper = sleeper || ->(seconds) { sleep seconds }
+      @out.sync = true if @out.respond_to?(:sync=)
+    end
+
+    def run(worker_indices:, models:, expected_digests: [], clean: false, context: nil,
+            heartbeat_seconds: DEFAULT_HEARTBEAT_SECONDS, poll_seconds: DEFAULT_POLL_SECONDS)
+      fleet = active_fleet!
+      workers = selected_workers(fleet, worker_indices)
+      models = normalize_models(models)
+      digests = normalize_digests(expected_digests, models)
+      heartbeat_seconds = positive_float(heartbeat_seconds, "heartbeat seconds")
+      poll_seconds = positive_float(poll_seconds, "poll seconds")
+      context = positive_integer(context, "context") if context
+      validate_remote_setup!
+
+      bootstrap_root = @fleet_state.artifact_dir(fleet.fetch("fleet_id"), "bootstrap")
+      FileUtils.mkdir_p(bootstrap_root)
+
+      lock_path = File.join(bootstrap_root, ".lock")
+      File.open(lock_path, File::RDWR | File::CREAT, 0o600) do |lock|
+        unless lock.flock(File::LOCK_EX | File::LOCK_NB)
+          raise Error, "another bootstrap is already running for fleet #{fleet.fetch('fleet_id')}"
+        end
+
+        execute_run(
+          fleet:,
+          workers:,
+          models:,
+          digests:,
+          clean:,
+          context:,
+          heartbeat_seconds:,
+          poll_seconds:,
+          bootstrap_root:
+        )
+      end
+    end
+
+    private
+
+    def execute_run(fleet:, workers:, models:, digests:, clean:, context:, heartbeat_seconds:, poll_seconds:, bootstrap_root:)
+      started_wall = utc_now
+      started_mono = @monotonic_clock.call
+      run_id = build_run_id(started_wall)
+      run_dir = File.join(bootstrap_root, run_id)
+      FileUtils.mkdir_p(run_dir)
+      atomic_write(File.join(bootstrap_root, "current"), "#{run_id}\n")
+
+      record = initial_record(
+        fleet:,
+        workers:,
+        models:,
+        digests:,
+        clean:,
+        context:,
+        heartbeat_seconds:,
+        started_wall:,
+        run_id:
+      )
+      record_path = File.join(run_dir, "bootstrap.json")
+      write_record(record_path, record)
+
+      children = {}
+      begin
+        workers.each do |worker|
+          child = spawn_worker(
+            worker:,
+            models:,
+            digests:,
+            clean:,
+            context:,
+            run_dir:
+          )
+          children[worker.fetch("index")] = child
+          worker_record = worker_record(record, worker.fetch("index"))
+          worker_record["pid"] = child.fetch(:pid)
+          worker_record["status"] = "running"
+          worker_record["started_at_utc"] = utc_now.iso8601
+          @out.puts format(
+            "Starting %s bootstrap on burst_%d (%s:%d)...",
+            models.join(", "),
+            worker.fetch("index"),
+            worker.fetch("host"),
+            worker.fetch("ssh_port")
+          )
+        end
+        write_record(record_path, record)
+      rescue Interrupt
+        interrupt_children(children, record, record_path)
+        raise
+      rescue StandardError => e
+        terminate_children(children)
+        record["status"] = "failed"
+        record["error"] = "launcher error: #{e.message}"
+        record["finished_at_utc"] = utc_now.iso8601
+        record.fetch("workers").each do |worker|
+          next unless worker["status"] == "running"
+
+          worker["status"] = "aborted"
+          worker["finished_at_utc"] = record["finished_at_utc"]
+        end
+        write_record(record_path, record)
+        raise
+      end
+
+      next_heartbeat = started_mono + heartbeat_seconds
+      last_stage = {}
+
+      begin
+        until children.empty?
+          children.keys.sort.each do |index|
+            child = children.fetch(index)
+            progress = progress_for(child.fetch(:log_path))
+            worker = worker_record(record, index)
+            worker["stage"] = progress.fetch(:stage)
+            worker["progress"] = progress[:detail]
+            worker["last_log_line"] = progress[:latest_line]
+
+            if last_stage[index] != progress[:stage]
+              @out.puts progress_line(index, progress)
+              last_stage[index] = progress[:stage]
+            end
+
+            waited_pid, status = wait_nonblocking(child.fetch(:pid))
+            next unless waited_pid
+
+            progress = progress_for(child.fetch(:log_path))
+            worker["stage"] = progress.fetch(:stage)
+            worker["progress"] = progress[:detail]
+            worker["last_log_line"] = progress[:latest_line]
+            worker["exit_status"] = status.exitstatus
+            worker["finished_at_utc"] = utc_now.iso8601
+
+            if status.success? && progress[:passed]
+              worker["status"] = "passed"
+              @out.puts "PASS: burst_#{index} bootstrap"
+            else
+              worker["status"] = "failed"
+              @out.puts "FAIL: burst_#{index} bootstrap (exit #{status.exitstatus || 'signal'}) -- #{child.fetch(:log_path)}"
+            end
+            children.delete(index)
+            write_record(record_path, record)
+          end
+
+          now = @monotonic_clock.call
+          if !children.empty? && now >= next_heartbeat
+            emit_heartbeat(record, fleet, started_mono, now)
+            write_record(record_path, record)
+            next_heartbeat = now + heartbeat_seconds
+          end
+
+          @sleeper.call(poll_seconds) unless children.empty?
+        end
+      rescue Interrupt
+        interrupt_children(children, record, record_path)
+        raise
+      end
+
+      failures = record.fetch("workers").count { |worker| worker["status"] == "failed" }
+      passes = record.fetch("workers").count { |worker| worker["status"] == "passed" }
+      record["status"] = failures.zero? ? "passed" : "failed"
+      record["finished_at_utc"] = utc_now.iso8601
+      record["elapsed_seconds"] = (@monotonic_clock.call - started_mono).round(3)
+      record["bootstrap_window_cost_usd"] = bootstrap_window_cost(fleet, record["elapsed_seconds"])
+      write_record(record_path, record)
+
+      @out.puts format(
+        "Bootstrap complete: %d passed, %d failed. Fleet %s; run %s; bootstrap-window cost approx. $%.4f.",
+        passes,
+        failures,
+        fleet.fetch("fleet_id"),
+        run_id,
+        record.fetch("bootstrap_window_cost_usd")
+      )
+      @out.puts "Bootstrap evidence: #{run_dir}"
+
+      raise Error, "bootstrap failed on #{failures} worker(s); inspect #{run_dir}" unless failures.zero?
+
+      record
+    end
+
+    def active_fleet!
+      fleet = @fleet_state.current
+      raise Error, "no current RunPod fleet state exists; provision a fleet first" unless fleet
+      raise Error, "current RunPod fleet #{fleet.fetch('fleet_id')} is not active" unless fleet["status"] == "active"
+
+      fleet
+    rescue RunpodFleetState::Error => e
+      raise Error, e.message
+    end
+
+    def selected_workers(fleet, values)
+      indices = Array(values).map { |value| Integer(value) }.uniq.sort
+      raise Error, "no workers selected" if indices.empty?
+
+      by_index = fleet.fetch("workers").to_h { |worker| [Integer(worker.fetch("index")), worker] }
+      unknown = indices.reject { |index| by_index.key?(index) }
+      raise Error, "current fleet does not contain worker index(es): #{unknown.join(', ')}" unless unknown.empty?
+
+      selected = indices.map { |index| by_index.fetch(index) }
+      inactive = selected.reject { |worker| worker["status"] == "active" }
+      unless inactive.empty?
+        raise Error, "selected worker(s) are not active: #{inactive.map { |worker| "burst_#{worker.fetch('index')}" }.join(', ')}"
+      end
+
+      selected
+    rescue ArgumentError, TypeError
+      raise Error, "worker indices must be integers"
+    end
+
+    def normalize_models(values)
+      models = Array(values).map { |value| value.to_s.strip }.reject(&:empty?).uniq
+      raise Error, "at least one --model is required" if models.empty?
+
+      models
+    end
+
+    def normalize_digests(values, models)
+      Array(values).each_with_object({}) do |value, out|
+        model, digest = value.to_s.split("=", 2)
+        if model.to_s.empty? || digest.to_s.empty?
+          raise Error, "expected digest must use MODEL=DIGEST"
+        end
+        raise Error, "expected digest names unrequested model #{model.inspect}" unless models.include?(model)
+
+        out[model] = digest
+      end
+    end
+
+    def spawn_worker(worker:, models:, digests:, clean:, context:, run_dir:)
+      index = worker.fetch("index")
+      log_path = File.join(run_dir, "burst_#{index}.log")
+      command = [@remote_setup_path, "--worker", index.to_s]
+      command << "--clean" if clean
+      models.each do |model|
+        command.concat(["--model", model])
+        command.concat(["--expect-digest", "#{model}=#{digests.fetch(model)}"]) if digests.key?(model)
+      end
+      command.concat(["--context", context.to_s]) if context
+
+      log = File.open(log_path, "w")
+      pid = Process.spawn(
+        *command,
+        chdir: @repo_root,
+        in: File::NULL,
+        out: log,
+        err: [:child, :out],
+        pgroup: true
+      )
+      { pid:, log_path: }
+    ensure
+      log&.close
+    end
+
+    def wait_nonblocking(pid)
+      Process.waitpid2(pid, Process::WNOHANG)
+    rescue Errno::ECHILD
+      [pid, synthetic_failed_status]
+    end
+
+    def synthetic_failed_status
+      Struct.new(:exitstatus) do
+        def success? = false
+      end.new(nil)
+    end
+
+    def progress_for(path)
+      text = log_tail(path)
+      events = [
+        [/Worker setup PASS\./, "FINALIZING"],
+        [/verification PASS: context=/, "VERIFIED"],
+        [/\[6\/8\] Warm each model/, "WARMING"],
+        [/Warming /, "WARMING"],
+        [/Copying completed Ollama store/, "COPYING"],
+        [/\b\d+(?:\.\d+)?[KMGT]\s+\d+%\s+\d+(?:\.\d+)?[KMGT]?B\/s/i, "COPYING"],
+        [/Pulling /, "PULLING"],
+        [/pulling [0-9a-f]{8,}:/i, "PULLING"],
+        [/\[3\/8\] Stage requested models/, "STAGING"],
+        [/\[2\/8\] Normalize Ollama state/, "PREPARING"],
+        [/\[1\/8\] Preflight host/, "PREFLIGHT"],
+        [/Streaming setup_runpod_ollama_worker\.sh/, "CONNECTING"],
+        [/Direct SSH PASS\./, "SSH"],
+        [/Loading worker /, "STARTING"]
+      ]
+
+      winner = events.filter_map do |pattern, stage|
+        match = nil
+        text.to_enum(:scan, pattern).each { match = Regexp.last_match }
+        [match.begin(0), stage] if match
+      end.max_by(&:first)
+
+      stage = winner ? winner[1] : "STARTING"
+      segment = winner ? text[winner[0]..] : text
+      percentages = segment.scan(/(?<!\d)(100|[1-9]?\d)%/).flatten
+      detail = %w[PULLING COPYING].include?(stage) && !percentages.empty? ? "#{percentages.last}%" : nil
+      passed = text.include?("remote setup PASS")
+      stage = "READY" if passed
+
+      {
+        stage:,
+        detail:,
+        latest_line: latest_meaningful_line(text),
+        passed:
+      }
+    end
+
+    def log_tail(path)
+      return "" unless File.file?(path)
+
+      File.open(path, "rb") do |file|
+        file.seek(-[file.size, LOG_TAIL_BYTES].min, IO::SEEK_END)
+        sanitize_text(file.read.to_s)
+      end
+    rescue Errno::ENOENT
+      ""
+    end
+
+    def sanitize_text(value)
+      value.encode("UTF-8", invalid: :replace, undef: :replace, replace: "?")
+           .gsub(/\e\[[0-?]*[ -\/]*[@-~]/, "")
+           .tr("\r", "\n")
+    end
+
+    def latest_meaningful_line(text)
+      text.lines.reverse_each do |line|
+        cleaned = line.strip
+        next if cleaned.empty?
+        next unless cleaned.match?(/[[:alnum:]]/)
+
+        return cleaned[-300, 300] || cleaned
+      end
+      nil
+    end
+
+    def progress_line(index, progress)
+      suffix = progress[:detail] ? " #{progress[:detail]}" : ""
+      "[#{utc_now.strftime('%H:%M:%S')}] burst_#{index} #{progress.fetch(:stage)}#{suffix}"
+    end
+
+    def emit_heartbeat(record, fleet, started_mono, now)
+      counts = record.fetch("workers").group_by { |worker| worker.fetch("status") }.transform_values(&:length)
+      active = record.fetch("workers").select { |worker| worker["status"] == "running" }
+      states = active.map do |worker|
+        suffix = worker["progress"] ? " #{worker['progress']}" : ""
+        "burst_#{worker.fetch('index')} #{worker.fetch('stage')}#{suffix}"
+      end
+      elapsed = now - started_mono
+      cost = bootstrap_window_cost(fleet, elapsed)
+      summary = format(
+        "[%s] heartbeat: %d running, %d passed, %d failed | fleet $%.4f/hr | elapsed %s | bootstrap-window ~$%.4f",
+        utc_now.strftime("%H:%M:%S"),
+        counts.fetch("running", 0),
+        counts.fetch("passed", 0),
+        counts.fetch("failed", 0),
+        Float(fleet.fetch("fleet_hourly_rate_usd")),
+        format_duration(elapsed),
+        cost
+      )
+      summary += " | #{states.join(' | ')}" unless states.empty?
+      @out.puts summary
+    end
+
+    def interrupt_children(children, record, record_path)
+      @out.puts "Interrupt received; stopping #{children.length} bootstrap process group(s)..."
+      terminate_children(children)
+      timestamp = utc_now.iso8601
+      record["status"] = "interrupted"
+      record["finished_at_utc"] = timestamp
+      record.fetch("workers").each do |worker|
+        next unless worker["status"] == "running"
+
+        worker["status"] = "interrupted"
+        worker["finished_at_utc"] = timestamp
+      end
+      write_record(record_path, record)
+      @out.puts "Bootstrap interrupted. Local bootstrap/SSH process groups stopped; remote worker state may require inspection."
+    end
+
+    def terminate_children(children)
+      remaining = children.values.map { |child| child.fetch(:pid) }.uniq
+      remaining.each { |pid| signal_group("TERM", pid) }
+      deadline = @monotonic_clock.call + TERMINATION_GRACE_SECONDS
+
+      until remaining.empty? || @monotonic_clock.call >= deadline
+        remaining.delete_if do |pid|
+          waited, = wait_nonblocking(pid)
+          !waited.nil?
+        end
+        @sleeper.call(0.05) unless remaining.empty?
+      end
+
+      remaining.each { |pid| signal_group("KILL", pid) }
+      remaining.each do |pid|
+        Process.waitpid(pid)
+      rescue Errno::ECHILD
+        nil
+      end
+    end
+
+    def signal_group(signal, pid)
+      Process.kill(signal, -pid)
+    rescue Errno::ESRCH
+      nil
+    end
+
+    def initial_record(fleet:, workers:, models:, digests:, clean:, context:, heartbeat_seconds:, started_wall:, run_id:)
+      {
+        "schema_version" => 1,
+        "bootstrap_run_id" => run_id,
+        "fleet_id" => fleet.fetch("fleet_id"),
+        "status" => "running",
+        "started_at_utc" => started_wall.iso8601,
+        "finished_at_utc" => nil,
+        "models" => models,
+        "expected_digests" => digests,
+        "clean" => clean,
+        "context" => context || 262_144,
+        "heartbeat_seconds" => heartbeat_seconds,
+        "fleet_hourly_rate_usd" => fleet.fetch("fleet_hourly_rate_usd"),
+        "workers" => workers.map do |worker|
+          {
+            "index" => worker.fetch("index"),
+            "pod_id" => worker.fetch("pod_id"),
+            "host" => worker.fetch("host"),
+            "ssh_port" => worker.fetch("ssh_port"),
+            "status" => "pending",
+            "stage" => "PENDING",
+            "progress" => nil,
+            "pid" => nil,
+            "log" => "burst_#{worker.fetch('index')}.log",
+            "started_at_utc" => nil,
+            "finished_at_utc" => nil,
+            "exit_status" => nil
+          }
+        end
+      }
+    end
+
+    def worker_record(record, index)
+      record.fetch("workers").find { |worker| worker.fetch("index") == index } ||
+        raise(Error, "bootstrap state lost worker burst_#{index}")
+    end
+
+    def write_record(path, record)
+      atomic_write(path, JSON.pretty_generate(record) + "\n")
+    end
+
+    def atomic_write(path, content)
+      FileUtils.mkdir_p(File.dirname(path))
+      tmp = "#{path}.tmp.#{$$}.#{Thread.current.object_id}"
+      File.write(tmp, content)
+      File.rename(tmp, path)
+    ensure
+      File.delete(tmp) if defined?(tmp) && tmp && File.exist?(tmp)
+    end
+
+    def build_run_id(timestamp)
+      "#{timestamp.strftime('%Y%m%dT%H%M%SZ')}-#{$$}-#{SecureRandom.hex(2)}"
+    end
+
+    def validate_remote_setup!
+      raise Error, "remote bootstrap wrapper not found: #{@remote_setup_path}" unless File.file?(@remote_setup_path)
+      raise Error, "remote bootstrap wrapper is not executable: #{@remote_setup_path}" unless File.executable?(@remote_setup_path)
+    end
+
+    def positive_float(value, label)
+      number = Float(value)
+      raise Error, "#{label} must be positive" unless number.positive?
+
+      number
+    rescue ArgumentError, TypeError
+      raise Error, "#{label} must be numeric"
+    end
+
+    def positive_integer(value, label)
+      number = Integer(value)
+      raise Error, "#{label} must be positive" unless number.positive?
+
+      number
+    rescue ArgumentError, TypeError
+      raise Error, "#{label} must be an integer"
+    end
+
+    def utc_now
+      value = @wall_clock.call
+      value = Time.parse(value.to_s) unless value.is_a?(Time)
+      value.utc
+    end
+
+    def bootstrap_window_cost(fleet, elapsed_seconds)
+      (Float(fleet.fetch("fleet_hourly_rate_usd")) * Float(elapsed_seconds) / 3600.0).round(6)
+    end
+
+    def format_duration(seconds)
+      total = seconds.to_i
+      hours = total / 3600
+      minutes = (total % 3600) / 60
+      secs = total % 60
+      format("%02d:%02d:%02d", hours, minutes, secs)
+    end
+  end
+end
