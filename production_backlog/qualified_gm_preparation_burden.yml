@@ -1,0 +1,18 @@
+version: 1
+contract_type: gmpb_local_qualified_v1
+dimension: "GM Preparation Burden"
+slug: gmpb
+profile: gmpb-v0.6-dependency-fan-out
+catalog_column: GM Preparation Burden
+model_alias: gemma
+ollama_model: gemma4:26b
+qualified_scorer_baseline: 878514b6a29d132945e39559ccd714c102c190a1
+afao_version: "1.6.1"
+max_page_count_exclusive: 100
+runtime_config_path: production_backlog/gmpb-v0.6-runtime.yml
+reasoning_effort: medium
+max_tokens: 16384
+temperature: 0
+replicates: 1
+external_api_cost_usd: 0.0
+no_favorable_rerun: true
