@@ -1,0 +1,5 @@
+llm:
+  provider: ollama
+  model: gemma4:26b
+  reasoning_effort: medium
+  max_tokens: 16384

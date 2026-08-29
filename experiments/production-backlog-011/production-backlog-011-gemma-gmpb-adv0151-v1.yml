@@ -1,0 +1,57 @@
+name: production-backlog-011-gemma-gmpb-adv0151-v1
+purpose: >
+  Interruptible AdventureFinder local production scoring. Produce one proposed
+  GM Preparation Burden assessment for canonical ADV-0151 using the
+  locally qualified gemma4:26b GMPB v0.6 dependency-fan-out profile. The accepted
+  AMC GM Preparation Burden value was blank when this queue was generated.
+dispatch: pool
+
+models:
+  - gemma
+
+dimension: "GM Preparation Burden"
+
+adventures:
+  - ADV-0151
+
+replicates: 1
+
+workers:
+  - mac
+
+required_worker_labels:
+  - local
+
+scorer:
+  repo: ../../../af-cli-scoring-utility
+  mode: positional
+  extra_args:
+    - --config
+    - ../local-model-eval2spd/production_backlog/gmpb-v0.6-runtime.yml
+
+production_contract:
+  contract_type: gmpb_local_qualified_v1
+  disposition: local-qualified-background
+  queue: production-backlog-011
+  candidate_model: gemma
+  qualified_profile: gmpb-v0.6-dependency-fan-out
+  qualified_scorer_baseline: 878514b6a29d132945e39559ccd714c102c190a1
+  reasoning_effort: medium
+  max_tokens: 16384
+  temperature: 0
+  replicate_count: 1
+  no_favorable_rerun: true
+  external_api_cost_usd: 0.0
+
+success_criteria:
+  - Structured scorer output validates and remains grounded to the complete canonical adventure source unit.
+  - Use the frozen GMPB v0.6 dependency-fan-out profile with gemma4:26b.
+  - Use reasoning effort medium, temperature 0, and max tokens 16384.
+  - Preserve the single completed sample as a proposed production assessment pending QC/ingestion.
+  - Do not use an existing accepted GMPB score or calibration target as expected-answer context.
+
+stop_conditions:
+  - Do not rerun a completed case to seek a more favorable sample.
+  - Queue-level repeated operational failures trigger the background runner circuit breaker.
+
+cost_cap_usd: 0.01
