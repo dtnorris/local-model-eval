@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+require "dotenv"
+
+Dotenv.load(File.expand_path("../.env", __dir__))
+
 require_relative "local_model_evaluation/config"
 require_relative "local_model_evaluation/worker"
 require_relative "local_model_evaluation/experiment"
