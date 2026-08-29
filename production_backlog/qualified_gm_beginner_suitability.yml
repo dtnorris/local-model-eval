@@ -1,0 +1,14 @@
+version: 1
+contract_type: gmbs_local_qualified_v1
+dimension: "GM Beginner Suitability"
+slug: gmbs
+profile: gmbs-clean-blind-v0.3
+catalog_column: GM Beginner Suitability
+model_alias: qwen
+ollama_model: qwen3.6:35b-a3b
+qualified_scorer_baseline: bcdc94496ace154ab0f65131711ca36166bdd430
+afao_version: "1.6.1"
+max_page_count_exclusive: 100
+replicates: 1
+external_api_cost_usd: 0.0
+no_favorable_rerun: true
