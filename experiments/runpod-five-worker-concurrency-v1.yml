@@ -1,0 +1,52 @@
+name: runpod-five-worker-concurrency-v1
+purpose: >
+  Prove that five independently configured RunPod A40 Ollama workers execute five
+  identical AdventureFinder logical jobs concurrently through LME pool dispatch,
+  after the two-worker concurrency gate passed and before treating five-worker burst
+  capacity as operationally qualified.
+
+dispatch: pool
+
+models:
+  - qwen27
+
+dimension: Social Interaction Emphasis
+
+adventures:
+  - ADV-0200
+
+replicates: 5
+
+workers:
+  - burst_1
+  - burst_2
+  - burst_3
+  - burst_4
+  - burst_5
+
+required_worker_labels:
+  - remote
+  - burst
+  - nvidia
+  - a40
+  - 48gb
+
+scorer:
+  repo: ../../af-cli-scoring-utility
+  mode: positional
+  extra_args: []
+
+success_criteria:
+  - All five workers independently verify the same full qwen3.6:27b digest before dispatch.
+  - All five logical jobs complete with normal structured output.
+  - Pool dispatch assigns one concurrent job to each of burst_1 through burst_5.
+  - Total wall-clock time is no more than approximately 1.3x the slowest individual remote job.
+
+stop_conditions:
+  - Any worker model digest differs.
+  - Any worker is unavailable, loses full-context GPU residency, or is missing the selected model.
+  - LME fails to dispatch across all five workers or serializes the jobs materially.
+  - Any job fails structured output or exits nonzero.
+  - The configured soft scoring-runtime cost cap is reached.
+
+cost_cap_usd: 0.25
