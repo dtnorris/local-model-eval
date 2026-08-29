@@ -5,36 +5,49 @@ set -euo pipefail
 # RunPod's ssh.runpod.io proxy does not support the channel forwarding needed here.
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+ENV_FILE="$ROOT/.env"
 STATE_DIR="$ROOT/output/tunnels"
+WORKER=""
 HOST=""
 SSH_PORT=""
 LOCAL_PORT=""
 REMOTE_PORT=11434
 SSH_USER=root
 IDENTITY="$HOME/.ssh/id_ed25519"
-NAME="burst"
+NAME=""
 STOP=0
 WAIT_SECONDS=30
 
 usage() {
   cat <<'USAGE'
 Usage:
+  runpod_ollama_tunnel.sh --worker N [options]
   runpod_ollama_tunnel.sh --host HOST --ssh-port PORT --local-port PORT [options]
+  runpod_ollama_tunnel.sh --stop --worker N
   runpod_ollama_tunnel.sh --stop --local-port PORT
 
+Worker mode:
+  --worker N           Resolve connection settings from repo-local .env:
+                         RUNPOD_BURST_N_HOST
+                         RUNPOD_BURST_N_SSH_PORT
+                         LME_BURST_N_URL
+
 Options:
-  --host HOST          RunPod direct-TCP public IP/host (not ssh.runpod.io)
-  --ssh-port PORT      External TCP port mapped to container port 22
-  --local-port PORT    Local Mac port for the tunneled Ollama endpoint
+  --host HOST          Explicit direct-TCP public IP/host; overrides .env
+  --ssh-port PORT      Explicit external TCP port mapped to container port 22
+  --local-port PORT    Explicit local Mac port; overrides LME_BURST_N_URL
   --remote-port PORT   Remote Ollama port (default: 11434)
   --user USER          SSH user (default: root)
   --identity PATH      SSH private key (default: ~/.ssh/id_ed25519)
-  --name NAME          Worker label used in the printed env var (default: burst)
+  --name NAME          Worker label used in status output
   --wait-seconds N     Endpoint readiness timeout (default: 30)
-  --stop               Stop the tunnel associated with --local-port
+  --stop               Stop the selected tunnel
   -h, --help           Show this help
 
-Example:
+Preferred:
+  scripts/runpod_ollama_tunnel.sh --worker 2
+
+Explicit fallback:
   scripts/runpod_ollama_tunnel.sh \
     --name burst_2 \
     --host 69.30.85.231 \
@@ -47,8 +60,18 @@ ts() { date '+%H:%M:%S'; }
 info() { printf '[%s] %s\n' "$(ts)" "$*"; }
 die() { printf '[%s] ERROR: %s\n' "$(ts)" "$*" >&2; exit 1; }
 
+load_repo_env() {
+  [[ -f "$ENV_FILE" ]] || die "worker mode requires $ENV_FILE; copy .env.example to .env and fill in real RunPod values"
+  info "Loading worker connection settings from $ENV_FILE ..."
+  set -a
+  # shellcheck disable=SC1090
+  source "$ENV_FILE"
+  set +a
+}
+
 while (($#)); do
   case "$1" in
+    --worker) WORKER="${2:-}"; shift 2 ;;
     --host) HOST="${2:-}"; shift 2 ;;
     --ssh-port) SSH_PORT="${2:-}"; shift 2 ;;
     --local-port) LOCAL_PORT="${2:-}"; shift 2 ;;
@@ -63,7 +86,33 @@ while (($#)); do
   esac
 done
 
-[[ -n "$LOCAL_PORT" ]] || { usage >&2; die "--local-port is required"; }
+if [[ -n "$WORKER" ]]; then
+  [[ "$WORKER" =~ ^[1-9][0-9]*$ ]] || die "--worker must be a positive integer"
+  load_repo_env
+
+  host_var="RUNPOD_BURST_${WORKER}_HOST"
+  ssh_port_var="RUNPOD_BURST_${WORKER}_SSH_PORT"
+  endpoint_var="LME_BURST_${WORKER}_URL"
+
+  [[ -n "$HOST" ]] || HOST="${!host_var:-}"
+  [[ -n "$SSH_PORT" ]] || SSH_PORT="${!ssh_port_var:-}"
+
+  if [[ -z "$LOCAL_PORT" ]]; then
+    configured_endpoint="${!endpoint_var:-}"
+    [[ -n "$configured_endpoint" ]] || die "$endpoint_var is not set in $ENV_FILE"
+    if [[ "$configured_endpoint" =~ ^http://(127\.0\.0\.1|localhost):([0-9]+)$ ]]; then
+      LOCAL_PORT="${BASH_REMATCH[2]}"
+    else
+      die "$endpoint_var must be a localhost HTTP endpoint such as http://127.0.0.1:11442"
+    fi
+  fi
+
+  [[ -n "$NAME" ]] || NAME="burst_${WORKER}"
+else
+  [[ -n "$NAME" ]] || NAME="burst"
+fi
+
+[[ -n "$LOCAL_PORT" ]] || { usage >&2; die "--local-port is required (or use --worker N)"; }
 [[ "$LOCAL_PORT" =~ ^[0-9]+$ ]] || die "--local-port must be an integer"
 mkdir -p "$STATE_DIR"
 PID_FILE="$STATE_DIR/runpod-ollama-${LOCAL_PORT}.pid"
@@ -83,8 +132,16 @@ if [[ $STOP -eq 1 ]]; then
   exit 0
 fi
 
-[[ -n "$HOST" ]] || { usage >&2; die "--host is required"; }
-[[ -n "$SSH_PORT" ]] || { usage >&2; die "--ssh-port is required"; }
+[[ -n "$HOST" ]] || { usage >&2; die "--host is required (or set RUNPOD_BURST_${WORKER:-N}_HOST in .env)"; }
+[[ -n "$SSH_PORT" ]] || { usage >&2; die "--ssh-port is required (or set RUNPOD_BURST_${WORKER:-N}_SSH_PORT in .env)"; }
+
+case "$HOST" in
+  *'<'*|*'>'*) die "RunPod host still contains a placeholder: $HOST" ;;
+esac
+case "$SSH_PORT" in
+  *'<'*|*'>'*) die "RunPod SSH port still contains a placeholder: $SSH_PORT" ;;
+esac
+
 [[ "$SSH_PORT" =~ ^[0-9]+$ ]] || die "--ssh-port must be an integer"
 [[ "$REMOTE_PORT" =~ ^[0-9]+$ ]] || die "--remote-port must be an integer"
 [[ "$WAIT_SECONDS" =~ ^[0-9]+$ ]] || die "--wait-seconds must be an integer"
@@ -167,8 +224,17 @@ info "Remote Ollama reachable: $version"
 safe_name="$(printf '%s' "$NAME" | tr '[:lower:]-' '[:upper:]_' | tr -cd 'A-Z0-9_')"
 env_name="LME_${safe_name}_URL"
 info "[4/4] Tunnel PASS."
-printf '\nUse this endpoint for LME/scorer routing:\n'
-printf '  export %s=%s\n' "$env_name" "$ENDPOINT"
-printf '  export AF_OLLAMA_BASE_URL=%s\n' "$ENDPOINT"
+printf '\nLME/scorer endpoint: %s\n' "$ENDPOINT"
+if [[ -n "$WORKER" ]]; then
+  printf 'LME variable: %s (loaded from repo-local .env by LME)\n' "$env_name"
+else
+  printf 'For manual routing:\n'
+  printf '  export %s=%s\n' "$env_name" "$ENDPOINT"
+  printf '  export AF_OLLAMA_BASE_URL=%s\n' "$ENDPOINT"
+fi
 printf '\nTunnel pid file: %s\n' "$PID_FILE"
-printf 'Stop it with:\n  %s --stop --local-port %s\n' "$0" "$LOCAL_PORT"
+if [[ -n "$WORKER" ]]; then
+  printf 'Stop it with:\n  %s --stop --worker %s\n' "$0" "$WORKER"
+else
+  printf 'Stop it with:\n  %s --stop --local-port %s\n' "$0" "$LOCAL_PORT"
+fi
