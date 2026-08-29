@@ -75,26 +75,31 @@ when "worker-check"
   models = load_models
   selected = workers.values
   required_models = []
+  required_labels = []
   if experiment_path
     exp = LocalModelEvaluation::Experiment.new(experiment_path)
     selected = exp.worker_names.map { |name| workers.fetch(name) }
     required_models = exp.models.map { |name| models.fetch(name).fetch("ollama_model") }
+    required_labels = exp.required_worker_labels
   end
 
   checker = LocalModelEvaluation::WorkerCheck.new
   failed = false
-  puts format("%-14s %-8s %-12s %s", "WORKER", "STATUS", "OLLAMA", "REQUIRED MODELS")
+  puts format("%-14s %-11s %-12s %s", "WORKER", "STATUS", "OLLAMA", "REQUIREMENTS")
   selected.each do |worker|
-    result = checker.check(worker)
-    if result.ok
-      missing = required_models.reject { |model| result.models.include?(model) || result.models.any? { |m| m.start_with?("#{model}:") } }
-      status = missing.empty? ? "OK" : "MISSING"
-      failed ||= !missing.empty?
-      model_text = required_models.empty? ? "-" : (missing.empty? ? "yes" : "missing: #{missing.join(', ')}")
-      puts format("%-14s %-8s %-12s %s", worker.name, status, result.version || "?", model_text)
-    else
+    result = checker.check(worker, required_models:, required_labels:)
+    if result.error
       failed = true
-      puts format("%-14s %-8s %-12s %s", worker.name, "ERROR", "-", result.error)
+      puts format("%-14s %-11s %-12s %s", worker.name, "ERROR", "-", result.error)
+    elsif result.missing_labels.any?
+      failed = true
+      puts format("%-14s %-11s %-12s %s", worker.name, "INELIGIBLE", result.version || "?", "missing labels: #{result.missing_labels.join(', ')}")
+    elsif result.missing_models.any?
+      failed = true
+      puts format("%-14s %-11s %-12s %s", worker.name, "MISSING", result.version || "?", "missing models: #{result.missing_models.join(', ')}")
+    else
+      requirement_text = required_models.empty? && required_labels.empty? ? "-" : "yes"
+      puts format("%-14s %-11s %-12s %s", worker.name, "OK", result.version || "?", requirement_text)
     end
   end
   exit(failed ? 1 : 0)

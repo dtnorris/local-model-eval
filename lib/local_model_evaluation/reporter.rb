@@ -74,7 +74,9 @@ module LocalModelEvaluation
     end
 
     def extract_result(run_dir)
-      candidates = Dir.glob(File.join(run_dir, "native", "**", "*.json")).sort
+      candidates = Dir.glob(File.join(run_dir, "native", "**", "*.json")).sort.reject do |path|
+        File.basename(path).end_with?("_request.json")
+      end
       candidates.each do |path|
         data = JSON.parse(File.read(path)) rescue next
         found = recursive_fields(data)
@@ -97,6 +99,12 @@ module LocalModelEvaluation
         obj.each do |value|
           found = recursive_fields(value)
           return found if found[:score] || found[:confidence]
+        end
+      when String
+        stripped = obj.lstrip
+        if stripped.start_with?("{", "[")
+          parsed = JSON.parse(obj) rescue nil
+          return recursive_fields(parsed) if parsed
         end
       end
       { score: nil, confidence: nil }

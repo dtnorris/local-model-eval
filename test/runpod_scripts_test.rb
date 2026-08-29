@@ -135,6 +135,15 @@ class RunpodScriptsTest < Minitest::Test
       "FAKE_SSH_LOG" => @ssh_log,
       "FAKE_STDIN_LOG" => @stdin_log
     }
+
+    # Other tests load the repo-local .env through dotenv. Do not let those
+    # real worker coordinates leak into these isolated script fixtures.
+    (1..5).each do |worker|
+      env["LME_BURST_#{worker}_URL"] = nil
+      env["RUNPOD_BURST_#{worker}_HOST"] = nil
+      env["RUNPOD_BURST_#{worker}_SSH_PORT"] = nil
+    end
+
     Open3.capture3(env, File.join(@repo, "scripts", name), *args)
   end
 
