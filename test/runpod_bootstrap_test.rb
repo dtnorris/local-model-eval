@@ -14,6 +14,9 @@ module LocalModelEvaluation
 end
 
 class RunpodBootstrapTest < Minitest::Test
+  DIGEST = "a" * 64
+  OTHER_DIGEST = "b" * 64
+
   class FakeFleetState
     attr_reader :root
 
@@ -43,6 +46,7 @@ class RunpodBootstrapTest < Minitest::Test
       "fleet_id" => "20260829T200000Z-podabc",
       "status" => "active",
       "fleet_hourly_rate_usd" => 2.20,
+      "gpu" => { "id" => "NVIDIA A40", "count_per_worker" => 1 },
       "workers" => (1..3).map do |index|
         {
           "index" => index,
@@ -81,6 +85,8 @@ class RunpodBootstrapTest < Minitest::Test
       STDOUT.flush
       sleep 0.03
       puts "gemma4:26b verification PASS: context=262144 and 100% model residency in VRAM."
+      puts "[16:09:59] LME_PROVENANCE_GPU\tNVIDIA A40\t46068"
+      puts "[16:09:59] LME_PROVENANCE_MODEL\tgemma4:26b\t#{"a" * 64}\t262144\t2566893074\t2566893074"
       puts "Worker setup PASS."
       puts "[16:10:00] Worker #{worker} remote setup PASS."
     RUBY
@@ -93,7 +99,7 @@ class RunpodBootstrapTest < Minitest::Test
     record = runner.run(
       worker_indices: [1, 2, 3],
       models: ["gemma4:26b"],
-      expected_digests: ["gemma4:26b=abc123"],
+      expected_digests: ["gemma4:26b=#{DIGEST}"],
       clean: true,
       heartbeat_seconds: 0.02,
       poll_seconds: 0.005
@@ -131,6 +137,8 @@ class RunpodBootstrapTest < Minitest::Test
         exit 7
       end
       puts "gemma4:26b verification PASS: context=262144 and 100% model residency in VRAM."
+      puts "LME_PROVENANCE_GPU\tNVIDIA A40\t46068"
+      puts "LME_PROVENANCE_MODEL\tgemma4:26b\t#{"a" * 64}\t262144\t2566893074\t2566893074"
       puts "Worker setup PASS."
       puts "Worker #{worker} remote setup PASS."
     RUBY
@@ -139,6 +147,7 @@ class RunpodBootstrapTest < Minitest::Test
       build_runner(script).run(
         worker_indices: [1, 2, 3],
         models: ["gemma4:26b"],
+        expected_digests: ["gemma4:26b=#{DIGEST}"],
         heartbeat_seconds: 0.01,
         poll_seconds: 0.005
       )
@@ -162,6 +171,8 @@ class RunpodBootstrapTest < Minitest::Test
       puts "ARGS=#{ARGV.join('|')}"
       input = STDIN.read
       puts "STDIN_BYTES=#{input.bytesize}"
+      puts "LME_PROVENANCE_GPU\tNVIDIA A40\t46068"
+      puts "LME_PROVENANCE_MODEL\tgemma4:26b\t#{"a" * 64}\t262144\t2566893074\t2566893074"
       puts "Worker setup PASS."
       worker = ARGV[ARGV.index("--worker") + 1]
       puts "Worker #{worker} remote setup PASS."
@@ -170,7 +181,7 @@ class RunpodBootstrapTest < Minitest::Test
     record = build_runner(script).run(
       worker_indices: [2],
       models: ["gemma4:26b"],
-      expected_digests: ["gemma4:26b=deadbeef"],
+      expected_digests: ["gemma4:26b=#{DIGEST}"],
       clean: true,
       context: 262_144,
       heartbeat_seconds: 1,
@@ -181,7 +192,7 @@ class RunpodBootstrapTest < Minitest::Test
     bootstrap_root = File.join(@state_root, @fleet.fetch("fleet_id"), "bootstrap")
     run_id = File.read(File.join(bootstrap_root, "current")).strip
     log = File.read(File.join(bootstrap_root, run_id, "burst_2.log"))
-    assert_includes log, "ARGS=--worker|2|--clean|--model|gemma4:26b|--expect-digest|gemma4:26b=deadbeef|--context|262144"
+    assert_includes log, "ARGS=--worker|2|--expect-gpu|NVIDIA A40|--clean|--model|gemma4:26b|--expect-digest|gemma4:26b=#{DIGEST}|--context|262144"
     assert_includes log, "STDIN_BYTES=0"
   end
 
@@ -217,6 +228,7 @@ class RunpodBootstrapTest < Minitest::Test
         runner.run(
           worker_indices: [1],
           models: ["gemma4:26b"],
+          expected_digests: ["gemma4:26b=#{DIGEST}"],
           heartbeat_seconds: 0.05,
           poll_seconds: 0.005
         )
@@ -254,6 +266,49 @@ class RunpodBootstrapTest < Minitest::Test
     assert_includes @out.string, "Interrupt received; stopping 1 bootstrap process group(s)"
     assert_includes @out.string, "Local bootstrap/SSH process groups stopped"
   end
+
+  def test_requires_exact_digest_for_every_model_before_spawning
+    script = fake_remote_script("raise 'must not run'\n")
+    runner = build_runner(script)
+
+    error = assert_raises(LocalModelEvaluation::RunpodBootstrap::Error) do
+      runner.run(worker_indices: [1], models: ["gemma4:26b"])
+    end
+    assert_includes error.message, "exact expected digest required"
+
+    error = assert_raises(LocalModelEvaluation::RunpodBootstrap::Error) do
+      runner.run(
+        worker_indices: [1],
+        models: ["gemma4:26b"],
+        expected_digests: ["gemma4:26b=deadbeef"]
+      )
+    end
+    assert_includes error.message, "exactly 64 hexadecimal"
+  end
+
+  def test_successful_remote_exit_fails_closed_when_provenance_mismatches
+    script = fake_remote_script(<<~'RUBY')
+      worker = ARGV[ARGV.index("--worker") + 1]
+      puts "gemma4:26b verification PASS: context=262144 and 100% model residency in VRAM."
+      puts "LME_PROVENANCE_GPU\tNVIDIA A40\t46068"
+      puts "LME_PROVENANCE_MODEL\tgemma4:26b\t#{"b" * 64}\t262144\t2566893074\t2566893074"
+      puts "Worker setup PASS."
+      puts "Worker #{worker} remote setup PASS."
+    RUBY
+
+    error = assert_raises(LocalModelEvaluation::RunpodBootstrap::Error) do
+      build_runner(script).run(
+        worker_indices: [1],
+        models: ["gemma4:26b"],
+        expected_digests: ["gemma4:26b=#{DIGEST}"],
+        poll_seconds: 0.005
+      )
+    end
+
+    assert_includes error.message, "1 worker(s)"
+    assert_includes @out.string, "provenance: gemma4:26b digest mismatch"
+  end
+
 
   private
 

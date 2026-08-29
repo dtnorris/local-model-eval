@@ -14,6 +14,8 @@ bin/lme runpod-bootstrap \
   --expect-digest gemma4:26b=<full-digest>
 ```
 
+Every requested model must have an exact 64-hex `--expect-digest`. The managed launcher also derives the exact expected GPU from current fleet state and always pins an explicit context (262144 unless overridden). Missing or mismatched model/digest/context/GPU provenance fails closed.
+
 The command requires an active fleet created by `bin/lme runpod-create`. It reads the authoritative current fleet from `output/runpod-fleets/current`; it never discovers current work by scanning arbitrary historical output directories.
 
 ## Operator feedback
@@ -47,7 +49,9 @@ output/runpod-fleets/<fleet-id>/bootstrap/
 
 `bootstrap/current` points only at the latest bootstrap invocation for that fleet. Historical runs remain preserved but cannot become current merely because their log files still exist.
 
-`bootstrap.json` is atomically updated as workers start, change stage, complete, fail, or are interrupted. It records the requested models, expected digests, context, worker pod IDs/endpoints, child PIDs, per-worker stage/status, exit status, timestamps, elapsed time, and bootstrap-window cost.
+`bootstrap.json` is atomically updated as workers start, change stage, complete, fail, or are interrupted. It records the requested models, exact expected digests, exact expected GPU, context, worker pod IDs/endpoints, child PIDs, per-worker stage/status, exit status, timestamps, elapsed time, and bootstrap-window cost.
+
+On successful remote setup, each worker emits machine-readable provenance markers. LME records the detected GPU name/VRAM and, for every model, the observed digest, context length, model size, VRAM-resident size, and full-residency result. A worker cannot be marked `passed` unless those markers exactly satisfy the requested provenance contract.
 
 ## Interruption
 
@@ -59,9 +63,9 @@ The wrapper's SSH process is in the same local process group, so the local SSH/b
 
 - `--workers 1-5` — explicit worker indices from the current fleet.
 - `--model MODEL` — model to install; repeatable.
-- `--expect-digest MODEL=DIGEST` — pass an exact digest requirement to remote setup; repeatable.
+- `--expect-digest MODEL=DIGEST` — required exact 64-hex digest for each model; repeatable.
 - `--clean` — delete staging and shared Ollama stores before setup. Omit when adding a model to an existing worker store.
-- `--context N` — override the remote setup context length; otherwise its 262144 default applies.
+- `--context N` — exact context length; defaults to 262144 and is always passed explicitly to remote setup.
 - `--heartbeat-seconds N` — heartbeat interval; default 10 seconds.
 
 The command fails before spawning if no current active fleet exists, a requested worker is absent/destroyed, the remote bootstrap wrapper is missing, or another bootstrap command holds the fleet bootstrap lock.

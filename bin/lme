@@ -317,6 +317,26 @@ when "run"
   opts = parse_run_options(ARGV)
 
   exp, workers, models, jobs = load_experiment_context(experiment_path)
+  begin
+    provenance = LocalModelEvaluation::RunpodProvenance.new(
+      fleet_state: LocalModelEvaluation::RunpodFleetState.new(
+        root: File.join(ROOT, "output", "runpod-fleets")
+      )
+    ).verify_experiment!(experiment: exp, models: models)
+    if provenance
+      puts format(
+        "RunPod provenance: PASS | workers=%s | models=%s | context=%d | gpu=%s | exact digests pinned",
+        provenance.fetch("workers").map { |index| "burst_#{index}" }.join(","),
+        provenance.fetch("models").join(","),
+        provenance.fetch("context"),
+        provenance.fetch("gpu")
+      )
+    end
+  rescue LocalModelEvaluation::RunpodProvenance::Error => e
+    warn "ERROR: RunPod provenance gate failed: #{e.message}"
+    exit 1
+  end
+
   puts "Experiment: #{exp.name}"
   puts "Dispatch: #{exp.dispatch}"
   puts "Jobs: #{jobs.length}"

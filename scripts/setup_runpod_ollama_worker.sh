@@ -18,9 +18,14 @@ STATE_ROOT=/workspace/lme-worker-state
 SERVER_HOST=127.0.0.1:11434
 CLIENT_URL=http://127.0.0.1:11434
 MIN_VRAM_GB=40
+EXPECTED_GPU_NAME=""
 CLEAN=0
 MODELS=()
 declare -A EXPECTED_DIGESTS=()
+declare -A FINAL_DIGESTS=()
+declare -A VERIFIED_CONTEXTS=()
+declare -A VERIFIED_SIZES=()
+declare -A VERIFIED_SIZES_VRAM=()
 OLLAMA_PID=""
 FINAL_SERVER_READY=0
 STEP=0
@@ -40,6 +45,7 @@ Options:
   --shared-dir PATH             Shared/workspace store (default: /workspace/ollama-models)
   --state-root PATH             Worker evidence directory (default: /workspace/lme-worker-state)
   --min-vram-gb N               Minimum detected GPU VRAM (default: 40)
+  --expect-gpu NAME             Fail before model pull unless detected GPU name matches exactly.
   --expect-digest MODEL=DIGEST  Fail unless the pulled model has this full digest. Repeatable.
   --clean                       Delete both staging and shared Ollama stores before setup.
   -h, --help                    Show this help.
@@ -80,6 +86,10 @@ while (($#)); do
     --min-vram-gb)
       [[ $# -ge 2 ]] || die "--min-vram-gb requires a value"
       MIN_VRAM_GB="$2"; shift 2 ;;
+    --expect-gpu)
+      [[ $# -ge 2 ]] || die "--expect-gpu requires a value"
+      EXPECTED_GPU_NAME="$2"
+      shift 2 ;;
     --expect-digest)
       [[ $# -ge 2 ]] || die "--expect-digest requires MODEL=DIGEST"
       [[ "$2" == *=* ]] || die "--expect-digest must be MODEL=DIGEST"
@@ -187,6 +197,10 @@ GPU_VRAM_MIB="${GPU_VRAM_MIB// /}"
 MIN_VRAM_MIB=$((MIN_VRAM_GB * 1024))
 info "GPU detected: $GPU_NAME (${GPU_VRAM_MIB} MiB VRAM)"
 ((GPU_VRAM_MIB >= MIN_VRAM_MIB)) || die "GPU has less than required ${MIN_VRAM_GB} GiB VRAM"
+if [[ -n "$EXPECTED_GPU_NAME" && "$GPU_NAME" != "$EXPECTED_GPU_NAME" ]]; then
+  die "GPU mismatch: expected '$EXPECTED_GPU_NAME', got '$GPU_NAME'"
+fi
+
 nvidia-smi > "$STATE_DIR/nvidia-smi-preflight.txt"
 df -h / /workspace > "$STATE_DIR/disk-preflight.txt" 2>&1 || true
 cat "$STATE_DIR/disk-preflight.txt"
@@ -265,6 +279,7 @@ for model in "${MODELS[@]}"; do
   [[ -n "$digest" && "$digest" != "null" ]] || die "$model is not visible from final workspace server"
   expected="${EXPECTED_DIGESTS[$model]:-}"
   info "$model digest: $digest"
+  FINAL_DIGESTS["$model"]="$digest"
   if [[ -n "$expected" && "$digest" != "$expected" ]]; then
     die "final digest mismatch for $model: expected $expected, got $digest"
   fi
@@ -293,6 +308,9 @@ for model in "${MODELS[@]}"; do
   [[ "$size" == "$size_vram" ]] || \
     die "$model is not fully GPU-resident: size=$size size_vram=$size_vram"
 
+  VERIFIED_CONTEXTS["$model"]="$actual_context"
+  VERIFIED_SIZES["$model"]="$size"
+  VERIFIED_SIZES_VRAM["$model"]="$size_vram"
   info "$model verification PASS: context=$CONTEXT_LENGTH and 100% model residency in VRAM."
   OLLAMA_HOST="$CLIENT_URL" ollama stop "$model" >/dev/null 2>&1 || true
 done
@@ -307,6 +325,14 @@ step "Write durable worker evidence"
   echo "server_url=$CLIENT_URL"
   echo "models=${MODELS[*]}"
 } > "$STATE_DIR/worker-summary.txt"
+
+info "Emitting machine-readable model/GPU provenance."
+printf '[%s] LME_PROVENANCE_GPU\t%s\t%s\n' "$(ts)" "$GPU_NAME" "$GPU_VRAM_MIB"
+for model in "${MODELS[@]}"; do
+  printf '[%s] LME_PROVENANCE_MODEL\t%s\t%s\t%s\t%s\t%s\n' \
+    "$(ts)" "$model" "${FINAL_DIGESTS[$model]}" \
+    "${VERIFIED_CONTEXTS[$model]}" "${VERIFIED_SIZES[$model]}" "${VERIFIED_SIZES_VRAM[$model]}"
+done
 
 info "Worker setup PASS."
 info "Ollama is serving from $SHARED_DIR on $CLIENT_URL."

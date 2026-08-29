@@ -32,9 +32,12 @@ module LocalModelEvaluation
       workers = selected_workers(fleet, worker_indices)
       models = normalize_models(models)
       digests = normalize_digests(expected_digests, models)
+      expected_gpu = fleet.dig("gpu", "id").to_s
+      raise Error, "current fleet does not record an exact GPU id" if expected_gpu.empty?
+
       heartbeat_seconds = positive_float(heartbeat_seconds, "heartbeat seconds")
       poll_seconds = positive_float(poll_seconds, "poll seconds")
-      context = positive_integer(context, "context") if context
+      context = context ? positive_integer(context, "context") : 262_144
       validate_remote_setup!
 
       bootstrap_root = @fleet_state.artifact_dir(fleet.fetch("fleet_id"), "bootstrap")
@@ -51,6 +54,7 @@ module LocalModelEvaluation
           workers:,
           models:,
           digests:,
+          expected_gpu:,
           clean:,
           context:,
           heartbeat_seconds:,
@@ -62,7 +66,8 @@ module LocalModelEvaluation
 
     private
 
-    def execute_run(fleet:, workers:, models:, digests:, clean:, context:, heartbeat_seconds:, poll_seconds:, bootstrap_root:)
+    def execute_run(fleet:, workers:, models:, digests:, expected_gpu:, clean:, context:,
+                    heartbeat_seconds:, poll_seconds:, bootstrap_root:)
       started_wall = utc_now
       started_mono = @monotonic_clock.call
       run_id = build_run_id(started_wall)
@@ -75,6 +80,7 @@ module LocalModelEvaluation
         workers:,
         models:,
         digests:,
+        expected_gpu:,
         clean:,
         context:,
         heartbeat_seconds:,
@@ -91,6 +97,7 @@ module LocalModelEvaluation
             worker:,
             models:,
             digests:,
+            expected_gpu:,
             clean:,
             context:,
             run_dir:
@@ -154,13 +161,26 @@ module LocalModelEvaluation
             worker["last_log_line"] = progress[:latest_line]
             worker["exit_status"] = status.exitstatus
             worker["finished_at_utc"] = utc_now.iso8601
+            provenance = provenance_for(child.fetch(:log_path))
+            worker["provenance"] = provenance
+            provenance_error = provenance_error_for(
+              provenance,
+              models:,
+              digests:,
+              context:,
+              expected_gpu:
+            )
+            worker["provenance_error"] = provenance_error
 
-            if status.success? && progress[:passed]
+            if status.success? && progress[:passed] && provenance_error.nil?
               worker["status"] = "passed"
               @out.puts "PASS: burst_#{index} bootstrap"
             else
               worker["status"] = "failed"
-              @out.puts "FAIL: burst_#{index} bootstrap (exit #{status.exitstatus || 'signal'}) -- #{child.fetch(:log_path)}"
+              detail = provenance_error ? " -- provenance: #{provenance_error}" : ""
+              @out.puts(
+                "FAIL: burst_#{index} bootstrap (exit #{status.exitstatus || 'signal'})#{detail} -- #{child.fetch(:log_path)}"
+              )
             end
             children.delete(index)
             write_record(record_path, record)
@@ -240,27 +260,38 @@ module LocalModelEvaluation
     end
 
     def normalize_digests(values, models)
-      Array(values).each_with_object({}) do |value, out|
+      digests = Array(values).each_with_object({}) do |value, out|
         model, digest = value.to_s.split("=", 2)
         if model.to_s.empty? || digest.to_s.empty?
           raise Error, "expected digest must use MODEL=DIGEST"
         end
         raise Error, "expected digest names unrequested model #{model.inspect}" unless models.include?(model)
+        unless digest.match?(/\A[0-9a-fA-F]{64}\z/)
+          raise Error, "expected digest for #{model} must be exactly 64 hexadecimal characters"
+        end
 
-        out[model] = digest
+        out[model] = digest.downcase
       end
+
+      missing = models - digests.keys
+      unless missing.empty?
+        raise Error, "exact expected digest required for model(s): #{missing.join(', ')}"
+      end
+
+      digests
     end
 
-    def spawn_worker(worker:, models:, digests:, clean:, context:, run_dir:)
+    def spawn_worker(worker:, models:, digests:, expected_gpu:, clean:, context:, run_dir:)
       index = worker.fetch("index")
       log_path = File.join(run_dir, "burst_#{index}.log")
       command = [@remote_setup_path, "--worker", index.to_s]
+      command.concat(["--expect-gpu", expected_gpu])
       command << "--clean" if clean
       models.each do |model|
         command.concat(["--model", model])
-        command.concat(["--expect-digest", "#{model}=#{digests.fetch(model)}"]) if digests.key?(model)
+        command.concat(["--expect-digest", "#{model}=#{digests.fetch(model)}"])
       end
-      command.concat(["--context", context.to_s]) if context
+      command.concat(["--context", context.to_s])
 
       log = File.open(log_path, "w")
       pid = Process.spawn(
@@ -326,6 +357,80 @@ module LocalModelEvaluation
         latest_line: latest_meaningful_line(text),
         passed:
       }
+    end
+
+    def provenance_for(path)
+      text = log_tail(path)
+      gpu = nil
+      model_records = {}
+
+      text.each_line do |line|
+        if (payload = line.split("LME_PROVENANCE_GPU\t", 2)[1])
+          name, vram = payload.strip.split("\t", 2)
+          gpu = {
+            "name" => name,
+            "vram_mib" => integer_or_nil(vram)
+          }
+        elsif (payload = line.split("LME_PROVENANCE_MODEL\t", 2)[1])
+          model, digest, actual_context, size, size_vram = payload.strip.split("\t", 5)
+          next unless model && digest
+
+          parsed_size = integer_or_nil(size)
+          parsed_size_vram = integer_or_nil(size_vram)
+          model_records[model] = {
+            "digest" => digest.downcase,
+            "context_length" => integer_or_nil(actual_context),
+            "size_bytes" => parsed_size,
+            "size_vram_bytes" => parsed_size_vram,
+            "fully_gpu_resident" => !parsed_size.nil? && parsed_size == parsed_size_vram
+          }
+        end
+      end
+
+      {
+        "gpu" => gpu,
+        "models" => model_records
+      }
+    end
+
+    def provenance_error_for(provenance, models:, digests:, context:, expected_gpu:)
+      errors = []
+      gpu = provenance["gpu"]
+      if gpu.nil?
+        errors << "missing GPU provenance marker"
+      elsif gpu["name"] != expected_gpu
+        errors << "GPU mismatch: expected #{expected_gpu.inspect}, got #{gpu['name'].inspect}"
+      end
+
+      observed_models = provenance.fetch("models", {})
+      models.each do |model|
+        observed = observed_models[model]
+        unless observed
+          errors << "missing model provenance for #{model}"
+          next
+        end
+
+        expected_digest = digests.fetch(model)
+        if observed["digest"] != expected_digest
+          errors << "#{model} digest mismatch: expected #{expected_digest}, got #{observed['digest'].inspect}"
+        end
+        if observed["context_length"] != context
+          errors << "#{model} context mismatch: expected #{context}, got #{observed['context_length'].inspect}"
+        end
+        unless observed["fully_gpu_resident"] == true &&
+               observed["size_bytes"] &&
+               observed["size_bytes"] == observed["size_vram_bytes"]
+          errors << "#{model} is not proven fully GPU-resident"
+        end
+      end
+
+      errors.empty? ? nil : errors.join("; ")
+    end
+
+    def integer_or_nil(value)
+      Integer(value)
+    rescue ArgumentError, TypeError
+      nil
     end
 
     def log_tail(path)
@@ -427,9 +532,10 @@ module LocalModelEvaluation
       nil
     end
 
-    def initial_record(fleet:, workers:, models:, digests:, clean:, context:, heartbeat_seconds:, started_wall:, run_id:)
+    def initial_record(fleet:, workers:, models:, digests:, expected_gpu:, clean:, context:,
+                       heartbeat_seconds:, started_wall:, run_id:)
       {
-        "schema_version" => 1,
+        "schema_version" => 2,
         "bootstrap_run_id" => run_id,
         "fleet_id" => fleet.fetch("fleet_id"),
         "status" => "running",
@@ -437,8 +543,9 @@ module LocalModelEvaluation
         "finished_at_utc" => nil,
         "models" => models,
         "expected_digests" => digests,
+        "expected_gpu" => expected_gpu,
         "clean" => clean,
-        "context" => context || 262_144,
+        "context" => context,
         "heartbeat_seconds" => heartbeat_seconds,
         "fleet_hourly_rate_usd" => fleet.fetch("fleet_hourly_rate_usd"),
         "workers" => workers.map do |worker|
@@ -454,7 +561,9 @@ module LocalModelEvaluation
             "log" => "burst_#{worker.fetch('index')}.log",
             "started_at_utc" => nil,
             "finished_at_utc" => nil,
-            "exit_status" => nil
+            "exit_status" => nil,
+            "provenance" => nil,
+            "provenance_error" => nil
           }
         end
       }
