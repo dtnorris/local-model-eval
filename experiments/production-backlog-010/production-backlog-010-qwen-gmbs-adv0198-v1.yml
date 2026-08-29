@@ -1,0 +1,51 @@
+name: production-backlog-010-qwen-gmbs-adv0198-v1
+purpose: >
+  Interruptible AdventureFinder local production scoring. Produce one proposed
+  GM Beginner Suitability assessment for canonical ADV-0198 using the
+  locally qualified qwen3.6:35b-a3b clean blind GMBS v0.3 path. The accepted AMC
+  GM Beginner Suitability value was blank when this queue was generated.
+dispatch: pool
+
+models:
+  - qwen
+
+dimension: "GM Beginner Suitability"
+
+adventures:
+  - ADV-0198
+
+replicates: 1
+
+workers:
+  - mac
+
+required_worker_labels:
+  - local
+
+scorer:
+  repo: ../../../af-cli-scoring-utility
+  mode: positional
+  extra_args: []
+
+production_contract:
+  contract_type: gmbs_local_qualified_v1
+  disposition: local-qualified-background
+  queue: production-backlog-010
+  candidate_model: qwen
+  qualified_profile: gmbs-clean-blind-v0.3
+  qualified_scorer_baseline: bcdc94496ace154ab0f65131711ca36166bdd430
+  replicate_count: 1
+  no_favorable_rerun: true
+  external_api_cost_usd: 0.0
+
+success_criteria:
+  - Structured scorer output validates and remains grounded to the canonical adventure source unit.
+  - Use the frozen clean blind GM Beginner Suitability v0.3 profile with qwen3.6:35b-a3b.
+  - Preserve the single completed sample as a proposed production assessment pending QC/ingestion.
+  - Do not use an existing accepted GMBS score or calibration target as expected-answer context.
+
+stop_conditions:
+  - Do not rerun a completed case to seek a more favorable sample.
+  - Queue-level repeated operational failures trigger the background runner circuit breaker.
+
+cost_cap_usd: 0.01
