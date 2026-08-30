@@ -6,7 +6,7 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 ENV_FILE="$ROOT/.env"
-STATE_DIR="$ROOT/output/tunnels"
+STATE_DIR=""
 WORKER=""
 HOST=""
 SSH_PORT=""
@@ -108,8 +108,11 @@ if [[ -n "$WORKER" ]]; then
   fi
 
   [[ -n "$NAME" ]] || NAME="burst_${WORKER}"
+  [[ -n "${LME_RUNPOD_FLEET_DIR:-}" ]] || die "LME_RUNPOD_FLEET_DIR is not set; worker-mode tunnel state must be scoped to the current fleet"
+  STATE_DIR="$LME_RUNPOD_FLEET_DIR/tunnels/legacy"
 else
   [[ -n "$NAME" ]] || NAME="burst"
+  STATE_DIR="$ROOT/output/manual-tunnels"
 fi
 
 [[ -n "$LOCAL_PORT" ]] || { usage >&2; die "--local-port is required (or use --worker N)"; }
@@ -117,6 +120,7 @@ fi
 mkdir -p "$STATE_DIR"
 PID_FILE="$STATE_DIR/runpod-ollama-${LOCAL_PORT}.pid"
 LOG_FILE="$STATE_DIR/runpod-ollama-${LOCAL_PORT}.log"
+KNOWN_HOSTS_FILE="$STATE_DIR/known_hosts-${LOCAL_PORT}"
 
 if [[ $STOP -eq 1 ]]; then
   info "[1/2] Looking for tunnel on local port $LOCAL_PORT ..."
@@ -166,6 +170,7 @@ ssh \
   -o BatchMode=yes \
   -o IdentitiesOnly=yes \
   -o StrictHostKeyChecking=accept-new \
+  -o UserKnownHostsFile="$KNOWN_HOSTS_FILE" \
   -o ConnectTimeout=10 \
   -p "$SSH_PORT" \
   -i "$IDENTITY" \
@@ -179,6 +184,7 @@ nohup ssh \
   -o BatchMode=yes \
   -o IdentitiesOnly=yes \
   -o StrictHostKeyChecking=accept-new \
+  -o UserKnownHostsFile="$KNOWN_HOSTS_FILE" \
   -o ExitOnForwardFailure=yes \
   -o ServerAliveInterval=30 \
   -o ServerAliveCountMax=3 \

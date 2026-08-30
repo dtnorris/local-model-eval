@@ -18,3 +18,5 @@ require_relative "local_model_evaluation/runpod_fleet"
 require_relative "local_model_evaluation/runpod_bootstrap"
 require_relative "local_model_evaluation/runpod_status"
 require_relative "local_model_evaluation/runpod_provenance"
+
+require_relative "local_model_evaluation/runpod_tunnels"

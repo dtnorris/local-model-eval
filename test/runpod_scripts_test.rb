@@ -30,6 +30,8 @@ class RunpodScriptsTest < Minitest::Test
     File.write(@identity, "test-key\n")
     @ssh_log = File.join(@tmp, "ssh.log")
     @stdin_log = File.join(@tmp, "stdin.log")
+    @fleet_dir = File.join(@repo, "output", "runpod-fleets", "test-fleet")
+    FileUtils.mkdir_p(@fleet_dir)
 
     write_fake_ssh
   end
@@ -40,6 +42,7 @@ class RunpodScriptsTest < Minitest::Test
 
   def test_tunnel_worker_mode_resolves_local_port_from_dotenv
     write_env(
+      "LME_RUNPOD_FLEET_DIR=#{@fleet_dir}",
       "LME_BURST_2_URL=http://127.0.0.1:11442",
       "RUNPOD_BURST_2_HOST=198.51.100.22",
       "RUNPOD_BURST_2_SSH_PORT=22422"
@@ -55,6 +58,7 @@ class RunpodScriptsTest < Minitest::Test
 
   def test_tunnel_explicit_connection_flags_override_worker_dotenv
     write_env(
+      "LME_RUNPOD_FLEET_DIR=#{@fleet_dir}",
       "LME_BURST_2_URL=http://127.0.0.1:11442",
       "RUNPOD_BURST_2_HOST=env-host.example",
       "RUNPOD_BURST_2_SSH_PORT=22002"
@@ -77,6 +81,20 @@ class RunpodScriptsTest < Minitest::Test
     assert_includes log, "-p 22999"
     assert_includes log, "root@203.0.113.99"
     refute_includes log, "env-host.example"
+  end
+
+  def test_tunnel_worker_mode_requires_fleet_scoped_state_dir
+    write_env(
+      "LME_BURST_2_URL=http://127.0.0.1:11442",
+      "RUNPOD_BURST_2_HOST=198.51.100.22",
+      "RUNPOD_BURST_2_SSH_PORT=22422"
+    )
+
+    _stdout, stderr, status = run_script("runpod_ollama_tunnel.sh", "--stop", "--worker", "2")
+
+    refute status.success?
+    assert_includes stderr, "LME_RUNPOD_FLEET_DIR is not set"
+    refute File.exist?(File.join(@repo, "output", "tunnels"))
   end
 
   def test_remote_setup_wrapper_loads_worker_and_forwards_setup_arguments
@@ -138,6 +156,8 @@ class RunpodScriptsTest < Minitest::Test
 
     # Other tests load the repo-local .env through dotenv. Do not let those
     # real worker coordinates leak into these isolated script fixtures.
+    env["LME_RUNPOD_FLEET_DIR"] = nil
+
     (1..5).each do |worker|
       env["LME_BURST_#{worker}_URL"] = nil
       env["RUNPOD_BURST_#{worker}_HOST"] = nil

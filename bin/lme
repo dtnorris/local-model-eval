@@ -186,6 +186,9 @@ when "worker-check"
   end
   exit(failed ? 1 : 0)
 
+when "runpod-tunnels"
+  exec RbConfig.ruby, File.join(ROOT, "bin", "lme-runpod-tunnels"), *ARGV
+
 when "runpod-status"
   exec RbConfig.ruby, File.join(ROOT, "bin", "lme-runpod-status"), *ARGV
 
@@ -258,6 +261,30 @@ when "runpod-destroy"
   opts = runpod_destroy_options(ARGV)
   names = opts[:workers].map { |index| "af-lme-burst-#{index}" }.join(", ")
   confirm_or_abort("Permanently delete RunPod pod(s): #{names}?", assume_yes: opts[:yes])
+
+  begin
+    tunnel_state = LocalModelEvaluation::RunpodFleetState.new(
+      root: File.join(ROOT, "output", "runpod-fleets")
+    )
+    current = tunnel_state.current
+    if current
+      active_indices = current.fetch("workers").filter_map do |worker|
+        index = Integer(worker.fetch("index"))
+        index if worker["status"] == "active" && opts[:workers].include?(index)
+      end
+      unless active_indices.empty?
+        tunnel_root = tunnel_state.artifact_dir(current.fetch("fleet_id"), "tunnels")
+        if File.file?(File.join(tunnel_root, LocalModelEvaluation::RunpodTunnels::STATE_FILE))
+          LocalModelEvaluation::RunpodTunnels.new(
+            fleet_state: tunnel_state,
+            repo_root: ROOT
+          ).stop(worker_indices: active_indices)
+        end
+      end
+    end
+  rescue LocalModelEvaluation::RunpodFleetState::Error, LocalModelEvaluation::RunpodTunnels::Error => e
+    warn "WARNING: could not stop managed local tunnel(s): #{e.message}; continuing paid pod teardown."
+  end
 
   begin
     cleared = runpod_fleet.destroy(worker_indices: opts[:workers])
@@ -356,6 +383,7 @@ else
       bin/lme plan EXPERIMENT.yml
       bin/lme worker-check [EXPERIMENT.yml]
       bin/lme runpod-status
+      bin/lme runpod-tunnels [start|status|stop] [--workers 1-5|--all]
       bin/lme runpod-bootstrap --workers 1-5 --model MODEL [options]
       bin/lme runpod-create --workers N [--cloud COMMUNITY|SECURE] [--dry-run|--yes] [--max-hourly-usd USD]
       bin/lme runpod-destroy --workers 1-5 [--yes]
