@@ -58,7 +58,7 @@ class RunpodProvenanceTest < Minitest::Test
     assert_equal [1, 2], result.fetch("workers")
     assert_equal ["gemma4:26b"], result.fetch("models")
     assert_equal DIGEST, result.dig("digests", "gemma4:26b")
-    assert_equal 262_144, result.fetch("context")
+    assert_equal 131_072, result.fetch("context")
     assert_equal "NVIDIA A40", result.fetch("gpu")
   end
 
@@ -79,7 +79,7 @@ class RunpodProvenanceTest < Minitest::Test
   def test_fails_closed_on_digest_context_gpu_or_residency_mismatch
     [
       ->(record) { record["workers"][0]["provenance"]["models"]["gemma4:26b"]["digest"] = OTHER_DIGEST },
-      ->(record) { record["workers"][0]["provenance"]["models"]["gemma4:26b"]["context_length"] = 131_072 },
+      ->(record) { record["workers"][0]["provenance"]["models"]["gemma4:26b"]["context_length"] = 262_144 },
       ->(record) { record["workers"][0]["provenance"]["gpu"]["name"] = "NVIDIA A100" },
       lambda do |record|
         model = record["workers"][0]["provenance"]["models"]["gemma4:26b"]
@@ -159,7 +159,7 @@ class RunpodProvenanceTest < Minitest::Test
       "models" => ["gemma4:26b"],
       "expected_digests" => { "gemma4:26b" => DIGEST },
       "expected_gpu" => "NVIDIA A40",
-      "context" => 262_144,
+      "context" => 131_072,
       "workers" => [verified_worker(1), verified_worker(2)]
     }
   end
@@ -176,7 +176,7 @@ class RunpodProvenanceTest < Minitest::Test
         "models" => {
           "gemma4:26b" => {
             "digest" => DIGEST,
-            "context_length" => 262_144,
+            "context_length" => 131_072,
             "size_bytes" => 2_566_893_074,
             "size_vram_bytes" => 2_566_893_074,
             "fully_gpu_resident" => true

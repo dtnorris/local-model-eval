@@ -45,7 +45,7 @@ parser = OptionParser.new do |o|
   o.on("--model MODEL", "Ollama model to bootstrap; repeatable") { |v| opts[:models] << v }
   o.on("--expect-digest MODEL=DIGEST", "Required exact 64-hex digest for each --model; repeatable") { |v| opts[:expected_digests] << v }
   o.on("--clean", "Delete staging/shared Ollama stores before bootstrap") { opts[:clean] = true }
-  o.on("--context N", Integer, "Ollama context length; remote default is 262144") { |v| opts[:context] = v }
+  o.on("--context N", Integer, "Ollama context length; remote default is 131072") { |v| opts[:context] = v }
   o.on("--heartbeat-seconds N", Float, "Fleet heartbeat interval (default: 10)") { |v| opts[:heartbeat_seconds] = v }
 end
 

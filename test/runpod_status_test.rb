@@ -113,7 +113,7 @@ class RunpodStatusTest < Minitest::Test
         "started_at_utc" => "2026-08-29T20:10:00Z",
         "finished_at_utc" => nil,
         "models" => ["gemma4:26b"],
-        "context" => 262_144,
+        "context" => 131_072,
         "workers" => [
           { "index" => 1, "status" => "passed", "stage" => "READY" },
           { "index" => 2, "status" => "running", "stage" => "WARMING" }
