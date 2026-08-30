@@ -21,6 +21,7 @@ else
 fi
 ORDER="$QUEUE_DIR/run_order.txt"
 SNAPSHOT="$QUEUE_DIR/snapshot.yml"
+SOURCE_PREFLIGHT="$REPO/bin/preflight-production-backlog-sources"
 
 CONTRACT_TYPE="$(
   ruby - "$SNAPSHOT" <<'RUBY'
@@ -50,6 +51,7 @@ mkdir -p "$CONTROL_DIR"
 
 [[ -f "$ORDER" ]] || { echo "ERROR: missing $ORDER"; exit 1; }
 [[ -x "$VERIFY" ]] || { echo "ERROR: missing/executable verifier $VERIFY"; exit 1; }
+[[ -x "$SOURCE_PREFLIGHT" ]] || { echo "ERROR: missing/executable runtime source preflight $SOURCE_PREFLIGHT"; exit 1; }
 
 if [[ -f "$PAUSE_FILE" ]]; then
   echo "Background production is paused. Resume with:"
@@ -64,6 +66,13 @@ fi
 
 export AF_SOCIAL_INTERACTION_GUARDRAIL_PROFILE=phase6-v0.3
 export AF_INVESTIGATION_GUARDRAIL_PROFILE=phase6-v0.4
+
+echo
+echo "Checking runtime source resolution against the active scorer checkout..."
+"$SOURCE_PREFLIGHT" "$QUEUE_ARG" || {
+  echo "ERROR: runtime source preflight failed. No inference launched."
+  exit 1
+}
 
 manifest_status() {
   local manifest="$1"
