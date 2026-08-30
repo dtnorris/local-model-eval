@@ -10,12 +10,19 @@ module LocalModelEvaluation
     STATE_FILE = "fleet.json"
     CURRENT_FILE = "current"
     ARTIFACT_DIRS = %w[bootstrap tunnels].freeze
+    DEFAULT_LOCAL_PORT_BASE = 11_441
 
     class Error < StandardError; end
 
-    def initialize(root:, clock: nil)
+    def initialize(root:, clock: nil, local_port_base: DEFAULT_LOCAL_PORT_BASE)
       @root = File.expand_path(root)
       @clock = clock || -> { Time.now.utc }
+      @local_port_base = Integer(local_port_base)
+      unless @local_port_base.between?(1, 65_530)
+        raise Error, "local port base must leave room for five managed workers"
+      end
+    rescue ArgumentError, TypeError
+      raise Error, "local port base must be an integer"
     end
 
     attr_reader :root
@@ -67,7 +74,7 @@ module LocalModelEvaluation
           "host" => worker.host,
           "ssh_port" => worker.ssh_port,
           "hourly_rate_usd" => worker.hourly_rate,
-          "local_ollama_url" => "http://127.0.0.1:#{11_440 + worker.index}",
+          "local_ollama_url" => "http://127.0.0.1:#{@local_port_base + worker.index - 1}",
           "status" => "active"
         }
       end

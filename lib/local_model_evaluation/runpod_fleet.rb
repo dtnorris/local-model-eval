@@ -105,20 +105,26 @@ module LocalModelEvaluation
       end
     end
 
-    def initialize(client:, env_path:, out: $stdout, sleeper: nil, clock: nil, state_root: nil, wall_clock: nil)
+    def initialize(client:, env_path:, out: $stdout, sleeper: nil, clock: nil, state_root: nil, wall_clock: nil,
+                   fleet_key: "default", local_port_base: RunpodFleetState::DEFAULT_LOCAL_PORT_BASE)
       @client = client
+      @fleet_key = fleet_key.to_s
+      unless @fleet_key.match?(/\A[a-z0-9][a-z0-9_-]{0,31}\z/)
+        raise Error, "invalid fleet key: #{@fleet_key.inspect}"
+      end
       env_path = File.expand_path(env_path)
       @env_file = EnvFile.new(env_path)
       @fleet_state = RunpodFleetState.new(
         root: state_root || File.join(File.dirname(env_path), "output", "runpod-fleets"),
-        clock: wall_clock
+        clock: wall_clock,
+        local_port_base:
       )
       @out = out
       @sleeper = sleeper || ->(seconds) { sleep seconds }
       @clock = clock || -> { Process.clock_gettime(Process::CLOCK_MONOTONIC) }
     end
 
-    attr_reader :env_file, :fleet_state
+    attr_reader :env_file, :fleet_state, :fleet_key
 
     def preflight(worker_count:, cloud: DEFAULT_CLOUD, max_fleet_hourly_usd: DEFAULT_MAX_FLEET_HOURLY_USD)
       worker_count = validate_worker_count(worker_count)
@@ -396,13 +402,14 @@ module LocalModelEvaluation
 
     def write_worker_env(workers, fleet_record:)
       fleet_id = fleet_record.fetch("fleet_id")
+      state_workers = fleet_record.fetch("workers").to_h { |worker| [Integer(worker.fetch("index")), worker] }
       updates = {
         "LME_RUNPOD_FLEET_ID" => fleet_id,
         "LME_RUNPOD_FLEET_DIR" => @fleet_state.fleet_dir(fleet_id)
       }
       workers.each do |worker|
         index = worker.index
-        updates["LME_BURST_#{index}_URL"] = "http://127.0.0.1:#{11_440 + index}"
+        updates["LME_BURST_#{index}_URL"] = state_workers.fetch(index).fetch("local_ollama_url")
         updates[env_key(index, "POD_ID")] = worker.pod_id
         updates[env_key(index, "HOST")] = worker.host
         updates[env_key(index, "SSH_PORT")] = worker.ssh_port
@@ -453,7 +460,9 @@ module LocalModelEvaluation
     end
 
     def worker_name(index)
-      "af-lme-burst-#{index}"
+      return "af-lme-burst-#{index}" if @fleet_key == "default"
+
+      "af-lme-#{@fleet_key}-burst-#{index}"
     end
 
     def env_key(index, suffix)

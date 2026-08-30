@@ -6,6 +6,7 @@ require "optparse"
 ROOT = File.expand_path("..", __dir__)
 $LOAD_PATH.unshift File.join(ROOT, "lib")
 
+require "local_model_evaluation/runpod_fleet_namespace"
 require "local_model_evaluation/runpod_fleet_state"
 require "local_model_evaluation/runpod_tunnels"
 
@@ -61,9 +62,20 @@ rescue OptionParser::ParseError => e
   exit 2
 end
 
-state = LocalModelEvaluation::RunpodFleetState.new(
-  root: File.join(ROOT, "output", "runpod-fleets")
-)
+begin
+  namespace = LocalModelEvaluation::RunpodFleetNamespace.new(
+    root: File.join(ROOT, "output", "runpod-fleets"),
+    repo_root: ROOT,
+    fleet_key: ENV.fetch("LME_RUNPOD_FLEET", LocalModelEvaluation::RunpodFleetNamespace::DEFAULT_KEY)
+  )
+  state = LocalModelEvaluation::RunpodFleetState.new(
+    root: namespace.state_root,
+    local_port_base: namespace.local_port_base
+  )
+rescue LocalModelEvaluation::RunpodFleetNamespace::Error => e
+  warn "ERROR: #{e.message}"
+  exit 1
+end
 
 if opts[:all]
   begin

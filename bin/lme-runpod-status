@@ -8,6 +8,7 @@ Dotenv.load(File.join(ROOT, ".env"))
 $LOAD_PATH.unshift File.join(ROOT, "lib")
 
 require "local_model_evaluation/runpod_client"
+require "local_model_evaluation/runpod_fleet_namespace"
 require "local_model_evaluation/runpod_fleet_state"
 require "local_model_evaluation/runpod_status"
 
@@ -16,8 +17,20 @@ unless ARGV.empty?
   exit 2
 end
 
+begin
+  namespace = LocalModelEvaluation::RunpodFleetNamespace.new(
+    root: File.join(ROOT, "output", "runpod-fleets"),
+    repo_root: ROOT,
+    fleet_key: ENV.fetch("LME_RUNPOD_FLEET", LocalModelEvaluation::RunpodFleetNamespace::DEFAULT_KEY)
+  )
+rescue LocalModelEvaluation::RunpodFleetNamespace::Error => e
+  warn "ERROR: #{e.message}"
+  exit 1
+end
+
 state = LocalModelEvaluation::RunpodFleetState.new(
-  root: File.join(ROOT, "output", "runpod-fleets")
+  root: namespace.state_root,
+  local_port_base: namespace.local_port_base
 )
 
 api_key = ENV["RUNPOD_API_KEY"].to_s

@@ -6,6 +6,7 @@ require "optparse"
 ROOT = File.expand_path("..", __dir__)
 $LOAD_PATH.unshift File.join(ROOT, "lib")
 
+require "local_model_evaluation/runpod_fleet_namespace"
 require "local_model_evaluation/runpod_fleet_state"
 require "local_model_evaluation/runpod_bootstrap"
 
@@ -60,16 +61,21 @@ rescue OptionParser::ParseError => e
   exit 2
 end
 
-state = LocalModelEvaluation::RunpodFleetState.new(
-  root: File.join(ROOT, "output", "runpod-fleets")
-)
-bootstrap = LocalModelEvaluation::RunpodBootstrap.new(
-  fleet_state: state,
-  remote_setup_path: File.join(ROOT, "scripts", "setup_runpod_worker_remote.sh"),
-  repo_root: ROOT
-)
-
 begin
+  namespace = LocalModelEvaluation::RunpodFleetNamespace.new(
+    root: File.join(ROOT, "output", "runpod-fleets"),
+    repo_root: ROOT,
+    fleet_key: ENV.fetch("LME_RUNPOD_FLEET", LocalModelEvaluation::RunpodFleetNamespace::DEFAULT_KEY)
+  )
+  state = LocalModelEvaluation::RunpodFleetState.new(
+    root: namespace.state_root,
+    local_port_base: namespace.local_port_base
+  )
+  bootstrap = LocalModelEvaluation::RunpodBootstrap.new(
+    fleet_state: state,
+    remote_setup_path: File.join(ROOT, "scripts", "setup_runpod_worker_remote.sh"),
+    repo_root: ROOT
+  )
   bootstrap.run(
     worker_indices: opts[:workers],
     models: opts[:models],
@@ -80,7 +86,7 @@ begin
   )
 rescue Interrupt
   exit 130
-rescue LocalModelEvaluation::RunpodBootstrap::Error => e
+rescue LocalModelEvaluation::RunpodBootstrap::Error, LocalModelEvaluation::RunpodFleetNamespace::Error => e
   warn "ERROR: #{e.message}"
   exit 1
 end
