@@ -99,16 +99,28 @@ case "$SSH_PORT" in
   *'<'*|*'>'*) die "$ssh_port_var still contains a placeholder: $SSH_PORT" ;;
 esac
 [[ "$SSH_PORT" =~ ^[0-9]+$ ]] || die "$ssh_port_var must be an integer"
+[[ -n "${LME_RUNPOD_FLEET_DIR:-}" ]] || die "LME_RUNPOD_FLEET_DIR is not set; remote worker SSH state must be scoped to the current fleet"
+
+SSH_STATE_DIR="$LME_RUNPOD_FLEET_DIR/ssh"
+KNOWN_HOSTS_FILE="$SSH_STATE_DIR/known_hosts-burst_${WORKER}"
+mkdir -p "$SSH_STATE_DIR"
+touch "$KNOWN_HOSTS_FILE"
+chmod 600 "$KNOWN_HOSTS_FILE"
+SSH_COMMON_ARGS=(
+  -o BatchMode=yes
+  -o IdentitiesOnly=yes
+  -o StrictHostKeyChecking=accept-new
+  -o "UserKnownHostsFile=$KNOWN_HOSTS_FILE"
+  -p "$SSH_PORT"
+  -i "$IDENTITY"
+)
 
 info "[2/4] Resolved worker $WORKER -> ${SSH_USER}@${HOST}:${SSH_PORT}"
+info "Worker-specific SSH host keys: $KNOWN_HOSTS_FILE"
 info "[3/4] Checking direct SSH reachability and key authentication ..."
 ssh \
-  -o BatchMode=yes \
-  -o IdentitiesOnly=yes \
-  -o StrictHostKeyChecking=accept-new \
+  "${SSH_COMMON_ARGS[@]}" \
   -o ConnectTimeout=10 \
-  -p "$SSH_PORT" \
-  -i "$IDENTITY" \
   "$SSH_USER@$HOST" \
   'printf "direct-ssh-ok\\n"' | grep -q direct-ssh-ok || die "direct SSH authentication failed"
 info "Direct SSH PASS."
@@ -122,11 +134,7 @@ done
 info "[4/4] Streaming setup_runpod_ollama_worker.sh to worker $WORKER ..."
 info "Remote setup progress follows; model pulls and rsync may take several minutes."
 ssh \
-  -o BatchMode=yes \
-  -o IdentitiesOnly=yes \
-  -o StrictHostKeyChecking=accept-new \
-  -p "$SSH_PORT" \
-  -i "$IDENTITY" \
+  "${SSH_COMMON_ARGS[@]}" \
   "$SSH_USER@$HOST" \
   "$remote_command" \
   < "$REMOTE_SETUP"

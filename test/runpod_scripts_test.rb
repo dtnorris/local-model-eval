@@ -100,6 +100,7 @@ class RunpodScriptsTest < Minitest::Test
   def test_remote_setup_wrapper_loads_worker_and_forwards_setup_arguments
     digest = "9d5803d493a991af27b9441c098aa56f2ed7bbd260877f075ec09b575c049bc3"
     write_env(
+      "LME_RUNPOD_FLEET_DIR=#{@fleet_dir}",
       "RUNPOD_BURST_2_HOST=198.51.100.42",
       "RUNPOD_BURST_2_SSH_PORT=22442"
     )
@@ -120,10 +121,65 @@ class RunpodScriptsTest < Minitest::Test
     log = File.read(@ssh_log)
     assert_includes log, "-p 22442"
     assert_includes log, "root@198.51.100.42"
+    known_hosts = File.join(@fleet_dir, "ssh", "known_hosts-burst_2")
+    assert_equal 2, log.scan("UserKnownHostsFile=#{known_hosts}").length
+    assert File.file?(known_hosts)
     assert_includes log, "bash -s -- --clean --model qwen3.6:27b --expect-digest qwen3.6:27b=#{digest}"
 
     streamed = File.read(@stdin_log)
     assert_includes streamed, "Bootstrap an already-created RunPod GPU worker"
+  end
+
+  def test_remote_setup_wrapper_uses_distinct_fleet_scoped_known_hosts_files_per_worker
+    write_env(
+      "LME_RUNPOD_FLEET_DIR=#{@fleet_dir}",
+      "RUNPOD_BURST_1_HOST=198.51.100.41",
+      "RUNPOD_BURST_1_SSH_PORT=22441",
+      "RUNPOD_BURST_2_HOST=198.51.100.42",
+      "RUNPOD_BURST_2_SSH_PORT=22442"
+    )
+
+    results = [1, 2].map do |worker|
+      Thread.new do
+        run_script(
+          "setup_runpod_worker_remote.sh",
+          "--worker", worker.to_s,
+          "--identity", @identity,
+          "--model", "qwen3.6:27b"
+        )
+      end
+    end.map(&:value)
+
+    results.each do |_stdout, stderr, status|
+      assert status.success?, stderr
+    end
+
+    log = File.read(@ssh_log)
+    worker_1_hosts = File.join(@fleet_dir, "ssh", "known_hosts-burst_1")
+    worker_2_hosts = File.join(@fleet_dir, "ssh", "known_hosts-burst_2")
+    assert_includes log, "UserKnownHostsFile=#{worker_1_hosts}"
+    assert_includes log, "UserKnownHostsFile=#{worker_2_hosts}"
+    refute_equal worker_1_hosts, worker_2_hosts
+    assert File.file?(worker_1_hosts)
+    assert File.file?(worker_2_hosts)
+  end
+
+  def test_remote_setup_wrapper_requires_fleet_scoped_ssh_state
+    write_env(
+      "RUNPOD_BURST_2_HOST=198.51.100.42",
+      "RUNPOD_BURST_2_SSH_PORT=22442"
+    )
+
+    _stdout, stderr, status = run_script(
+      "setup_runpod_worker_remote.sh",
+      "--worker", "2",
+      "--identity", @identity,
+      "--model", "qwen3.6:27b"
+    )
+
+    refute status.success?
+    assert_includes stderr, "LME_RUNPOD_FLEET_DIR is not set"
+    refute File.exist?(@ssh_log), "SSH should not be attempted without fleet-scoped host-key state"
   end
 
   def test_remote_setup_wrapper_fails_before_ssh_when_worker_coordinates_are_missing
