@@ -8,6 +8,7 @@ catalog_column: Exploration Emphasis
 
 model_alias: gptoss
 ollama_model: gpt-oss:20b
+provider: ollama
 
 qualified_scorer_baseline: 4f11e25c99b4f408f88bf7205395d31f8ab325e8
 afao_version: "1.6.1"
@@ -25,6 +26,7 @@ no_favorable_rerun: true
 first_wave:
   calls: 40
   max_page_count: 60
+  selection_strategy: stratified_page_count_source_diverse
   max_source_share: 0.35
 
   page_strata:
@@ -48,7 +50,12 @@ first_wave:
       max_pages: 60
       weight: 3
 
+backfill:
+  max_page_count: 60
+  selection_strategy: exhaustive_source_ready_backfill
+
 reliability_gate:
   green_min_valid: 39
   yellow_min_valid: 38
   red_max_valid: 37
+  repeated_operational_failure_is_red: true

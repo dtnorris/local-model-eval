@@ -1,0 +1,574 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "csv"
+require "digest"
+require "json"
+require "open3"
+require "pathname"
+require "tmpdir"
+require "yaml"
+require_relative "../lib/production_backlog_selector"
+
+ROOT = File.expand_path("..", __dir__)
+QUALIFIED_PATH = File.join(ROOT, "production_backlog", "qualified_exploration_emphasis.yml")
+DIMENSION = "Exploration Emphasis"
+
+
+def abort_with(message)
+  warn "ERROR: #{message}"
+  exit 1
+end
+
+
+def blank?(value)
+  value.nil? || value.to_s.strip.empty?
+end
+
+
+def integer_or_nil(value)
+  return nil if blank?(value)
+
+  Integer(Float(value))
+rescue ArgumentError, TypeError
+  nil
+end
+
+
+def canonical_header(value)
+  header = value.to_s.strip
+  header == "ADV - ID" ? "Adventure ID" : header
+end
+
+
+def metadata_dimension(metadata)
+  value = metadata["dimension"].to_s.strip
+  return value unless value.empty?
+
+  value = metadata["selected_dimension"].to_s.strip
+  return value unless value.empty?
+
+  metadata.dig("run_metadata", "selected_dimension").to_s.strip
+end
+
+
+def metadata_adventure_id(metadata)
+  value = metadata["adventure"].to_s.strip
+  return value unless value.empty?
+
+  metadata["adventure_id"].to_s.strip
+end
+
+
+def current_queue_output?(relative_path, current_queue)
+  relative_path.start_with?("output/#{current_queue}-") ||
+    relative_path.start_with?("output/#{current_queue}/")
+end
+
+
+def reserved_ee_pairs(root, current_queue:)
+  reserved = {}
+
+  Dir.glob(File.join(root, "production_backlog", "**", "*case_index.csv")).sort.each do |path|
+    relative = path.delete_prefix("#{root}/")
+    next if relative.start_with?("production_backlog/#{current_queue}/")
+
+    begin
+      rows = CSV.read(path, headers: true, encoding: "UTF-8")
+      next unless rows.headers&.include?("adventure_id") && rows.headers&.include?("dimension")
+
+      rows.each do |row|
+        next unless row["dimension"].to_s.strip == DIMENSION
+
+        id = row["adventure_id"].to_s.strip
+        reserved[id] ||= "case_index:#{relative}" unless id.empty?
+      end
+    rescue CSV::MalformedCSVError => e
+      warn "WARNING: could not read #{path}: #{e.message}"
+    end
+  end
+
+  Dir.glob(File.join(root, "output", "**", "metadata.json")).sort.each do |path|
+    relative = path.delete_prefix("#{root}/")
+    next if current_queue_output?(relative, current_queue)
+
+    begin
+      metadata = JSON.parse(File.read(path))
+      next unless metadata_dimension(metadata) == DIMENSION
+
+      id = metadata_adventure_id(metadata)
+      reserved[id] ||= "local_output:#{relative}" unless id.empty?
+    rescue JSON::ParserError
+      next
+    end
+  end
+
+  reserved
+end
+
+
+def validate_environment_contract!(qualification)
+  expected = {
+    "AF_LLM_PROVIDER" => qualification.fetch("provider"),
+    "AF_OPENAI_MODEL" => qualification.fetch("ollama_model"),
+    "AF_OPENAI_REASONING_EFFORT" => qualification.fetch("reasoning_effort"),
+    "AF_LLM_MAX_TOKENS" => qualification.fetch("max_tokens").to_s
+  }
+
+  expected.each do |name, value|
+    actual = ENV[name].to_s
+    next if actual.empty? || actual == value.to_s
+
+    abort_with("#{name}=#{actual.inspect} overrides frozen EE value #{value.inspect}")
+  end
+end
+
+
+def scorer_env
+  ENV.to_h.dup.tap do |env|
+    env.delete("AF_LLM_PROVIDER")
+    env.delete("AF_OPENAI_MODEL")
+    env.delete("AF_OPENAI_REASONING_EFFORT")
+    env.delete("AF_LLM_MAX_TOKENS")
+  end
+end
+
+
+def source_preflight(scorer_repo, runtime_config_path, adventure_id, qualification)
+  Dir.mktmpdir("af-ee-verify") do |dir|
+    rendered = File.join(dir, "preflight.json")
+    command = [
+      File.join(scorer_repo, "bin", "af-score"),
+      "--config", runtime_config_path,
+      "--model", qualification.fetch("ollama_model"),
+      "--dimension", DIMENSION,
+      "--preflight",
+      "--render-preflight", rendered,
+      adventure_id
+    ]
+
+    stdout, stderr, status = Open3.capture3(scorer_env, *command, chdir: scorer_repo)
+    detail = [stdout, stderr].join("\n").strip
+    return [false, detail, nil] unless status.success?
+
+    data = JSON.parse(File.read(rendered))
+    targets = data.fetch("targets")
+    raise KeyError, "expected one EE target, got #{targets.length}" unless targets.length == 1
+
+    target = targets.fetch(0)
+    raise KeyError, "wrong preflight dimension #{target.fetch('dimensions').inspect}" unless target.fetch("dimensions") == [DIMENSION]
+
+    metadata = data.fetch("run_metadata")
+    fingerprint = {
+      "prompt_sha256" => target.fetch("prompt_sha256"),
+      "schema_sha256" => target.fetch("schema_sha256"),
+      "source_file" => data.fetch("source_file"),
+      "source_scope" => data.fetch("source_scope"),
+      "afao_version" => metadata.fetch("afao_version"),
+      "provider" => metadata.fetch("provider"),
+      "model" => metadata.fetch("model"),
+      "reasoning_effort" => metadata.fetch("reasoning_effort")
+    }
+    [true, detail, fingerprint]
+  rescue JSON::ParserError, KeyError => e
+    [false, "invalid rendered preflight: #{e.class}: #{e.message}", nil]
+  end
+end
+
+
+def assert_fingerprint!(current, frozen, adventure_id)
+  current.each do |key, value|
+    expected = frozen.fetch(key)
+    next if value == expected
+
+    abort_with("#{adventure_id} #{key} drifted: frozen=#{expected.inspect} current=#{value.inspect}")
+  end
+end
+
+
+def run_command!(*command, chdir:, label:)
+  stdout, stderr, status = Open3.capture3(*command, chdir: chdir)
+  return [stdout, stderr] if status.success?
+
+  abort_with("#{label} failed:\n#{stdout}\n#{stderr}")
+end
+
+queue_arg = ARGV.shift.to_s
+abort_with("Usage: bin/verify-production-backlog-ee production_backlog/QUEUE") if queue_arg.empty?
+abort_with("unexpected arguments: #{ARGV.join(' ')}") unless ARGV.empty?
+
+queue_dir = Pathname.new(queue_arg).absolute? ? File.expand_path(queue_arg) : File.expand_path(queue_arg, ROOT)
+snapshot_path = File.join(queue_dir, "snapshot.yml")
+index_path = File.join(queue_dir, "case_index.csv")
+order_path = File.join(queue_dir, "run_order.txt")
+
+[QUALIFIED_PATH, snapshot_path, index_path, order_path].each do |path|
+  abort_with("missing #{path}") unless File.file?(path)
+end
+
+qualification = YAML.safe_load_file(QUALIFIED_PATH)
+runtime_config_path = File.join(ROOT, qualification.fetch("runtime_config_path"))
+abort_with("missing runtime config #{runtime_config_path}") unless File.file?(runtime_config_path)
+
+snapshot = YAML.safe_load_file(snapshot_path, aliases: true)
+queue = snapshot.fetch("queue")
+mode = snapshot.fetch("selection_mode")
+abort_with("unsupported selection mode #{mode.inspect}") unless %w[first-wave backfill].include?(mode)
+
+snapshot_scorer = snapshot.fetch("scorer_repo_path")
+scorer_repo = if ENV["AF_SCORER_REPO"].to_s.empty?
+                File.expand_path(snapshot_scorer, ROOT)
+              else
+                File.expand_path(ENV.fetch("AF_SCORER_REPO"), ROOT)
+              end
+abort_with("scorer checkout not found: #{scorer_repo}") unless File.directory?(File.join(scorer_repo, ".git"))
+abort_with("queue scorer path changed: frozen=#{File.expand_path(snapshot_scorer, ROOT)} active=#{scorer_repo}") unless File.expand_path(snapshot_scorer, ROOT) == scorer_repo
+
+puts "AdventureFinder Exploration Emphasis production verifier"
+puts "Queue: #{queue_dir}"
+puts "Mode: #{mode}"
+puts
+
+validate_environment_contract!(qualification)
+puts "Environment override gate: PASS"
+
+abort_with("wrong EE contract type") unless qualification.fetch("contract_type") == "ee_local_qualified_v1"
+abort_with("wrong EE dimension") unless qualification.fetch("dimension") == DIMENSION
+abort_with("wrong EE model alias") unless qualification.fetch("model_alias") == "gptoss"
+abort_with("wrong EE model") unless qualification.fetch("ollama_model") == "gpt-oss:20b"
+abort_with("wrong EE provider") unless qualification.fetch("provider") == "ollama"
+abort_with("wrong reasoning profile") unless qualification.fetch("reasoning_effort") == "low"
+abort_with("wrong max-token profile") unless Integer(qualification.fetch("max_tokens")) == 4_096
+abort_with("wrong temperature") unless Float(qualification.fetch("temperature")) == 0.0
+abort_with("production replicate contract changed") unless Integer(qualification.fetch("replicates")) == 1
+abort_with("favorable reruns unexpectedly allowed") unless qualification.fetch("no_favorable_rerun") == true
+abort_with("external API cost is not zero") unless qualification.fetch("external_api_cost_usd").to_f == 0.0
+
+first_wave = qualification.fetch("first_wave")
+backfill = qualification.fetch("backfill")
+gate = qualification.fetch("reliability_gate")
+abort_with("first-wave call count changed") unless Integer(first_wave.fetch("calls")) == 40
+abort_with("first-wave page ceiling changed") unless Integer(first_wave.fetch("max_page_count")) == 60
+abort_with("first-wave selection strategy changed") unless first_wave.fetch("selection_strategy") == "stratified_page_count_source_diverse"
+abort_with("first-wave source cap changed") unless Float(first_wave.fetch("max_source_share")) == 0.35
+abort_with("backfill page ceiling changed") unless Integer(backfill.fetch("max_page_count")) == 60
+abort_with("backfill strategy changed") unless backfill.fetch("selection_strategy") == "exhaustive_source_ready_backfill"
+abort_with("EE green gate changed") unless Integer(gate.fetch("green_min_valid")) == 39
+abort_with("EE yellow gate changed") unless Integer(gate.fetch("yellow_min_valid")) == 38
+abort_with("EE red gate changed") unless Integer(gate.fetch("red_max_valid")) == 37
+abort_with("repeated operational failure gate changed") unless gate.fetch("repeated_operational_failure_is_red") == true
+
+runtime = YAML.safe_load_file(runtime_config_path) || {}
+llm = runtime.fetch("llm")
+abort_with("runtime provider changed") unless llm.fetch("provider") == "ollama"
+abort_with("runtime model changed") unless llm.fetch("model") == "gpt-oss:20b"
+abort_with("runtime reasoning changed") unless llm.fetch("reasoning_effort") == "low"
+abort_with("runtime max_tokens changed") unless Integer(llm.fetch("max_tokens")) == 4_096
+
+abort_with("snapshot contract type changed") unless snapshot.fetch("contract_type") == qualification.fetch("contract_type")
+abort_with("qualification contract changed after queue freeze") unless Digest::SHA256.file(QUALIFIED_PATH).hexdigest == snapshot.fetch("qualification_contract_sha256")
+abort_with("snapshot qualification payload changed") unless snapshot.fetch("qualification_contract") == qualification
+abort_with("runtime config changed after queue freeze") unless Digest::SHA256.file(runtime_config_path).hexdigest == snapshot.fetch("runtime_config_sha256")
+abort_with("snapshot dimension changed") unless snapshot.fetch("dimension") == DIMENSION
+abort_with("snapshot profile changed") unless snapshot.fetch("profile") == qualification.fetch("profile")
+abort_with("snapshot model alias changed") unless snapshot.fetch("model_alias") == qualification.fetch("model_alias")
+abort_with("snapshot model changed") unless snapshot.fetch("ollama_model") == qualification.fetch("ollama_model")
+abort_with("snapshot provider changed") unless snapshot.fetch("provider") == qualification.fetch("provider")
+abort_with("snapshot page ceiling changed") unless Integer(snapshot.fetch("max_page_count")) == 60
+abort_with("snapshot reasoning changed") unless snapshot.fetch("reasoning_effort") == qualification.fetch("reasoning_effort")
+abort_with("snapshot max tokens changed") unless Integer(snapshot.fetch("max_tokens")) == Integer(qualification.fetch("max_tokens"))
+abort_with("snapshot temperature changed") unless Float(snapshot.fetch("temperature")) == Float(qualification.fetch("temperature"))
+abort_with("snapshot reliability gate changed") unless snapshot.fetch("reliability_gate") == gate
+
+rows = CSV.read(index_path, headers: true, encoding: "UTF-8")
+order = File.readlines(order_path, chomp: true).reject(&:empty?)
+selected = snapshot.fetch("selected_adventures")
+expected_calls = Integer(snapshot.fetch("expected_calls"))
+abort_with("selected count #{selected.length} != expected_calls #{expected_calls}") unless selected.length == expected_calls
+abort_with("case count #{rows.length} != expected_calls #{expected_calls}") unless rows.length == expected_calls
+abort_with("run-order count #{order.length} != expected_calls #{expected_calls}") unless order.length == expected_calls
+abort_with("first wave must contain exactly 40 calls") if mode == "first-wave" && expected_calls != 40
+abort_with("backfill must contain at least one call") if mode == "backfill" && expected_calls < 1
+abort_with("run order has duplicates") unless order.uniq.length == order.length
+abort_with("duplicate selected Adventure IDs") unless selected.map { |record| record.fetch("id") }.uniq.length == selected.length
+abort_with("run order/index mismatch") unless rows.map { |row| row["manifest_path"] } == order
+abort_with("case-index adventure order changed") unless rows.map { |row| row["adventure_id"] } == selected.map { |record| record.fetch("id") }
+abort_with("case-index selection mode changed") unless rows.all? { |row| row["selection_mode"] == mode }
+
+selected.each do |record|
+  pages = Integer(record.fetch("page_count"))
+  abort_with("#{record.fetch('id')} has invalid page count #{pages}") unless pages.positive? && pages <= 60
+
+  %w[prompt_sha256 schema_sha256 source_file source_scope afao_version provider model reasoning_effort].each do |key|
+    abort_with("missing frozen #{key} for #{record.fetch('id')}") if blank?(record[key])
+  end
+  abort_with("#{record.fetch('id')} frozen AFAO changed") unless record["afao_version"] == qualification.fetch("afao_version")
+  abort_with("#{record.fetch('id')} frozen provider changed") unless record["provider"] == "ollama"
+  abort_with("#{record.fetch('id')} frozen model changed") unless record["model"] == "gpt-oss:20b"
+  abort_with("#{record.fetch('id')} frozen reasoning changed") unless record["reasoning_effort"] == "low"
+end
+
+if mode == "first-wave"
+  strata = ProductionBacklogSelector.build_strata(first_wave.fetch("page_strata"), max_pages: 60)
+  quotas = ProductionBacklogSelector.allocate_quotas(strata, 40)
+  actual_strata = selected.each_with_object(Hash.new(0)) { |record, counts| counts[record.fetch("page_stratum")] += 1 }
+  abort_with("first-wave page-stratum mix changed: expected=#{quotas.inspect} actual=#{actual_strata.inspect}") unless actual_strata == quotas
+
+  selected.each do |record|
+    stratum = strata.find { |candidate| candidate.fetch("name") == record.fetch("page_stratum") }
+    abort_with("#{record.fetch('id')} has unknown page stratum #{record.fetch('page_stratum').inspect}") unless stratum
+    pages = Integer(record.fetch("page_count"))
+    abort_with("#{record.fetch('id')} page count #{pages} does not fit #{stratum.fetch('name')}") unless pages.between?(stratum.fetch("min_pages"), stratum.fetch("max_pages"))
+  end
+
+  max_per_source = (40 * Float(first_wave.fetch("max_source_share"))).ceil
+  source_counts = selected.each_with_object(Hash.new(0)) do |record, counts|
+    counts[ProductionBacklogSelector.source_key(record)] += 1
+  end
+  offenders = source_counts.select { |_source, count| count > max_per_source }
+  abort_with("first-wave source cap exceeded: #{offenders.inspect}") unless offenders.empty?
+  abort_with("snapshot max source share changed") unless Float(snapshot.fetch("max_source_share")) == Float(first_wave.fetch("max_source_share"))
+  abort_with("snapshot max adventures/source changed") unless Integer(snapshot.fetch("max_adventures_per_source_book")) == max_per_source
+  abort_with("snapshot source counts changed") unless snapshot.fetch("source_counts") == source_counts.sort.to_h
+  snapshot_quotas = snapshot.fetch("page_strata").to_h { |stratum| [stratum.fetch("name"), Integer(stratum.fetch("quota"))] }
+  abort_with("snapshot page quotas changed") unless snapshot_quotas == quotas
+else
+  abort_with("snapshot backfill strategy changed") unless snapshot.fetch("selection_strategy") == backfill.fetch("selection_strategy")
+  failures = snapshot.fetch("source_preflight_failures")
+  failure_ids = failures.map { |record| record.fetch("id") }
+  eligible_ids = snapshot.fetch("eligible_candidate_ids")
+  abort_with("backfill source-failure IDs have duplicates") unless failure_ids.uniq.length == failure_ids.length
+  abort_with("backfill selected/failure overlap") unless (failure_ids & selected.map { |record| record.fetch("id") }).empty?
+  exhaustive_ids = (failure_ids + selected.map { |record| record.fetch("id") }).sort
+  abort_with("backfill snapshot is not exhaustive over eligible candidate IDs") unless exhaustive_ids == eligible_ids.sort
+end
+
+runtime_abs = File.expand_path(runtime_config_path)
+rows.each do |row|
+  relative_path = row.fetch("manifest_path")
+  path = File.expand_path(relative_path, ROOT)
+  abort_with("missing manifest #{relative_path}") unless File.file?(path)
+
+  data = YAML.safe_load_file(path)
+  abort_with("index dimension changed in #{relative_path}") unless row["dimension"] == DIMENSION
+  abort_with("index profile changed in #{relative_path}") unless row["profile"] == qualification.fetch("profile")
+  abort_with("wrong model alias in #{relative_path}") unless data["models"] == ["gptoss"]
+  abort_with("wrong dimension in #{relative_path}") unless data["dimension"] == DIMENSION
+  abort_with("wrong adventure in #{relative_path}") unless data["adventures"] == [row["adventure_id"]]
+  abort_with("replicates != 1 in #{relative_path}") unless data["replicates"] == 1
+  abort_with("wrong worker in #{relative_path}") unless data["workers"] == ["mac"]
+  abort_with("wrong worker labels in #{relative_path}") unless data["required_worker_labels"] == ["local"]
+
+  manifest_scorer = File.expand_path(data.dig("scorer", "repo").to_s, File.dirname(path))
+  abort_with("wrong scorer repo in #{relative_path}: #{manifest_scorer}") unless manifest_scorer == scorer_repo
+  abort_with("wrong scorer mode in #{relative_path}") unless data.dig("scorer", "mode") == "positional"
+  extra = data.dig("scorer", "extra_args")
+  expected_runtime_arg = "${LME_REPO}/#{qualification.fetch('runtime_config_path')}"
+  abort_with("wrong scorer args in #{relative_path}") unless extra == ["--config", expected_runtime_arg]
+  manifest_runtime = File.expand_path(extra.fetch(1).sub("${LME_REPO}", ROOT))
+  abort_with("wrong runtime config in #{relative_path}") unless manifest_runtime == runtime_abs
+
+  contract = data.fetch("production_contract")
+  abort_with("wrong production contract in #{relative_path}") unless contract["contract_type"] == qualification.fetch("contract_type")
+  abort_with("wrong production queue in #{relative_path}") unless contract["queue"] == queue
+  abort_with("wrong selection mode in #{relative_path}") unless contract["selection_mode"] == mode
+  abort_with("wrong candidate model in #{relative_path}") unless contract["candidate_model"] == "gptoss"
+  abort_with("wrong qualified profile in #{relative_path}") unless contract["qualified_profile"] == qualification.fetch("profile")
+  abort_with("wrong scorer baseline in #{relative_path}") unless contract["qualified_scorer_baseline"] == qualification.fetch("qualified_scorer_baseline")
+  abort_with("wrong provider in #{relative_path}") unless contract["provider"] == "ollama"
+  abort_with("wrong reasoning in #{relative_path}") unless contract["reasoning_effort"] == "low"
+  abort_with("wrong max_tokens in #{relative_path}") unless Integer(contract["max_tokens"]) == 4_096
+  abort_with("wrong temperature in #{relative_path}") unless Float(contract["temperature"]) == 0.0
+  abort_with("wrong replicate count in #{relative_path}") unless Integer(contract["replicate_count"]) == 1
+  abort_with("favorable reruns allowed in #{relative_path}") unless contract["no_favorable_rerun"] == true
+  abort_with("external API cost is not zero in #{relative_path}") unless contract["external_api_cost_usd"].to_f == 0.0
+  abort_with("legacy GPT-OSS top_p/seed leaked into #{relative_path}") if contract.key?("top_p") || contract.key?("seed")
+  abort_with("wrong cost cap in #{relative_path}") unless data["cost_cap_usd"].to_f == 0.01
+end
+
+puts "Frozen queue semantics: PASS"
+puts "  Calls: #{expected_calls}"
+puts "  Dimension: #{DIMENSION}"
+puts "  Profile: #{qualification.fetch('profile')}"
+puts "  Provider/runtime: ollama / gpt-oss:20b / low / 4096 / temperature 0"
+puts "  Reliability gate: green>=39, yellow=38, red<=37; repeated operational failure => red"
+
+models = YAML.safe_load_file(File.join(ROOT, "config", "models.yml"))
+actual_model = models.dig("models", "gptoss", "ollama_model").to_s
+abort_with("gptoss alias is #{actual_model.inspect}; expected gpt-oss:20b") unless actual_model == "gpt-oss:20b"
+puts "Model alias: PASS"
+
+qualified_base = qualification.fetch("qualified_scorer_baseline")
+frozen_scorer = snapshot.fetch("scorer_commit")
+active_scorer, _err, active_status = Open3.capture3("git", "-C", scorer_repo, "rev-parse", "HEAD")
+abort_with("could not resolve active scorer HEAD") unless active_status.success?
+active_scorer = active_scorer.strip
+_ancestor_out, _ancestor_err, ancestor_status = Open3.capture3("git", "-C", scorer_repo, "merge-base", "--is-ancestor", qualified_base, frozen_scorer)
+abort_with("frozen scorer is not a descendant of qualified EE baseline #{qualified_base}") unless ancestor_status.success?
+abort_with("active scorer HEAD #{active_scorer} differs from frozen scorer #{frozen_scorer}") unless active_scorer == frozen_scorer
+puts "Scorer lineage: PASS"
+puts "  qualified baseline: #{qualified_base}"
+puts "  frozen scorer:      #{frozen_scorer}"
+
+puts
+puts "Running local EE production contract test..."
+run_command!("bundle", "exec", "ruby", "-Itest", "test/ee_production_contract_test.rb", chdir: ROOT, label: "EE production contract test")
+puts "EE production contract test: PASS"
+
+puts
+puts "Running scorer EE blind-reset tests..."
+run_command!("bundle", "exec", "ruby", "-Itest", "test/ee_blind_prompt_reset_test.rb", chdir: scorer_repo, label: "EE blind-reset scorer test")
+puts "EE blind-reset scorer tests: PASS"
+
+puts
+puts "Checking ordinary Ollama request contract..."
+require File.join(scorer_repo, "lib", "af_scoring")
+config = AFScoring::Config.new(project_root: scorer_repo, config_path: runtime_config_path)
+runner = AFScoring::Runner.allocate
+runner.instance_variable_set(:@config, config)
+provider = runner.send(:build_provider)
+abort_with("runtime did not build ordinary OllamaProvider") unless provider.instance_of?(AFScoring::Providers::OllamaProvider)
+
+prompt_class = Struct.new(:instructions, :input)
+artifact = provider.request_artifact(
+  group_name: "play_mix",
+  prompt: prompt_class.new("verification only", "verification only"),
+  schema: { "type" => "object", "properties" => {}, "additionalProperties" => false }
+)
+payload = artifact.fetch("payload")
+abort_with("request provider changed") unless artifact.fetch("provider") == "ollama"
+abort_with("request model changed") unless payload.fetch("model") == "gpt-oss:20b"
+abort_with("request reasoning changed") unless payload.fetch("reasoning_effort") == "low"
+abort_with("request max_tokens changed") unless Integer(payload.fetch("max_tokens")) == 4_096
+abort_with("request temperature changed") unless Float(payload.fetch("temperature")) == 0.0
+abort_with("request unexpectedly streams") unless payload.fetch("stream") == false
+abort_with("legacy top_p leaked into ordinary Ollama request") if payload.key?("top_p")
+abort_with("legacy seed leaked into ordinary Ollama request") if payload.key?("seed")
+format = payload.fetch("response_format")
+abort_with("structured output is no longer json_schema") unless format.fetch("type") == "json_schema"
+abort_with("structured output is no longer strict") unless format.fetch("json_schema").fetch("strict") == true
+puts "Ordinary Ollama request contract: PASS"
+
+catalog_path = AFScoring::Config.new(project_root: scorer_repo, config_path: runtime_config_path).catalog_path
+abort_with("configured AMC missing: #{catalog_path}") unless File.file?(catalog_path)
+abort_with("configured AMC filename changed") unless File.basename(catalog_path) == snapshot.fetch("catalog_filename")
+actual_catalog_sha = Digest::SHA256.file(catalog_path).hexdigest
+abort_with("AMC SHA changed: #{actual_catalog_sha} != #{snapshot.fetch('catalog_sha256')}") unless actual_catalog_sha == snapshot.fetch("catalog_sha256")
+puts "Frozen AMC: PASS"
+puts "  #{File.basename(catalog_path)}"
+puts "  #{actual_catalog_sha}"
+
+require File.join(scorer_repo, "lib", "af_scoring", "xlsx_reader")
+catalog_rows = AFScoring::XlsxReader.new(catalog_path).rows(sheet_name: "Adventure Catalog")
+abort_with("AMC Adventure Catalog is empty") if catalog_rows.empty?
+headers = catalog_rows.shift.map { |value| canonical_header(value) }
+required_headers = [
+  "Adventure ID", "Adventure Title", "Source Book", "Book Publisher",
+  "Page Count", "Start Page", "End Page", qualification.fetch("catalog_column")
+]
+missing = required_headers - headers
+abort_with("AMC missing required columns: #{missing.join(', ')}") unless missing.empty?
+
+reserved = reserved_ee_pairs(ROOT, current_queue: queue)
+current_eligible = []
+selected_by_id = selected.to_h { |record| [record.fetch("id"), record] }
+seen_selected = {}
+
+catalog_rows.each do |row|
+  values = headers.zip(row).to_h
+  id = values["Adventure ID"].to_s.strip
+  next if id.empty?
+
+  page_count = integer_or_nil(values["Page Count"])
+  start_page = integer_or_nil(values["Start Page"])
+  end_page = integer_or_nil(values["End Page"])
+  page_count ||= (end_page - start_page + 1) if start_page && end_page && end_page >= start_page
+
+  eligible = page_count && page_count.positive? && page_count <= 60 &&
+             blank?(values[qualification.fetch("catalog_column")]) && !reserved.key?(id)
+  current_eligible << id if eligible
+
+  next unless selected_by_id.key?(id)
+  abort_with("duplicate selected AMC row #{id}") if seen_selected[id]
+  seen_selected[id] = true
+  frozen = selected_by_id.fetch(id)
+
+  abort_with("#{id} is now reserved by prior EE work: #{reserved.fetch(id)}") if reserved.key?(id)
+  abort_with("#{id} EE cell is no longer blank") unless blank?(values[qualification.fetch("catalog_column")])
+  abort_with("#{id} AMC page count changed") unless page_count == Integer(frozen.fetch("page_count"))
+  abort_with("#{id} source book changed") unless values["Source Book"].to_s == frozen.fetch("source_book")
+  abort_with("#{id} publisher changed") unless values["Book Publisher"].to_s == frozen.fetch("publisher")
+end
+
+missing_selected = selected_by_id.keys - seen_selected.keys
+abort_with("selected IDs disappeared from AMC: #{missing_selected.join(', ')}") unless missing_selected.empty?
+frozen_eligible = snapshot.fetch("eligible_candidate_ids").sort
+abort_with("eligible blank/unreserved EE population changed") unless current_eligible.sort == frozen_eligible
+abort_with("selected queue contains adventure outside frozen eligible population") unless (selected_by_id.keys - frozen_eligible).empty?
+puts "AMC eligibility + prior-EE reservation gate: PASS"
+puts "  frozen eligible candidates: #{frozen_eligible.length}"
+puts "  prior EE reservations/results: #{reserved.length}"
+
+puts
+records_to_verify = if mode == "backfill"
+                      failures = snapshot.fetch("source_preflight_failures")
+                      (selected + failures).sort_by { |record| record.fetch("id") }
+                    else
+                      selected
+                    end
+failure_ids = snapshot.fetch("source_preflight_failures").map { |record| record.fetch("id") }.to_h { |id| [id, true] }
+selected_lookup = selected.to_h { |record| [record.fetch("id"), record] }
+puts "Re-rendering #{records_to_verify.length} zero-inference EE preflight(s)..."
+
+records_to_verify.each_with_index do |record, index|
+  id = record.fetch("id")
+  ok, detail, fingerprint = source_preflight(scorer_repo, runtime_config_path, id, qualification)
+
+  if mode == "backfill" && failure_ids.key?(id)
+    abort_with("#{id} now passes source preflight; frozen backfill is no longer exhaustive") if ok
+    puts format("PREFLIGHT %3d/%d  %-9s  EXPECTED-REJECT", index + 1, records_to_verify.length, id)
+    next
+  end
+
+  abort_with("#{id} zero-inference preflight failed:\n#{detail}") unless ok
+  assert_fingerprint!(fingerprint, selected_lookup.fetch(id), id)
+  puts format("PREFLIGHT %3d/%d  %-9s  PASS", index + 1, records_to_verify.length, id)
+end
+puts "Zero-inference prompt/source/schema fingerprints: PASS"
+
+puts
+puts "Checking #{order.length} LME manifest(s)..."
+order.each_with_index do |relative_path, index|
+  _out, _err = run_command!(File.join(ROOT, "bin", "lme"), "plan", relative_path, chdir: ROOT, label: "bin/lme plan #{relative_path}")
+  puts format("PLAN      %3d/%d  PASS  %s", index + 1, order.length, relative_path)
+end
+puts "All LME manifests: PASS"
+
+first_manifest = order.first
+abort_with("run_order.txt is empty") unless first_manifest
+puts
+puts "Checking local worker + GPT-OSS availability..."
+stdout, stderr = run_command!(File.join(ROOT, "bin", "lme"), "worker-check", first_manifest, chdir: ROOT, label: "bin/lme worker-check")
+print stdout
+warn stderr unless stderr.empty?
+
+puts
+puts "============================================================"
+puts "EE PRODUCTION PREFLIGHT PASS — NO INFERENCE WAS RUN"
+puts "============================================================"
+puts "Queue:       #{queue}"
+puts "Mode:        #{mode}"
+puts "Cases:       #{expected_calls}"
+puts "Dimension:   #{DIMENSION}"
+puts "Model:       gpt-oss:20b"
+puts "Provider:    ollama"
+puts "Reasoning:   low"
+puts "Max tokens:  4096"
+puts "Temperature: 0"
+puts "Page domain: <=60"
+puts "Replicates:  1"
+puts "API cost:    $0"
+if mode == "first-wave"
+  puts "Gate:        green >=39 valid; yellow 38; red <=37"
+  puts "             repeated ordinary-source operational failure => red"
+end

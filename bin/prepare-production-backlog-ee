@@ -1,0 +1,634 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "csv"
+require "digest"
+require "fileutils"
+require "json"
+require "open3"
+require "optparse"
+require "pathname"
+require "tmpdir"
+require "time"
+require "yaml"
+require_relative "../lib/production_backlog_selector"
+
+ROOT = File.expand_path("..", __dir__)
+SCORER_REPO = File.expand_path(ENV.fetch("AF_SCORER_REPO", "../af-cli-scoring-utility"), ROOT)
+QUALIFIED_PATH = File.join(ROOT, "production_backlog", "qualified_exploration_emphasis.yml")
+DIMENSION = "Exploration Emphasis"
+
+
+def abort_with(message)
+  warn "ERROR: #{message}"
+  exit 1
+end
+
+
+def blank?(value)
+  value.nil? || value.to_s.strip.empty?
+end
+
+
+def integer_or_nil(value)
+  return nil if blank?(value)
+
+  Integer(Float(value))
+rescue ArgumentError, TypeError
+  nil
+end
+
+
+def canonical_header(value)
+  header = value.to_s.strip
+  header == "ADV - ID" ? "Adventure ID" : header
+end
+
+
+def git_head(repo)
+  out, _err, status = Open3.capture3("git", "-C", repo, "rev-parse", "HEAD")
+  status.success? ? out.strip : nil
+end
+
+
+def git_ancestor?(repo, ancestor, descendant = "HEAD")
+  _out, _err, status = Open3.capture3("git", "-C", repo, "merge-base", "--is-ancestor", ancestor, descendant)
+  status.success?
+end
+
+
+def scorer_catalog_path(scorer_repo, runtime_config_path)
+  require File.join(scorer_repo, "lib", "af_scoring", "errors")
+  require File.join(scorer_repo, "lib", "af_scoring", "config")
+
+  AFScoring::Config.new(project_root: scorer_repo, config_path: runtime_config_path).catalog_path
+end
+
+
+def metadata_dimension(metadata)
+  value = metadata["dimension"].to_s.strip
+  return value unless value.empty?
+
+  value = metadata["selected_dimension"].to_s.strip
+  return value unless value.empty?
+
+  metadata.dig("run_metadata", "selected_dimension").to_s.strip
+end
+
+
+def metadata_adventure_id(metadata)
+  value = metadata["adventure"].to_s.strip
+  return value unless value.empty?
+
+  metadata["adventure_id"].to_s.strip
+end
+
+
+def current_queue_output?(relative_path, current_queue)
+  relative_path.start_with?("output/#{current_queue}-") ||
+    relative_path.start_with?("output/#{current_queue}/")
+end
+
+
+def reserved_ee_pairs(root, current_queue:)
+  reserved = {}
+
+  Dir.glob(File.join(root, "production_backlog", "**", "*case_index.csv")).sort.each do |path|
+    relative = path.delete_prefix("#{root}/")
+    next if relative.start_with?("production_backlog/#{current_queue}/")
+
+    begin
+      rows = CSV.read(path, headers: true, encoding: "UTF-8")
+      next unless rows.headers&.include?("adventure_id") && rows.headers&.include?("dimension")
+
+      rows.each do |row|
+        next unless row["dimension"].to_s.strip == DIMENSION
+
+        id = row["adventure_id"].to_s.strip
+        reserved[id] ||= "case_index:#{relative}" unless id.empty?
+      end
+    rescue CSV::MalformedCSVError => e
+      warn "WARNING: could not read #{path}: #{e.message}"
+    end
+  end
+
+  Dir.glob(File.join(root, "output", "**", "metadata.json")).sort.each do |path|
+    relative = path.delete_prefix("#{root}/")
+    next if current_queue_output?(relative, current_queue)
+
+    begin
+      metadata = JSON.parse(File.read(path))
+      next unless metadata_dimension(metadata) == DIMENSION
+
+      id = metadata_adventure_id(metadata)
+      reserved[id] ||= "local_output:#{relative}" unless id.empty?
+    rescue JSON::ParserError
+      next
+    end
+  end
+
+  reserved
+end
+
+
+def validate_environment_contract!(qualification)
+  expected = {
+    "AF_LLM_PROVIDER" => qualification.fetch("provider"),
+    "AF_OPENAI_MODEL" => qualification.fetch("ollama_model"),
+    "AF_OPENAI_REASONING_EFFORT" => qualification.fetch("reasoning_effort"),
+    "AF_LLM_MAX_TOKENS" => qualification.fetch("max_tokens").to_s
+  }
+
+  expected.each do |name, value|
+    actual = ENV[name].to_s
+    next if actual.empty? || actual == value.to_s
+
+    abort_with("#{name}=#{actual.inspect} conflicts with frozen EE value #{value.inspect}")
+  end
+end
+
+
+def validate_runtime_config!(runtime_config_path, qualification)
+  abort_with("missing runtime config #{runtime_config_path}") unless File.file?(runtime_config_path)
+
+  config = YAML.safe_load_file(runtime_config_path) || {}
+  llm = config.fetch("llm")
+
+  abort_with("runtime provider changed") unless llm.fetch("provider") == qualification.fetch("provider")
+  abort_with("runtime model changed") unless llm.fetch("model") == qualification.fetch("ollama_model")
+  abort_with("runtime reasoning_effort changed") unless llm.fetch("reasoning_effort") == qualification.fetch("reasoning_effort")
+  abort_with("runtime max_tokens changed") unless Integer(llm.fetch("max_tokens")) == Integer(qualification.fetch("max_tokens"))
+end
+
+
+def source_preflight(scorer_repo, runtime_config_path, adventure_id, qualification)
+  Dir.mktmpdir("af-ee-preflight") do |dir|
+    rendered = File.join(dir, "preflight.json")
+    command = [
+      File.join(scorer_repo, "bin", "af-score"),
+      "--config", runtime_config_path,
+      "--model", qualification.fetch("ollama_model"),
+      "--dimension", DIMENSION,
+      "--preflight",
+      "--render-preflight", rendered,
+      adventure_id
+    ]
+
+    stdout, stderr, status = Open3.capture3(*command, chdir: scorer_repo)
+    detail = [stdout, stderr].join("\n").strip
+    return [false, detail, nil] unless status.success?
+
+    data = JSON.parse(File.read(rendered))
+    targets = data.fetch("targets")
+    raise KeyError, "expected one EE preflight target, got #{targets.length}" unless targets.length == 1
+
+    target = targets.fetch(0)
+    metadata = data.fetch("run_metadata")
+    fingerprint = {
+      "prompt_sha256" => target.fetch("prompt_sha256"),
+      "schema_sha256" => target.fetch("schema_sha256"),
+      "source_file" => data.fetch("source_file"),
+      "source_scope" => data.fetch("source_scope"),
+      "afao_version" => metadata.fetch("afao_version"),
+      "provider" => metadata.fetch("provider"),
+      "model" => metadata.fetch("model"),
+      "reasoning_effort" => metadata.fetch("reasoning_effort")
+    }
+    [true, detail, fingerprint]
+  rescue JSON::ParserError, KeyError => e
+    [false, "invalid rendered preflight: #{e.class}: #{e.message}", nil]
+  end
+end
+
+
+def validate_preflight_contract!(fingerprint, qualification, adventure_id)
+  failures = []
+  failures << "AFAO #{fingerprint['afao_version'].inspect}" unless fingerprint["afao_version"] == qualification.fetch("afao_version")
+  failures << "provider #{fingerprint['provider'].inspect}" unless fingerprint["provider"] == qualification.fetch("provider")
+  failures << "model #{fingerprint['model'].inspect}" unless fingerprint["model"] == qualification.fetch("ollama_model")
+  failures << "reasoning #{fingerprint['reasoning_effort'].inspect}" unless fingerprint["reasoning_effort"] == qualification.fetch("reasoning_effort")
+  return if failures.empty?
+
+  abort_with("#{adventure_id} rendered runtime contract mismatch: #{failures.join(', ')}")
+end
+
+
+def manifest_yaml(queue:, selection_mode:, adv:, scorer_rel:, runtime_config_arg:, qualification:)
+  <<~YAML
+    name: #{queue}-gptoss-ee-adv#{adv.fetch("id").split("-").last.downcase}-v1
+    purpose: >
+      Interruptible AdventureFinder local production scoring. Produce one proposed
+      Exploration Emphasis assessment for canonical #{adv.fetch("id")} using the
+      locally qualified GPT-OSS EE clean-reset v0.5 profile. The accepted AMC
+      Exploration Emphasis value was blank when this queue was generated.
+    dispatch: pool
+
+    models:
+      - #{qualification.fetch("model_alias")}
+
+    dimension: "#{qualification.fetch("dimension")}"
+
+    adventures:
+      - #{adv.fetch("id")}
+
+    replicates: 1
+
+    workers:
+      - mac
+
+    required_worker_labels:
+      - local
+
+    scorer:
+      repo: #{scorer_rel}
+      mode: positional
+      extra_args:
+        - --config
+        - #{runtime_config_arg}
+
+    production_contract:
+      contract_type: #{qualification.fetch("contract_type")}
+      disposition: local-qualified-background
+      queue: #{queue}
+      selection_mode: #{selection_mode}
+      candidate_model: #{qualification.fetch("model_alias")}
+      qualified_profile: #{qualification.fetch("profile")}
+      qualified_scorer_baseline: #{qualification.fetch("qualified_scorer_baseline")}
+      provider: #{qualification.fetch("provider")}
+      reasoning_effort: #{qualification.fetch("reasoning_effort")}
+      max_tokens: #{qualification.fetch("max_tokens")}
+      temperature: #{qualification.fetch("temperature")}
+      replicate_count: 1
+      no_favorable_rerun: true
+      external_api_cost_usd: 0.0
+
+    success_criteria:
+      - Structured scorer output validates and remains grounded to the complete canonical adventure source unit.
+      - Use the frozen EE clean-reset v0.5 prompt and AFAO 1.6.1 Exploration Emphasis rubric.
+      - Use ordinary Ollama with gpt-oss:20b, reasoning effort low, temperature 0, and max tokens 4096.
+      - Preserve the single completed sample as the first-pass proposed production assessment pending QC/ingestion.
+      - Do not use an existing accepted EE score, calibration target, or prior EE production result as expected-answer context.
+
+    stop_conditions:
+      - Do not rerun a completed case to seek a more favorable sample.
+      - Repeated ordinary-source length or missing-assistant-content failures stop EE expansion for review.
+
+    cost_cap_usd: 0.01
+  YAML
+end
+
+abort_with("missing qualification contract #{QUALIFIED_PATH}") unless File.file?(QUALIFIED_PATH)
+qualification = YAML.safe_load_file(QUALIFIED_PATH)
+RUNTIME_CONFIG_PATH = File.join(ROOT, qualification.fetch("runtime_config_path"))
+
+options = { queue: nil, mode: nil, pack_size: 50, max_pages: nil, force: false }
+OptionParser.new do |opts|
+  opts.banner = "Usage: bin/prepare-production-backlog-ee --queue NAME --mode first-wave|backfill [options]"
+  opts.on("--queue NAME", "Queue name (required)") { |v| options[:queue] = v }
+  opts.on("--mode MODE", %w[first-wave backfill], "Selection mode (required)") { |v| options[:mode] = v }
+  opts.on("--pack-size N", Integer, "Manifest count per operational pack (default 50)") { |v| options[:pack_size] = v }
+  opts.on("--max-pages N", Integer, "Must equal the frozen mode page ceiling") { |v| options[:max_pages] = v }
+  opts.on("--force", "Replace an unstarted queue with the same name") { options[:force] = true }
+end.parse!
+
+queue = options[:queue].to_s
+mode = options[:mode].to_s
+abort_with("--queue is required") if queue.empty?
+abort_with("--mode is required") if mode.empty?
+abort_with("invalid queue name #{queue.inspect}") unless queue.match?(/\A[a-z0-9][a-z0-9._-]*\z/)
+abort_with("--pack-size must be >= 1") if options[:pack_size] < 1
+abort_with("scorer checkout not found: #{SCORER_REPO}") unless File.directory?(File.join(SCORER_REPO, ".git"))
+abort_with("qualification contract type changed") unless qualification.fetch("contract_type") == "ee_local_qualified_v1"
+abort_with("qualification dimension changed") unless qualification.fetch("dimension") == DIMENSION
+abort_with("qualification provider changed") unless qualification.fetch("provider") == "ollama"
+abort_with("production replicate contract changed") unless Integer(qualification.fetch("replicates")) == 1
+abort_with("reasoning profile must remain low") unless qualification.fetch("reasoning_effort") == "low"
+abort_with("max token contract must remain 4096") unless Integer(qualification.fetch("max_tokens")) == 4_096
+abort_with("temperature contract must remain 0") unless Float(qualification.fetch("temperature")) == 0.0
+abort_with("external API cost must remain zero") unless Float(qualification.fetch("external_api_cost_usd")) == 0.0
+abort_with("no-favorable-rerun must remain true") unless qualification.fetch("no_favorable_rerun") == true
+
+mode_contract = qualification.fetch(mode == "first-wave" ? "first_wave" : "backfill")
+max_pages = Integer(mode_contract.fetch("max_page_count"))
+if options[:max_pages] && options[:max_pages] != max_pages
+  abort_with("--max-pages #{options[:max_pages]} conflicts with frozen #{mode} ceiling #{max_pages}")
+end
+abort_with("ordinary-size EE page ceiling must remain 60") unless max_pages == 60
+
+if mode == "first-wave"
+  abort_with("first-wave call count must remain 40") unless Integer(mode_contract.fetch("calls")) == 40
+  abort_with("first-wave selection strategy changed") unless mode_contract.fetch("selection_strategy") == "stratified_page_count_source_diverse"
+  abort_with("first-wave max source share changed") unless Float(mode_contract.fetch("max_source_share")) == 0.35
+else
+  abort_with("backfill selection strategy changed") unless mode_contract.fetch("selection_strategy") == "exhaustive_source_ready_backfill"
+end
+
+validate_environment_contract!(qualification)
+validate_runtime_config!(RUNTIME_CONFIG_PATH, qualification)
+
+baseline = qualification.fetch("qualified_scorer_baseline")
+abort_with("scorer HEAD is not a descendant of qualified EE baseline #{baseline}") unless git_ancestor?(SCORER_REPO, baseline)
+
+queue_dir = File.join(ROOT, "production_backlog", queue)
+experiment_dir = File.join(ROOT, "experiments", queue)
+if File.exist?(queue_dir) || File.exist?(experiment_dir)
+  abort_with("queue already exists; use --force to replace it") unless options[:force]
+
+  prior_output = Dir.glob(File.join(ROOT, "output", "#{queue}-gptoss-ee-*", "runs", "*", "metadata.json"))
+  abort_with("refusing --force because inference output already exists for #{queue}") unless prior_output.empty?
+end
+
+catalog_path = scorer_catalog_path(SCORER_REPO, RUNTIME_CONFIG_PATH)
+abort_with("configured AMC does not exist: #{catalog_path}") unless File.file?(catalog_path)
+catalog_sha = Digest::SHA256.file(catalog_path).hexdigest
+
+require File.join(SCORER_REPO, "lib", "af_scoring", "errors")
+require File.join(SCORER_REPO, "lib", "af_scoring", "xlsx_reader")
+rows = AFScoring::XlsxReader.new(catalog_path).rows(sheet_name: "Adventure Catalog")
+abort_with("AMC Adventure Catalog sheet is empty") if rows.empty?
+headers = rows.shift.map { |v| canonical_header(v) }
+required_headers = [
+  "Adventure ID", "Adventure Title", "Source Book", "Book Publisher",
+  "Page Count", "Start Page", "End Page", qualification.fetch("catalog_column")
+]
+missing = required_headers - headers
+abort_with("AMC missing required columns: #{missing.join(', ')}") unless missing.empty?
+
+reserved = reserved_ee_pairs(ROOT, current_queue: queue)
+audit = []
+eligible = []
+catalog_ids = []
+prepopulated = 0
+under_limit = 0
+
+rows.each do |row|
+  values = headers.zip(row).to_h
+  id = values["Adventure ID"].to_s.strip
+  next if id.empty?
+
+  catalog_ids << id
+  page_count = integer_or_nil(values["Page Count"])
+  start_page = integer_or_nil(values["Start Page"])
+  end_page = integer_or_nil(values["End Page"])
+  page_count ||= (end_page - start_page + 1) if start_page && end_page && end_page >= start_page
+
+  record = {
+    "id" => id,
+    "title" => values["Adventure Title"].to_s,
+    "source_book" => values["Source Book"].to_s,
+    "publisher" => values["Book Publisher"].to_s,
+    "page_count" => page_count,
+    "start_page" => start_page,
+    "end_page" => end_page
+  }
+
+  reason = nil
+  if page_count.nil? || page_count <= 0
+    reason = "page_count_missing"
+  elsif page_count > max_pages
+    reason = "page_count_over_limit"
+  else
+    under_limit += 1
+    if !blank?(values[qualification.fetch("catalog_column")])
+      prepopulated += 1
+      reason = "accepted_ee_present"
+    elsif reserved.key?(id)
+      reason = "reserved_ee_pair:#{reserved.fetch(id)}"
+    end
+  end
+
+  if reason
+    audit << record.merge("page_stratum" => nil, "decision" => "REJECT", "reason" => reason)
+  else
+    eligible << record
+  end
+end
+
+duplicates = catalog_ids.tally.select { |_id, count| count > 1 }
+abort_with("AMC duplicate Adventure IDs: #{duplicates.keys.join(', ')}") unless duplicates.empty?
+abort_with("no blank, unreserved EE candidates remain inside the #{max_pages}-page envelope") if eligible.empty?
+
+$stdout.sync = true
+preflight_count = 0
+source_failures = []
+selection_metadata = {}
+
+preflight = lambda do |record|
+  preflight_count += 1
+  puts format(
+    "PREFLIGHT %3d  %-9s  %3d pages  %s",
+    preflight_count, record.fetch("id"), record.fetch("page_count"), record.fetch("title")
+  )
+
+  ok, detail, fingerprint = source_preflight(
+    SCORER_REPO,
+    RUNTIME_CONFIG_PATH,
+    record.fetch("id"),
+    qualification
+  )
+
+  if ok
+    validate_preflight_contract!(fingerprint, qualification, record.fetch("id"))
+    record.merge!(fingerprint)
+    puts format("PASS      %3d  %-9s  %s", preflight_count, record.fetch("id"), record.fetch("title"))
+  else
+    source_failures << record.merge("detail" => detail)
+    puts format("REJECT    %3d  %-9s  %s", preflight_count, record.fetch("id"), record.fetch("title"))
+  end
+
+  [ok, detail]
+end
+
+selected = if mode == "first-wave"
+             policy = {
+               "selection_strategy" => mode_contract.fetch("selection_strategy"),
+               "page_strata" => mode_contract.fetch("page_strata"),
+               "max_source_share" => mode_contract.fetch("max_source_share")
+             }
+             begin
+               selection = ProductionBacklogSelector.select(
+                 eligible: eligible,
+                 required: Integer(mode_contract.fetch("calls")),
+                 policy: policy,
+                 max_pages: max_pages,
+                 preflight: preflight
+               )
+             rescue ProductionBacklogSelector::SelectionError => e
+               abort_with("#{e.message}; no queue was written")
+             end
+             audit.concat(selection.fetch(:audit))
+             selection_metadata = {
+               "selection_strategy" => policy.fetch("selection_strategy"),
+               "max_source_share" => selection.fetch(:max_source_share),
+               "max_adventures_per_source_book" => selection.fetch(:max_per_source),
+               "page_strata" => selection.fetch(:strata),
+               "source_counts" => selection.fetch(:source_counts)
+             }
+             selection.fetch(:selected)
+           else
+             successful = []
+             eligible.sort_by { |record| [Integer(record.fetch("page_count")), record.fetch("id")] }.each do |record|
+               ok, detail = preflight.call(record)
+               if ok
+                 successful << record
+                 audit << record.merge("page_stratum" => nil, "decision" => "SELECT", "reason" => "source_preflight_pass")
+               else
+                 compact = detail.to_s.lines.last(4).join(" ").gsub(/\s+/, " ").strip
+                 audit << record.merge("page_stratum" => nil, "decision" => "REJECT", "reason" => "source_preflight_failed:#{compact}")
+               end
+             end
+             selection_metadata = {
+               "selection_strategy" => mode_contract.fetch("selection_strategy")
+             }
+             successful
+           end
+
+abort_with("#{mode} produced zero source-ready EE calls") if selected.empty?
+
+FileUtils.rm_rf(queue_dir) if options[:force]
+FileUtils.rm_rf(experiment_dir) if options[:force]
+FileUtils.mkdir_p(queue_dir)
+FileUtils.mkdir_p(experiment_dir)
+
+qualification_sha = Digest::SHA256.file(QUALIFIED_PATH).hexdigest
+runtime_config_sha = Digest::SHA256.file(RUNTIME_CONFIG_PATH).hexdigest
+snapshot = {
+  "version" => 1,
+  "contract_type" => qualification.fetch("contract_type"),
+  "queue" => queue,
+  "selection_mode" => mode,
+  "generated_at" => Time.now.iso8601,
+  "local_model_eval_commit" => git_head(ROOT),
+  "scorer_commit" => git_head(SCORER_REPO),
+  "scorer_repo_path" => Pathname.new(SCORER_REPO).relative_path_from(Pathname.new(ROOT)).to_s,
+  "qualification_contract_path" => Pathname.new(QUALIFIED_PATH).relative_path_from(Pathname.new(ROOT)).to_s,
+  "qualification_contract_sha256" => qualification_sha,
+  "qualification_contract" => qualification,
+  "runtime_config_path" => qualification.fetch("runtime_config_path"),
+  "runtime_config_sha256" => runtime_config_sha,
+  "catalog_path" => catalog_path,
+  "catalog_filename" => File.basename(catalog_path),
+  "catalog_sha256" => catalog_sha,
+  "catalog_total_adventures" => catalog_ids.length,
+  "catalog_under_page_limit" => under_limit,
+  "catalog_prepopulated_ee" => prepopulated,
+  "catalog_prior_ee_reservations" => reserved.length,
+  "eligible_candidate_ids" => eligible.map { |record| record.fetch("id") }.sort,
+  "source_preflight_failures" => source_failures.map do |record|
+    record.slice("id", "title", "source_book", "publisher", "page_count", "start_page", "end_page", "detail")
+  end,
+  "dimension" => DIMENSION,
+  "profile" => qualification.fetch("profile"),
+  "model_alias" => qualification.fetch("model_alias"),
+  "ollama_model" => qualification.fetch("ollama_model"),
+  "provider" => qualification.fetch("provider"),
+  "max_page_count" => max_pages,
+  "reasoning_effort" => qualification.fetch("reasoning_effort"),
+  "max_tokens" => qualification.fetch("max_tokens"),
+  "temperature" => qualification.fetch("temperature"),
+  "reliability_gate" => qualification.fetch("reliability_gate"),
+  "pack_size" => options[:pack_size],
+  "expected_calls" => selected.length,
+  "selected_adventures" => selected
+}.merge(selection_metadata)
+File.write(File.join(queue_dir, "snapshot.yml"), YAML.dump(snapshot))
+
+audit_headers = %w[
+  adventure_id adventure_title source_book publisher page_count page_stratum decision reason
+]
+CSV.open(File.join(queue_dir, "candidate_audit.csv"), "w") do |csv|
+  csv << audit_headers
+  audit.sort_by { |record| [record.fetch("id"), record.fetch("decision")] }.each do |record|
+    csv << [
+      record["id"], record["title"], record["source_book"], record["publisher"],
+      record["page_count"], record["page_stratum"], record["decision"], record["reason"]
+    ]
+  end
+end
+
+case_headers = %w[
+  case_index pack_index pack_case_index adventure_id adventure_title source_book publisher
+  page_count page_stratum dimension profile selection_mode manifest_path
+]
+case_rows = []
+all_run_paths = []
+scorer_rel = Pathname.new(SCORER_REPO).relative_path_from(Pathname.new(experiment_dir)).to_s
+runtime_config_arg = '${LME_REPO}/' + qualification.fetch("runtime_config_path")
+
+selected.each_slice(options[:pack_size]).with_index(1) do |pack_adventures, pack_index|
+  pack_rows = []
+  pack_paths = []
+
+  pack_adventures.each_with_index do |adv, pack_offset|
+    case_index = case_rows.length + 1
+    filename = "#{queue}-gptoss-ee-adv#{adv.fetch('id').split('-').last.downcase}-v1.yml"
+    relative_path = File.join("experiments", queue, filename)
+    File.write(
+      File.join(experiment_dir, filename),
+      manifest_yaml(
+        queue: queue,
+        selection_mode: mode,
+        adv: adv,
+        scorer_rel: scorer_rel,
+        runtime_config_arg: runtime_config_arg,
+        qualification: qualification
+      )
+    )
+
+    row = [
+      case_index, pack_index, pack_offset + 1, adv.fetch("id"), adv.fetch("title"),
+      adv.fetch("source_book"), adv.fetch("publisher"), adv.fetch("page_count"), adv["page_stratum"],
+      DIMENSION, qualification.fetch("profile"), mode, relative_path
+    ]
+    case_rows << row
+    pack_rows << row
+    pack_paths << relative_path
+    all_run_paths << relative_path
+    puts format("WRITE %3d/%d  %s", case_index, selected.length, relative_path)
+  end
+
+  pack_name = format("pack-%03d", pack_index)
+  CSV.open(File.join(queue_dir, "#{pack_name}_case_index.csv"), "w") do |csv|
+    csv << case_headers
+    pack_rows.each { |row| csv << row }
+  end
+  File.write(File.join(queue_dir, "#{pack_name}_run_order.txt"), pack_paths.join("\n") + "\n")
+end
+
+CSV.open(File.join(queue_dir, "case_index.csv"), "w") do |csv|
+  csv << case_headers
+  case_rows.each { |row| csv << row }
+end
+File.write(File.join(queue_dir, "run_order.txt"), all_run_paths.join("\n") + "\n")
+
+puts
+puts "EE PRODUCTION BACKLOG PREPARED — NO INFERENCE WAS RUN"
+puts "Queue: production_backlog/#{queue}"
+puts "Mode: #{mode}"
+puts "AMC: #{File.basename(catalog_path)} / #{catalog_sha}"
+puts "AMC total: #{catalog_ids.length}"
+puts "Ordinary-size domain: Page Count <= #{max_pages} (#{under_limit} adventures)"
+puts "Accepted EE already present: #{prepopulated}"
+puts "Prior EE reservations/results: #{reserved.length}"
+puts "Blank unreserved candidate population: #{eligible.length}"
+puts "Source-preflight failures observed: #{source_failures.length}"
+puts "Prepared calls: #{selected.length}"
+if mode == "first-wave"
+  puts "Page strata: #{snapshot.fetch('page_strata').map { |s| "#{s.fetch('name')}=#{s.fetch('quota')}" }.join(', ')}"
+  puts "Max source share: #{snapshot.fetch('max_source_share')} (#{snapshot.fetch('max_adventures_per_source_book')} max calls/source)"
+end
+puts "Packs: #{(selected.length.to_f / options[:pack_size]).ceil} (pack size #{options[:pack_size]})"
+puts "Model: #{qualification.fetch('model_alias')} => #{qualification.fetch('ollama_model')}"
+puts "Dimension: #{DIMENSION}"
+puts "Profile: #{qualification.fetch('profile')}"
+puts "Runtime: provider=#{qualification.fetch('provider')} reasoning=#{qualification.fetch('reasoning_effort')} temperature=#{qualification.fetch('temperature')} max_tokens=#{qualification.fetch('max_tokens')}"
+puts "Qualified scorer baseline: #{qualification.fetch('qualified_scorer_baseline')}"
+puts "Frozen runtime scorer commit: #{snapshot.fetch('scorer_commit')}"
+puts "External/API inference cost: $0"
+puts
+puts "Next:"
+puts "  ./verify_production_backlog_ee.sh production_backlog/#{queue}"
+if mode == "first-wave"
+  puts "After all 40 cases are terminal:"
+  puts "  bin/evaluate-production-backlog-ee production_backlog/#{queue}"
+end
