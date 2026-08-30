@@ -289,7 +289,7 @@ step "Warm each model and verify context plus full GPU residency"
 for model in "${MODELS[@]}"; do
   safe="${model//[^A-Za-z0-9._-]/_}"
   info "Warming $model. This can take a while; Ollama output is saved to warmup-${safe}.log."
-  OLLAMA_HOST="$CLIENT_URL" ollama run "$model" "Reply with OK only." \
+  OLLAMA_HOST="$CLIENT_URL" ollama run "$model" "Reply with OK only." </dev/null \
     2>&1 | tee "$STATE_DIR/warmup-${safe}.log"
 
   OLLAMA_HOST="$CLIENT_URL" ollama ps | tee "$STATE_DIR/ollama-ps-${safe}.txt"
