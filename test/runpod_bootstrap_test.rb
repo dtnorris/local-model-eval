@@ -84,9 +84,9 @@ class RunpodBootstrapTest < Minitest::Test
       puts "[6/8] Warm each model and verify context plus full GPU residency"
       STDOUT.flush
       sleep 0.03
-      puts "gemma4:26b verification PASS: context=262144 and 100% model residency in VRAM."
+      puts "gemma4:26b verification PASS: context=131072 and 100% model residency in VRAM."
       puts "[16:09:59] LME_PROVENANCE_GPU\tNVIDIA A40\t46068"
-      puts "[16:09:59] LME_PROVENANCE_MODEL\tgemma4:26b\t#{"a" * 64}\t262144\t2566893074\t2566893074"
+      puts "[16:09:59] LME_PROVENANCE_MODEL\tgemma4:26b\t#{"a" * 64}\t131072\t2566893074\t2566893074"
       puts "Worker setup PASS."
       puts "[16:10:00] Worker #{worker} remote setup PASS."
     RUBY
@@ -136,9 +136,9 @@ class RunpodBootstrapTest < Minitest::Test
         warn "simulated worker failure"
         exit 7
       end
-      puts "gemma4:26b verification PASS: context=262144 and 100% model residency in VRAM."
+      puts "gemma4:26b verification PASS: context=131072 and 100% model residency in VRAM."
       puts "LME_PROVENANCE_GPU\tNVIDIA A40\t46068"
-      puts "LME_PROVENANCE_MODEL\tgemma4:26b\t#{"a" * 64}\t262144\t2566893074\t2566893074"
+      puts "LME_PROVENANCE_MODEL\tgemma4:26b\t#{"a" * 64}\t131072\t2566893074\t2566893074"
       puts "Worker setup PASS."
       puts "Worker #{worker} remote setup PASS."
     RUBY
@@ -289,9 +289,9 @@ class RunpodBootstrapTest < Minitest::Test
   def test_successful_remote_exit_fails_closed_when_provenance_mismatches
     script = fake_remote_script(<<~'RUBY')
       worker = ARGV[ARGV.index("--worker") + 1]
-      puts "gemma4:26b verification PASS: context=262144 and 100% model residency in VRAM."
+      puts "gemma4:26b verification PASS: context=131072 and 100% model residency in VRAM."
       puts "LME_PROVENANCE_GPU\tNVIDIA A40\t46068"
-      puts "LME_PROVENANCE_MODEL\tgemma4:26b\t#{"b" * 64}\t262144\t2566893074\t2566893074"
+      puts "LME_PROVENANCE_MODEL\tgemma4:26b\t#{"b" * 64}\t131072\t2566893074\t2566893074"
       puts "Worker setup PASS."
       puts "Worker #{worker} remote setup PASS."
     RUBY

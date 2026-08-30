@@ -5,7 +5,7 @@ require_relative "runpod_fleet_state"
 
 module LocalModelEvaluation
   class RunpodProvenance
-    REQUIRED_CONTEXT = 262_144
+    REQUIRED_CONTEXT = 131_072
     BURST_WORKER = /\Aburst_(\d+)\z/
     DIGEST = /\A[0-9a-f]{64}\z/i
 

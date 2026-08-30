@@ -11,7 +11,7 @@ set -euo pipefail
 # - verify model digest, full GPU residency, and context before declaring success;
 # - emit incremental console feedback for every long-running step.
 
-CONTEXT_LENGTH=262144
+CONTEXT_LENGTH=131072
 STAGING_DIR=/root/.ollama/models
 SHARED_DIR=/workspace/ollama-models
 STATE_ROOT=/workspace/lme-worker-state
@@ -40,7 +40,7 @@ Required:
   --model MODEL                 Ollama model to install. Repeat for multiple models.
 
 Options:
-  --context N                   Ollama context length (default: 262144)
+  --context N                   Ollama context length (default: 131072)
   --staging-dir PATH            Fast local staging store (default: /root/.ollama/models)
   --shared-dir PATH             Shared/workspace store (default: /workspace/ollama-models)
   --state-root PATH             Worker evidence directory (default: /workspace/lme-worker-state)

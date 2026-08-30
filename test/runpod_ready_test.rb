@@ -243,7 +243,7 @@ class RunpodReadyTest < Minitest::Test
       "workers" => [1, 2],
       "models" => ["gemma4:26b"],
       "digests" => { "gemma4:26b" => "a" * 64 },
-      "context" => 262_144,
+      "context" => 131_072,
       "gpu" => "NVIDIA A40"
     })
   end

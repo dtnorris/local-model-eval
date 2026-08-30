@@ -37,7 +37,7 @@ module LocalModelEvaluation
 
       heartbeat_seconds = positive_float(heartbeat_seconds, "heartbeat seconds")
       poll_seconds = positive_float(poll_seconds, "poll seconds")
-      context = context ? positive_integer(context, "context") : 262_144
+      context = context ? positive_integer(context, "context") : 131_072
       validate_remote_setup!
 
       bootstrap_root = @fleet_state.artifact_dir(fleet.fetch("fleet_id"), "bootstrap")
