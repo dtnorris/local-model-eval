@@ -9,6 +9,7 @@ require "optparse"
 require "rbconfig"
 
 ROOT = File.expand_path("..", __dir__)
+ENV["LME_REPO"] = ROOT
 
 def load_workers
   path = File.join(ROOT, "config", "workers.yml")
