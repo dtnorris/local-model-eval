@@ -1,0 +1,47 @@
+name: runpod-two-worker-concurrency-v1
+purpose: >
+  Prove that two independently configured RunPod A40 Ollama workers execute two
+  identical AdventureFinder logical jobs concurrently through LME pool dispatch,
+  before any five-worker burst test or provider provisioning automation.
+
+dispatch: pool
+
+models:
+  - qwen27
+
+dimension: Social Interaction Emphasis
+
+adventures:
+  - ADV-0200
+
+replicates: 2
+
+workers:
+  - burst_1
+  - burst_2
+
+required_worker_labels:
+  - remote
+  - burst
+  - nvidia
+  - a40
+  - 48gb
+
+scorer:
+  repo: ../../af-cli-scoring-utility
+  mode: positional
+  extra_args: []
+
+success_criteria:
+  - Both workers have independently verified the same full qwen3.6:27b digest before dispatch.
+  - Both logical jobs complete with normal structured output.
+  - Pool dispatch assigns one job to each worker rather than serializing both jobs on one worker.
+  - Total wall-clock time is no more than approximately 1.3x the slower individual remote job.
+
+stop_conditions:
+  - Worker model digests differ.
+  - Either worker is unavailable, loses full-context GPU residency, or is missing the selected model.
+  - LME serializes the two jobs instead of executing them concurrently.
+  - The configured soft scoring-runtime cost cap is reached.
+
+cost_cap_usd: 0.50

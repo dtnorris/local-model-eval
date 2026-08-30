@@ -51,6 +51,105 @@ def forwarded_run_options(opts)
   args
 end
 
+def runpod_api_key
+  key = ENV["RUNPOD_API_KEY"].to_s
+  abort "RUNPOD_API_KEY is missing; add it to the repo-local .env file." if key.empty?
+  key
+end
+
+def runpod_client
+  LocalModelEvaluation::RunpodClient.new(
+    api_key: runpod_api_key,
+    base_url: ENV.fetch("RUNPOD_API_BASE_URL", LocalModelEvaluation::RunpodClient::DEFAULT_BASE_URL)
+  )
+end
+
+def runpod_fleet(client = runpod_client)
+  LocalModelEvaluation::RunpodFleet.new(
+    client:,
+    env_path: File.join(ROOT, ".env")
+  )
+end
+
+def build_runpod_readiness(experiment, workers, models)
+  fleet_state = LocalModelEvaluation::RunpodFleetState.new(
+    root: File.join(ROOT, "output", "runpod-fleets")
+  )
+  client = ENV["RUNPOD_API_KEY"].to_s.empty? ? nil : runpod_client
+  gate = LocalModelEvaluation::RunpodReady.new(
+    fleet_state:,
+    client:,
+    tunnels: LocalModelEvaluation::RunpodTunnels.new(
+      fleet_state:,
+      repo_root: ROOT
+    ),
+    worker_check: LocalModelEvaluation::WorkerCheck.new
+  )
+  [gate, gate.check(experiment:, workers:, models:)]
+end
+
+def confirm_or_abort(prompt, assume_yes: false)
+  return if assume_yes
+
+  $stdout.print "#{prompt} [y/N] "
+  $stdout.flush
+  answer = $stdin.gets.to_s.strip.downcase
+  abort "Aborted; no changes made." unless %w[y yes].include?(answer)
+end
+
+def parse_worker_indices(value)
+  tokens = value.to_s.split(",").map(&:strip).reject(&:empty?)
+  abort "--workers requires a list such as 1-5 or 1,2,3" if tokens.empty?
+
+  tokens.flat_map do |token|
+    if (match = token.match(/\A(\d+)-(\d+)\z/))
+      first = Integer(match[1])
+      last = Integer(match[2])
+      abort "invalid descending worker range: #{token}" if first > last
+      (first..last).to_a
+    elsif token.match?(/\A\d+\z/)
+      Integer(token)
+    else
+      abort "invalid worker selector: #{token.inspect}"
+    end
+  end.uniq.sort
+end
+
+def runpod_create_options(argv)
+  opts = {
+    workers: nil,
+    cloud: LocalModelEvaluation::RunpodFleet::DEFAULT_CLOUD,
+    dry_run: false,
+    yes: false,
+    max_hourly_usd: ENV.fetch("RUNPOD_MAX_FLEET_HOURLY_USD", LocalModelEvaluation::RunpodFleet::DEFAULT_MAX_FLEET_HOURLY_USD),
+    ssh_public_key: ENV.fetch("RUNPOD_SSH_PUBLIC_KEY_PATH", "~/.ssh/id_ed25519.pub"),
+    wait_seconds: LocalModelEvaluation::RunpodFleet::DEFAULT_WAIT_SECONDS,
+    poll_seconds: LocalModelEvaluation::RunpodFleet::DEFAULT_POLL_SECONDS
+  }
+  OptionParser.new do |o|
+    o.on("--workers N", Integer, "Number of burst workers (1-5)") { |v| opts[:workers] = v }
+    o.on("--cloud TIER", "RunPod cloud tier: COMMUNITY or SECURE (default: COMMUNITY)") { |v| opts[:cloud] = v }
+    o.on("--dry-run", "Read-only availability/cost/prerequisite check") { opts[:dry_run] = true }
+    o.on("--yes", "Skip the paid-create confirmation prompt") { opts[:yes] = true }
+    o.on("--max-hourly-usd USD", Float, "Fail closed above this total fleet hourly rate") { |v| opts[:max_hourly_usd] = v }
+    o.on("--ssh-public-key PATH", "OpenSSH public key file to authorize") { |v| opts[:ssh_public_key] = v }
+    o.on("--wait-seconds N", Integer, "Maximum provisioning wait") { |v| opts[:wait_seconds] = v }
+    o.on("--poll-seconds N", Float, "Provisioning poll interval") { |v| opts[:poll_seconds] = v }
+  end.parse!(argv)
+  abort "Usage: bin/lme runpod-create --workers N [--dry-run|--yes]" unless opts[:workers]
+  opts
+end
+
+def runpod_destroy_options(argv)
+  opts = { workers: nil, yes: false }
+  OptionParser.new do |o|
+    o.on("--workers LIST", "Burst worker indices, e.g. 1-5 or 1,3,5") { |v| opts[:workers] = parse_worker_indices(v) }
+    o.on("--yes", "Skip the destructive confirmation prompt") { opts[:yes] = true }
+  end.parse!(argv)
+  abort "Usage: bin/lme runpod-destroy --workers 1-5 [--yes]" unless opts[:workers]
+  opts
+end
+
 command = ARGV.shift
 case command
 when "plan"
@@ -76,29 +175,158 @@ when "worker-check"
   models = load_models
   selected = workers.values
   required_models = []
+  required_labels = []
   if experiment_path
     exp = LocalModelEvaluation::Experiment.new(experiment_path)
     selected = exp.worker_names.map { |name| workers.fetch(name) }
     required_models = exp.models.map { |name| models.fetch(name).fetch("ollama_model") }
+    required_labels = exp.required_worker_labels
   end
 
   checker = LocalModelEvaluation::WorkerCheck.new
   failed = false
-  puts format("%-14s %-8s %-12s %s", "WORKER", "STATUS", "OLLAMA", "REQUIRED MODELS")
+  puts format("%-14s %-11s %-12s %s", "WORKER", "STATUS", "OLLAMA", "REQUIREMENTS")
   selected.each do |worker|
-    result = checker.check(worker)
-    if result.ok
-      missing = required_models.reject { |model| result.models.include?(model) || result.models.any? { |m| m.start_with?("#{model}:") } }
-      status = missing.empty? ? "OK" : "MISSING"
-      failed ||= !missing.empty?
-      model_text = required_models.empty? ? "-" : (missing.empty? ? "yes" : "missing: #{missing.join(', ')}")
-      puts format("%-14s %-8s %-12s %s", worker.name, status, result.version || "?", model_text)
-    else
+    result = checker.check(worker, required_models:, required_labels:)
+    if result.error
       failed = true
-      puts format("%-14s %-8s %-12s %s", worker.name, "ERROR", "-", result.error)
+      puts format("%-14s %-11s %-12s %s", worker.name, "ERROR", "-", result.error)
+    elsif result.missing_labels.any?
+      failed = true
+      puts format("%-14s %-11s %-12s %s", worker.name, "INELIGIBLE", result.version || "?", "missing labels: #{result.missing_labels.join(', ')}")
+    elsif result.missing_models.any?
+      failed = true
+      puts format("%-14s %-11s %-12s %s", worker.name, "MISSING", result.version || "?", "missing models: #{result.missing_models.join(', ')}")
+    else
+      requirement_text = required_models.empty? && required_labels.empty? ? "-" : "yes"
+      puts format("%-14s %-11s %-12s %s", worker.name, "OK", result.version || "?", requirement_text)
     end
   end
   exit(failed ? 1 : 0)
+
+when "runpod-ready"
+  experiment_path = ARGV.shift or abort "Usage: bin/lme runpod-ready EXPERIMENT.yml"
+  abort "Usage: bin/lme runpod-ready EXPERIMENT.yml" unless ARGV.empty?
+  exp, workers, models, _jobs = load_experiment_context(experiment_path)
+  unless LocalModelEvaluation::RunpodReady.applicable?(exp)
+    puts "RunPod readiness: NOT APPLICABLE -- experiment has no managed burst_N workers."
+    exit 0
+  end
+  gate, readiness = build_runpod_readiness(exp, workers, models)
+  puts gate.render(readiness)
+  if readiness.fetch("ready")
+    puts "Next: bin/lme run #{experiment_path}"
+    exit 0
+  end
+  exit 1
+
+when "runpod-tunnels"
+  exec RbConfig.ruby, File.join(ROOT, "bin", "lme-runpod-tunnels"), *ARGV
+
+when "runpod-status"
+  exec RbConfig.ruby, File.join(ROOT, "bin", "lme-runpod-status"), *ARGV
+
+when "runpod-bootstrap"
+  exec RbConfig.ruby, File.join(ROOT, "bin", "lme-runpod-bootstrap"), *ARGV
+
+when "runpod-create"
+  opts = runpod_create_options(ARGV)
+  fleet = runpod_fleet
+  begin
+    preflight = fleet.preflight(
+      worker_count: opts[:workers],
+      cloud: opts[:cloud],
+      max_fleet_hourly_usd: opts[:max_hourly_usd]
+    )
+    ssh_public_key = fleet.read_ssh_public_key(opts[:ssh_public_key])
+
+    puts "RunPod fleet preflight"
+    puts "  GPU: #{preflight.gpu.fetch('id')} (#{preflight.gpu.fetch('memory')} GB VRAM)"
+    puts "  Cloud: #{preflight.cloud}"
+    puts "  Availability: #{preflight.availability}"
+    puts "  Workers: #{preflight.worker_count}"
+    puts format("  Catalog rate: $%.4f/hr per worker", preflight.hourly_rate)
+    puts format("  Projected fleet rate: $%.4f/hr", preflight.fleet_hourly_rate)
+    puts format("  Projected 10-minute cost: $%.4f", preflight.fleet_hourly_rate / 6.0)
+    puts format("  Projected 30-minute cost: $%.4f", preflight.fleet_hourly_rate / 2.0)
+    puts format("  Safety cap: $%.4f/hr", preflight.max_fleet_hourly_rate)
+    puts "  SSH public key: #{File.expand_path(opts[:ssh_public_key])}"
+    puts "No pods have been created."
+
+    if opts[:dry_run]
+      puts "Dry run PASS."
+      exit 0
+    end
+
+    confirm_or_abort(
+      format("Create %d paid RunPod %s worker(s) at a projected $%.4f/hr total?", preflight.worker_count, preflight.cloud, preflight.fleet_hourly_rate),
+      assume_yes: opts[:yes]
+    )
+
+    workers = fleet.create(
+      worker_count: opts[:workers],
+      cloud: opts[:cloud],
+      ssh_public_key:,
+      preflight:,
+      max_fleet_hourly_usd: opts[:max_hourly_usd],
+      wait_seconds: opts[:wait_seconds],
+      poll_seconds: opts[:poll_seconds]
+    )
+    actual_rate = workers.sum(&:hourly_rate)
+    puts "RunPod fleet ready:"
+    workers.each do |worker|
+      puts format(
+        "  burst_%d: pod=%s ssh=%s:%d $%.4f/hr",
+        worker.index,
+        worker.pod_id,
+        worker.host,
+        worker.ssh_port,
+        worker.hourly_rate
+      )
+    end
+    puts format("Actual fleet rate: $%.4f/hr", actual_rate)
+    puts "Provisioning stopped here: no Ollama bootstrap, tunnels, worker-check, or scoring were started."
+  rescue LocalModelEvaluation::RunpodClient::Error, LocalModelEvaluation::RunpodFleet::Error => e
+    warn "ERROR: #{e.message}"
+    exit 1
+  end
+
+when "runpod-destroy"
+  opts = runpod_destroy_options(ARGV)
+  names = opts[:workers].map { |index| "af-lme-burst-#{index}" }.join(", ")
+  confirm_or_abort("Permanently delete RunPod pod(s): #{names}?", assume_yes: opts[:yes])
+
+  begin
+    tunnel_state = LocalModelEvaluation::RunpodFleetState.new(
+      root: File.join(ROOT, "output", "runpod-fleets")
+    )
+    current = tunnel_state.current
+    if current
+      active_indices = current.fetch("workers").filter_map do |worker|
+        index = Integer(worker.fetch("index"))
+        index if worker["status"] == "active" && opts[:workers].include?(index)
+      end
+      unless active_indices.empty?
+        tunnel_root = tunnel_state.artifact_dir(current.fetch("fleet_id"), "tunnels")
+        if File.file?(File.join(tunnel_root, LocalModelEvaluation::RunpodTunnels::STATE_FILE))
+          LocalModelEvaluation::RunpodTunnels.new(
+            fleet_state: tunnel_state,
+            repo_root: ROOT
+          ).stop(worker_indices: active_indices)
+        end
+      end
+    end
+  rescue LocalModelEvaluation::RunpodFleetState::Error, LocalModelEvaluation::RunpodTunnels::Error => e
+    warn "WARNING: could not stop managed local tunnel(s): #{e.message}; continuing paid pod teardown."
+  end
+
+  begin
+    cleared = runpod_fleet.destroy(worker_indices: opts[:workers])
+    puts "RunPod teardown complete for: #{cleared.map { |index| "burst_#{index}" }.join(', ')}"
+  rescue LocalModelEvaluation::RunpodClient::Error, LocalModelEvaluation::RunpodFleet::Error => e
+    warn "ERROR: #{e.message}"
+    exit 1
+  end
 
 when "start"
   experiment_path = ARGV.shift or abort "Usage: bin/lme start EXPERIMENT.yml [--rerun-failed|--force]"
@@ -150,6 +378,15 @@ when "run"
   opts = parse_run_options(ARGV)
 
   exp, workers, models, jobs = load_experiment_context(experiment_path)
+  if LocalModelEvaluation::RunpodReady.applicable?(exp)
+    gate, readiness = build_runpod_readiness(exp, workers, models)
+    puts gate.render(readiness)
+    unless readiness.fetch("ready")
+      warn "ERROR: RunPod readiness gate failed; no scoring was started."
+      exit 1
+    end
+  end
+
   puts "Experiment: #{exp.name}"
   puts "Dispatch: #{exp.dispatch}"
   puts "Jobs: #{jobs.length}"
@@ -168,6 +405,12 @@ else
     Usage:
       bin/lme plan EXPERIMENT.yml
       bin/lme worker-check [EXPERIMENT.yml]
+      bin/lme runpod-ready EXPERIMENT.yml
+      bin/lme runpod-status
+      bin/lme runpod-tunnels [start|status|stop] [--workers 1-5|--all]
+      bin/lme runpod-bootstrap --workers 1-5 --model MODEL [options]
+      bin/lme runpod-create --workers N [--cloud COMMUNITY|SECURE] [--dry-run|--yes] [--max-hourly-usd USD]
+      bin/lme runpod-destroy --workers 1-5 [--yes]
       bin/lme start EXPERIMENT.yml [--rerun-failed|--force]
       bin/lme status EXPERIMENT.yml
       bin/lme run EXPERIMENT.yml [--rerun-failed|--force]
