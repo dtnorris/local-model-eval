@@ -1,0 +1,5 @@
+llm:
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  max_tokens: 16384

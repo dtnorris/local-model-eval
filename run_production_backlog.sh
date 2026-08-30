@@ -37,6 +37,9 @@ case "$CONTRACT_TYPE" in
   ee_local_qualified_v1)
     VERIFY="$REPO/verify_production_backlog_ee.sh"
     ;;
+  seriousness_local_qualified_v1)
+    VERIFY="$REPO/verify_production_backlog_seriousness.sh"
+    ;;
   *)
     VERIFY="$REPO/verify_production_backlog.sh"
     ;;
