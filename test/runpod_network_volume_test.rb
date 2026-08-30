@@ -5,6 +5,7 @@ require "tmpdir"
 require "fileutils"
 require "json"
 require "uri"
+require "stringio"
 require_relative "../lib/local_model_evaluation/runpod_client"
 require_relative "../lib/local_model_evaluation/runpod_fleet"
 
@@ -178,6 +179,7 @@ class RunpodNetworkVolumeTest < Minitest::Test
     fleet = LocalModelEvaluation::RunpodFleet.new(
       client:,
       env_path:,
+      out: StringIO.new,
       sleeper: ->(_seconds) {},
       clock: -> { 0.0 },
       state_root: File.join(tmp, "state")
