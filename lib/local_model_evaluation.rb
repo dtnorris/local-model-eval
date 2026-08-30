@@ -20,3 +20,4 @@ require_relative "local_model_evaluation/runpod_status"
 require_relative "local_model_evaluation/runpod_provenance"
 
 require_relative "local_model_evaluation/runpod_tunnels"
+require_relative "local_model_evaluation/runpod_ready"

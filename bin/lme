@@ -70,6 +70,23 @@ def runpod_fleet(client = runpod_client)
   )
 end
 
+def build_runpod_readiness(experiment, workers, models)
+  fleet_state = LocalModelEvaluation::RunpodFleetState.new(
+    root: File.join(ROOT, "output", "runpod-fleets")
+  )
+  client = ENV["RUNPOD_API_KEY"].to_s.empty? ? nil : runpod_client
+  gate = LocalModelEvaluation::RunpodReady.new(
+    fleet_state:,
+    client:,
+    tunnels: LocalModelEvaluation::RunpodTunnels.new(
+      fleet_state:,
+      repo_root: ROOT
+    ),
+    worker_check: LocalModelEvaluation::WorkerCheck.new
+  )
+  [gate, gate.check(experiment:, workers:, models:)]
+end
+
 def confirm_or_abort(prompt, assume_yes: false)
   return if assume_yes
 
@@ -185,6 +202,22 @@ when "worker-check"
     end
   end
   exit(failed ? 1 : 0)
+
+when "runpod-ready"
+  experiment_path = ARGV.shift or abort "Usage: bin/lme runpod-ready EXPERIMENT.yml"
+  abort "Usage: bin/lme runpod-ready EXPERIMENT.yml" unless ARGV.empty?
+  exp, workers, models, _jobs = load_experiment_context(experiment_path)
+  unless LocalModelEvaluation::RunpodReady.applicable?(exp)
+    puts "RunPod readiness: NOT APPLICABLE -- experiment has no managed burst_N workers."
+    exit 0
+  end
+  gate, readiness = build_runpod_readiness(exp, workers, models)
+  puts gate.render(readiness)
+  if readiness.fetch("ready")
+    puts "Next: bin/lme run #{experiment_path}"
+    exit 0
+  end
+  exit 1
 
 when "runpod-tunnels"
   exec RbConfig.ruby, File.join(ROOT, "bin", "lme-runpod-tunnels"), *ARGV
@@ -344,24 +377,13 @@ when "run"
   opts = parse_run_options(ARGV)
 
   exp, workers, models, jobs = load_experiment_context(experiment_path)
-  begin
-    provenance = LocalModelEvaluation::RunpodProvenance.new(
-      fleet_state: LocalModelEvaluation::RunpodFleetState.new(
-        root: File.join(ROOT, "output", "runpod-fleets")
-      )
-    ).verify_experiment!(experiment: exp, models: models)
-    if provenance
-      puts format(
-        "RunPod provenance: PASS | workers=%s | models=%s | context=%d | gpu=%s | exact digests pinned",
-        provenance.fetch("workers").map { |index| "burst_#{index}" }.join(","),
-        provenance.fetch("models").join(","),
-        provenance.fetch("context"),
-        provenance.fetch("gpu")
-      )
+  if LocalModelEvaluation::RunpodReady.applicable?(exp)
+    gate, readiness = build_runpod_readiness(exp, workers, models)
+    puts gate.render(readiness)
+    unless readiness.fetch("ready")
+      warn "ERROR: RunPod readiness gate failed; no scoring was started."
+      exit 1
     end
-  rescue LocalModelEvaluation::RunpodProvenance::Error => e
-    warn "ERROR: RunPod provenance gate failed: #{e.message}"
-    exit 1
   end
 
   puts "Experiment: #{exp.name}"
@@ -382,6 +404,7 @@ else
     Usage:
       bin/lme plan EXPERIMENT.yml
       bin/lme worker-check [EXPERIMENT.yml]
+      bin/lme runpod-ready EXPERIMENT.yml
       bin/lme runpod-status
       bin/lme runpod-tunnels [start|status|stop] [--workers 1-5|--all]
       bin/lme runpod-bootstrap --workers 1-5 --model MODEL [options]
