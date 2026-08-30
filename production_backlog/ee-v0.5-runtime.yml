@@ -1,0 +1,5 @@
+llm:
+  provider: ollama
+  model: gpt-oss:20b
+  reasoning_effort: low
+  max_tokens: 4096
