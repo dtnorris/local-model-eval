@@ -186,6 +186,7 @@ def runpod_create_options(argv)
   opts = {
     workers: nil,
     cloud: LocalModelEvaluation::RunpodFleet::DEFAULT_CLOUD,
+    network_volume_id: ENV["RUNPOD_NETWORK_VOLUME_ID"],
     dry_run: false,
     yes: false,
     max_hourly_usd: ENV.fetch("RUNPOD_MAX_FLEET_HOURLY_USD", LocalModelEvaluation::RunpodFleet::DEFAULT_MAX_FLEET_HOURLY_USD),
@@ -197,6 +198,7 @@ def runpod_create_options(argv)
   OptionParser.new do |o|
     o.on("--workers N", Integer, "Number of burst workers (1-5)") { |v| opts[:workers] = v }
     o.on("--cloud TIER", "RunPod cloud tier: COMMUNITY or SECURE (default: COMMUNITY)") { |v| opts[:cloud] = v }
+    o.on("--network-volume-id ID", "Attach an existing RunPod Network Volume at /workspace; requires SECURE") { |v| opts[:network_volume_id] = v }
     o.on("--dry-run", "Read-only availability/cost/prerequisite check") { opts[:dry_run] = true }
     o.on("--yes", "Skip the paid-create confirmation prompt") { opts[:yes] = true }
     o.on("--max-hourly-usd USD", Float, "Fail closed above this fleet's hourly rate") { |v| opts[:max_hourly_usd] = v }
@@ -315,6 +317,7 @@ when "runpod-create"
     preflight = fleet.preflight(
       worker_count: opts[:workers],
       cloud: opts[:cloud],
+      network_volume_id: opts[:network_volume_id],
       max_fleet_hourly_usd: opts[:max_hourly_usd]
     )
     ssh_public_key = fleet.read_ssh_public_key(opts[:ssh_public_key])
@@ -340,6 +343,10 @@ when "runpod-create"
     puts "  Cloud: #{preflight.cloud}"
     puts "  Availability: #{preflight.availability}"
     puts "  Workers: #{preflight.worker_count}"
+    if preflight.network_volume_id
+      puts "  Network volume: #{preflight.network_volume_id}"
+      puts "  Data center: #{preflight.data_center_id}"
+    end
     puts format("  Catalog rate: $%.4f/hr per worker", preflight.hourly_rate)
     puts format("  Projected fleet rate: $%.4f/hr", preflight.fleet_hourly_rate)
     puts format("  Projected 10-minute cost: $%.4f", preflight.fleet_hourly_rate / 6.0)
@@ -373,6 +380,7 @@ when "runpod-create"
     workers = fleet.create(
       worker_count: opts[:workers],
       cloud: opts[:cloud],
+      network_volume_id: opts[:network_volume_id],
       ssh_public_key:,
       preflight:,
       max_fleet_hourly_usd: opts[:max_hourly_usd],

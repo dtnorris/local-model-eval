@@ -38,6 +38,16 @@ module LocalModelEvaluation
       request("GET", "/pods/#{safe_id(pod_id)}")
     end
 
+    def get_network_volume(network_volume_id)
+      request("GET", "/network-volumes/#{safe_id(network_volume_id)}")
+    end
+
+    def list_data_centers(include_gpu_availability: false)
+      query = include_gpu_availability ? { "include" => "GPU_AVAILABILITY" } : nil
+      data = request("GET", "/catalog/datacenters", query:)
+      Array(data.fetch("dataCenters"))
+    end
+
     def list_gpu_types(cloud:, count: 1)
       data = request(
         "GET",
