@@ -20,7 +20,27 @@ else
   QUEUE_DIR="$REPO/$QUEUE_ARG"
 fi
 ORDER="$QUEUE_DIR/run_order.txt"
-VERIFY="$REPO/verify_production_backlog.sh"
+SNAPSHOT="$QUEUE_DIR/snapshot.yml"
+
+CONTRACT_TYPE="$(
+  ruby - "$SNAPSHOT" <<'RUBY'
+require "yaml"
+path = ARGV.fetch(0)
+if File.file?(path)
+  snapshot = YAML.safe_load_file(path, aliases: true) || {}
+  print snapshot["contract_type"].to_s
+end
+RUBY
+)"
+
+case "$CONTRACT_TYPE" in
+  ee_local_qualified_v1)
+    VERIFY="$REPO/verify_production_backlog_ee.sh"
+    ;;
+  *)
+    VERIFY="$REPO/verify_production_backlog.sh"
+    ;;
+esac
 
 cd "$REPO" || exit 1
 mkdir -p "$CONTROL_DIR"
