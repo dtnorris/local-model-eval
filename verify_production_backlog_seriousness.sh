@@ -403,15 +403,25 @@ abort "frozen prompt hash changed" unless target.fetch("prompt_sha256") == first
 abort "frozen schema hash changed" unless target.fetch("schema_sha256") == first.fetch("schema_sha256")
 
 prompt = target.fetch("prompt")
-rendered_prompt = "#{prompt.fetch('instructions')}\n#{prompt.fetch('input')}"
-forbidden = [
-  "Calibration Benchmarks",
+input = prompt.fetch("input")
+match = input.match(
+  /^# AFAO [^\n]+ Rubric for This Focused Pass\s*$\n\n(.*?)\n\n^# Focused Assessment Task\s*$/m
+)
+abort "could not isolate focused AFAO rubric" unless match
+rubric = match[1]
+
+abort "Seriousness rubric heading missing" unless rubric.match?(/^###\s+\d+\.\s+Seriousness\s*$/)
+if rubric.match?(/^####\s+Calibration Benchmarks\s*$/i)
+  abort "Seriousness Calibration Benchmarks subsection leaked into focused rubric"
+end
+
+forbidden_guardrails = [
   "# Seriousness Adversarial-Play Guardrail",
   "# Seriousness Tonal-Hierarchy / Proxy-Weighting Guardrail",
   "# Seriousness Direct Register-Comparison Decision Guardrail v0.3"
 ]
-present = forbidden.select { |marker| rendered_prompt.include?(marker) }
-abort "reset-only prompt contract violated: #{present.inspect}" unless present.empty?
+present = forbidden_guardrails.select { |marker| rubric.include?(marker) }
+abort "legacy Seriousness guardrail leaked into focused rubric: #{present.inspect}" unless present.empty?
 
 puts "Rendered reset-only Seriousness profile: PASS"
 puts "  prompt_sha256=#{target.fetch('prompt_sha256')}"

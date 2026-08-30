@@ -22,8 +22,7 @@ PROTECTED_SCORER_FILES = %w[
   lib/af_scoring/prompt_builder.rb
   lib/af_scoring/phase6_seriousness_guardrail.rb
 ].freeze
-RESET_FORBIDDEN_MARKERS = [
-  "Calibration Benchmarks",
+RESET_FORBIDDEN_GUARDRAIL_MARKERS = [
   "# Seriousness Adversarial-Play Guardrail",
   "# Seriousness Tonal-Hierarchy / Proxy-Weighting Guardrail",
   "# Seriousness Direct Register-Comparison Decision Guardrail v0.3"
@@ -165,6 +164,13 @@ def source_preflight(scorer_repo, runtime_config_path, adventure_id, ollama_mode
   end
 end
 
+def focused_rubric_block(prompt_input)
+  match = prompt_input.match(
+    /^# AFAO [^\n]+ Rubric for This Focused Pass\s*$\n\n(.*?)\n\n^# Focused Assessment Task\s*$/m
+  )
+  match && match[1]
+end
+
 def validate_preflight_contract!(fingerprint, qualification, adventure_id)
   failures = []
   failures << "AFAO #{fingerprint['afao_version'].inspect}" unless fingerprint["afao_version"] == qualification.fetch("afao_version")
@@ -173,9 +179,17 @@ def validate_preflight_contract!(fingerprint, qualification, adventure_id)
   failures << "reasoning #{fingerprint['reasoning_effort'].inspect}" unless fingerprint["reasoning_effort"] == qualification.fetch("reasoning_effort")
   failures << "dimensions #{fingerprint['dimensions'].inspect}" unless fingerprint["dimensions"] == [DIMENSION]
 
-  rendered_prompt = "#{fingerprint['prompt_instructions']}\n#{fingerprint['prompt_input']}"
-  RESET_FORBIDDEN_MARKERS.each do |marker|
-    failures << "forbidden reset marker #{marker.inspect}" if rendered_prompt.include?(marker)
+  rubric = focused_rubric_block(fingerprint.fetch("prompt_input"))
+  if rubric.nil?
+    failures << "could not isolate focused AFAO rubric"
+  else
+    failures << "Seriousness rubric heading missing" unless rubric.match?(/^###\s+\d+\.\s+Seriousness\s*$/)
+    if rubric.match?(/^####\s+Calibration Benchmarks\s*$/i)
+      failures << "Seriousness Calibration Benchmarks subsection leaked into focused rubric"
+    end
+    RESET_FORBIDDEN_GUARDRAIL_MARKERS.each do |marker|
+      failures << "legacy Seriousness guardrail #{marker.inspect}" if rubric.include?(marker)
+    end
   end
 
   abort_with("#{adventure_id} rendered Seriousness contract mismatch: #{failures.join(', ')}") unless failures.empty?
