@@ -1,0 +1,1099 @@
+---
+version: 1
+contract_type: ee_local_qualified_v1
+queue: production-ee-b001
+selection_mode: first-wave
+generated_at: '2026-08-30T09:23:52-04:00'
+local_model_eval_commit: 30f3319cfc473c78e89ac330805f4c8a80f5fd02
+scorer_commit: 4f11e25c99b4f408f88bf7205395d31f8ab325e8
+scorer_repo_path: "../af-cli-scoring-utility"
+qualification_contract_path: production_backlog/qualified_exploration_emphasis.yml
+qualification_contract_sha256: 40c629b5f16d1753895b5cdf313d7ed1717152bb40ee0e2c046e844f40f24640
+qualification_contract:
+  version: 1
+  contract_type: ee_local_qualified_v1
+  dimension: Exploration Emphasis
+  slug: ee
+  profile: ee-clean-reset-v0.5
+  catalog_column: Exploration Emphasis
+  model_alias: gptoss
+  ollama_model: gpt-oss:20b
+  provider: ollama
+  qualified_scorer_baseline: 4f11e25c99b4f408f88bf7205395d31f8ab325e8
+  afao_version: 1.6.1
+  runtime_config_path: production_backlog/ee-v0.5-runtime.yml
+  reasoning_effort: low
+  max_tokens: 4096
+  temperature: 0
+  replicates: 1
+  external_api_cost_usd: 0.0
+  no_favorable_rerun: true
+  first_wave:
+    calls: 40
+    max_page_count: 60
+    selection_strategy: stratified_page_count_source_diverse
+    max_source_share: 0.35
+    page_strata:
+    - name: 1-2-pages
+      min_pages: 1
+      max_pages: 2
+      weight: 11
+    - name: 3-10-pages
+      min_pages: 3
+      max_pages: 10
+      weight: 5
+    - name: 11-30-pages
+      min_pages: 11
+      max_pages: 30
+      weight: 23
+    - name: 31-60-pages
+      min_pages: 31
+      max_pages: 60
+      weight: 3
+  backfill:
+    max_page_count: 60
+    selection_strategy: exhaustive_source_ready_backfill
+  reliability_gate: &1
+    green_min_valid: 39
+    yellow_min_valid: 38
+    red_max_valid: 37
+    repeated_operational_failure_is_red: true
+runtime_config_path: production_backlog/ee-v0.5-runtime.yml
+runtime_config_sha256: 5bb44d4c2346404ae8756e90cc76e8082ec11fe4c10d0ed7688d0648ce5cf0b6
+catalog_path: "/Users/davidnorris/code/af-xlsx-data-sources/5e_Adventure_Master_Catalog_2.12.xlsx"
+catalog_filename: 5e_Adventure_Master_Catalog_2.12.xlsx
+catalog_sha256: 006f00625111b980a845120540c069d6f0083a8c5026ea0db582425dca93b350
+catalog_total_adventures: 330
+catalog_under_page_limit: 320
+catalog_prepopulated_ee: 10
+catalog_prior_ee_reservations: 0
+eligible_candidate_ids:
+- ADV-0001
+- ADV-0002
+- ADV-0003
+- ADV-0004
+- ADV-0005
+- ADV-0006
+- ADV-0007
+- ADV-0008
+- ADV-0009
+- ADV-0010
+- ADV-0011
+- ADV-0012
+- ADV-0013
+- ADV-0014
+- ADV-0015
+- ADV-0016
+- ADV-0017
+- ADV-0018
+- ADV-0019
+- ADV-0020
+- ADV-0021
+- ADV-0022
+- ADV-0023
+- ADV-0024
+- ADV-0025
+- ADV-0026
+- ADV-0027
+- ADV-0028
+- ADV-0029
+- ADV-0030
+- ADV-0031
+- ADV-0032
+- ADV-0033
+- ADV-0035
+- ADV-0036
+- ADV-0037
+- ADV-0038
+- ADV-0039
+- ADV-0041
+- ADV-0042
+- ADV-0043
+- ADV-0044
+- ADV-0045
+- ADV-0046
+- ADV-0047
+- ADV-0048
+- ADV-0049
+- ADV-0050
+- ADV-0051
+- ADV-0052
+- ADV-0054
+- ADV-0055
+- ADV-0056
+- ADV-0057
+- ADV-0058
+- ADV-0059
+- ADV-0060
+- ADV-0061
+- ADV-0063
+- ADV-0064
+- ADV-0065
+- ADV-0066
+- ADV-0067
+- ADV-0069
+- ADV-0070
+- ADV-0071
+- ADV-0072
+- ADV-0073
+- ADV-0074
+- ADV-0075
+- ADV-0076
+- ADV-0077
+- ADV-0079
+- ADV-0080
+- ADV-0081
+- ADV-0082
+- ADV-0083
+- ADV-0084
+- ADV-0085
+- ADV-0086
+- ADV-0087
+- ADV-0088
+- ADV-0089
+- ADV-0090
+- ADV-0091
+- ADV-0093
+- ADV-0094
+- ADV-0095
+- ADV-0096
+- ADV-0112
+- ADV-0113
+- ADV-0114
+- ADV-0115
+- ADV-0116
+- ADV-0117
+- ADV-0118
+- ADV-0119
+- ADV-0120
+- ADV-0121
+- ADV-0122
+- ADV-0123
+- ADV-0124
+- ADV-0125
+- ADV-0126
+- ADV-0127
+- ADV-0128
+- ADV-0129
+- ADV-0130
+- ADV-0131
+- ADV-0132
+- ADV-0133
+- ADV-0134
+- ADV-0135
+- ADV-0136
+- ADV-0137
+- ADV-0138
+- ADV-0139
+- ADV-0140
+- ADV-0141
+- ADV-0142
+- ADV-0143
+- ADV-0144
+- ADV-0145
+- ADV-0146
+- ADV-0147
+- ADV-0148
+- ADV-0149
+- ADV-0150
+- ADV-0151
+- ADV-0152
+- ADV-0153
+- ADV-0154
+- ADV-0155
+- ADV-0156
+- ADV-0157
+- ADV-0158
+- ADV-0159
+- ADV-0160
+- ADV-0161
+- ADV-0162
+- ADV-0163
+- ADV-0164
+- ADV-0165
+- ADV-0166
+- ADV-0167
+- ADV-0168
+- ADV-0171
+- ADV-0172
+- ADV-0173
+- ADV-0174
+- ADV-0175
+- ADV-0176
+- ADV-0177
+- ADV-0178
+- ADV-0179
+- ADV-0180
+- ADV-0181
+- ADV-0182
+- ADV-0183
+- ADV-0184
+- ADV-0185
+- ADV-0186
+- ADV-0187
+- ADV-0188
+- ADV-0189
+- ADV-0190
+- ADV-0191
+- ADV-0192
+- ADV-0193
+- ADV-0194
+- ADV-0195
+- ADV-0196
+- ADV-0197
+- ADV-0199
+- ADV-0200
+- ADV-0201
+- ADV-0202
+- ADV-0203
+- ADV-0204
+- ADV-0205
+- ADV-0206
+- ADV-0207
+- ADV-0208
+- ADV-0209
+- ADV-0210
+- ADV-0211
+- ADV-0212
+- ADV-0213
+- ADV-0214
+- ADV-0215
+- ADV-0216
+- ADV-0217
+- ADV-0218
+- ADV-0219
+- ADV-0220
+- ADV-0221
+- ADV-0223
+- ADV-0224
+- ADV-0225
+- ADV-0226
+- ADV-0227
+- ADV-0228
+- ADV-0229
+- ADV-0230
+- ADV-0231
+- ADV-0232
+- ADV-0233
+- ADV-0234
+- ADV-0236
+- ADV-0237
+- ADV-0238
+- ADV-0239
+- ADV-0240
+- ADV-0241
+- ADV-0242
+- ADV-0243
+- ADV-0244
+- ADV-0245
+- ADV-0246
+- ADV-0247
+- ADV-0248
+- ADV-0249
+- ADV-0251
+- ADV-0252
+- ADV-0253
+- ADV-0254
+- ADV-0255
+- ADV-0256
+- ADV-0258
+- ADV-0259
+- ADV-0260
+- ADV-0261
+- ADV-0263
+- ADV-0264
+- ADV-0265
+- ADV-0266
+- ADV-0267
+- ADV-0269
+- ADV-0270
+- ADV-0271
+- ADV-0272
+- ADV-0273
+- ADV-0274
+- ADV-0275
+- ADV-0276
+- ADV-0278
+- ADV-0279
+- ADV-0280
+- ADV-0281
+- ADV-0282
+- ADV-0283
+- ADV-0284
+- ADV-0285
+- ADV-0286
+- ADV-0288
+- ADV-0289
+- ADV-0290
+- ADV-0291
+- ADV-0292
+- ADV-0293
+- ADV-0294
+- ADV-0295
+- ADV-0296
+- ADV-0297
+- ADV-0298
+- ADV-0299
+- ADV-0300
+- ADV-0301
+- ADV-0302
+- ADV-0304
+- ADV-0305
+- ADV-0306
+- ADV-0307
+- ADV-0308
+- ADV-0309
+- ADV-0310
+- ADV-0311
+- ADV-0312
+- ADV-0313
+- ADV-0314
+- ADV-0315
+- ADV-0316
+- ADV-0317
+- ADV-0318
+- ADV-0319
+- ADV-0320
+- ADV-0321
+- ADV-0323
+- ADV-0324
+- ADV-0325
+- ADV-0326
+- ADV-0327
+- ADV-0328
+- ADV-0329
+- ADV-0330
+- ADV-0331
+- ADV-0332
+- ADV-0333
+- ADV-0334
+- ADV-0335
+- ADV-0336
+- ADV-0337
+- ADV-0338
+- ADV-0339
+- ADV-0340
+- ADV-0341
+- ADV-0342
+- ADV-0343
+- ADV-0344
+- ADV-0345
+source_preflight_failures: []
+dimension: Exploration Emphasis
+profile: ee-clean-reset-v0.5
+model_alias: gptoss
+ollama_model: gpt-oss:20b
+provider: ollama
+max_page_count: 60
+reasoning_effort: low
+max_tokens: 4096
+temperature: 0
+reliability_gate: *1
+pack_size: 50
+expected_calls: 40
+selected_adventures:
+- id: ADV-0122
+  title: The Curse on Humble Hill
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 14
+  end_page: 14
+  page_stratum: 1-2-pages
+  prompt_sha256: bb984548381feba5dca121b4348f4aef2ffb3dda333a3615905208daefda3f4e
+  schema_sha256: 842204fc5240587b2aee65c89c1ee9ec76dd3882e65422518ae1834ab7db1275
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/5.5e_Forgotten_Realms_Adventures_in_Faerun_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: gpt-oss:20b
+  reasoning_effort: low
+- id: ADV-0237
+  title: The First Mission
+  source_book: 'Dragonlance: Shadow of the Dragon Queen'
+  publisher: Wizards of the Coast
+  page_count: 3
+  start_page: 86
+  end_page: 88
+  page_stratum: 3-10-pages
+  prompt_sha256: db4a0157eee761b76c5f0f59639994e8a92d3e008a36a3e7f48ad2a409899204
+  schema_sha256: 842204fc5240587b2aee65c89c1ee9ec76dd3882e65422518ae1834ab7db1275
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Dragonlance_Shadow_of_the_Dragon_Queen_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: gpt-oss:20b
+  reasoning_effort: low
+- id: ADV-0173
+  title: Written in Blood
+  source_book: Journeys Through the Radiant Citadel
+  publisher: Wizards of the Coast
+  page_count: 11
+  start_page: 34
+  end_page: 44
+  page_stratum: 11-30-pages
+  prompt_sha256: 8f46d2be5e900edb393ea18264f503e3bfd7fa1274290951e54b41dc472231d2
+  schema_sha256: 842204fc5240587b2aee65c89c1ee9ec76dd3882e65422518ae1834ab7db1275
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Journeys_Through_the_Radiant_Citadel_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: gpt-oss:20b
+  reasoning_effort: low
+- id: ADV-0035
+  title: The Lost City
+  source_book: Quests from the Infinite Staircase
+  publisher: Wizards of the Coast
+  page_count: 31
+  start_page: 15
+  end_page: 45
+  page_stratum: 31-60-pages
+  prompt_sha256: 7250290f57610a34565e8682757143d5f3c8b27f2481ce7010ae4b0fe8519c34
+  schema_sha256: 842204fc5240587b2aee65c89c1ee9ec76dd3882e65422518ae1834ab7db1275
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Quests_From_the_Infinite_Staircase_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: gpt-oss:20b
+  reasoning_effort: low
+- id: ADV-0279
+  title: Burly's Plan / The Heist
+  source_book: The Wild Beyond the Witchlight
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 51
+  end_page: 51
+  page_stratum: 1-2-pages
+  prompt_sha256: a718bbea09c06faa46081adf2841d358b572daf41c064c9e2b29e37477c73c27
+  schema_sha256: 842204fc5240587b2aee65c89c1ee9ec76dd3882e65422518ae1834ab7db1275
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/The_Wild_Beyond_the_Witchlight_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: gpt-oss:20b
+  reasoning_effort: low
+- id: ADV-0027
+  title: Return to Baldur's Gate
+  source_book: Heroes of Baldur's Gate
+  publisher: Arcanum Worlds
+  page_count: 3
+  start_page: 68
+  end_page: 70
+  page_stratum: 3-10-pages
+  prompt_sha256: 97b215f4d6a94f8e1eb8563502bd9c5394dc17dd2272836377806d4b39d5c729
+  schema_sha256: 842204fc5240587b2aee65c89c1ee9ec76dd3882e65422518ae1834ab7db1275
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/DM_Guild,_Heroes_of_Baldurs_Gate_v2_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: gpt-oss:20b
+  reasoning_effort: low
+- id: ADV-0267
+  title: Wave Echo Cave
+  source_book: 'Phandelver and Below: The Shattered Obelisk'
+  publisher: Wizards of the Coast
+  page_count: 11
+  start_page: 65
+  end_page: 75
+  page_stratum: 11-30-pages
+  prompt_sha256: 567d39ec8b5a6351e5476a905422634899f1bcb25148627af81585de14029705
+  schema_sha256: 842204fc5240587b2aee65c89c1ee9ec76dd3882e65422518ae1834ab7db1275
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Phandelver_and_Below_The_Shattered_Obelisk_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: gpt-oss:20b
+  reasoning_effort: low
+- id: ADV-0276
+  title: Beyond a Lightless Star
+  source_book: 'Phandelver and Below: The Shattered Obelisk'
+  publisher: Wizards of the Coast
+  page_count: 32
+  start_page: 169
+  end_page: 200
+  page_stratum: 31-60-pages
+  prompt_sha256: 621a2738b021ed8f75add9ecc30419f881459f364e4c906ae74e83e1c216de1a
+  schema_sha256: 842204fc5240587b2aee65c89c1ee9ec76dd3882e65422518ae1834ab7db1275
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Phandelver_and_Below_The_Shattered_Obelisk_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: gpt-oss:20b
+  reasoning_effort: low
+- id: ADV-0244
+  title: Camp Carrionclay
+  source_book: 'Dragonlance: Shadow of the Dragon Queen'
+  publisher: Wizards of the Coast
+  page_count: 2
+  start_page: 129
+  end_page: 130
+  page_stratum: 1-2-pages
+  prompt_sha256: 6b4512464b5208f0fba18e776f5b1af62951093911b87ec324093eda5ce55d7c
+  schema_sha256: 842204fc5240587b2aee65c89c1ee9ec76dd3882e65422518ae1834ab7db1275
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Dragonlance_Shadow_of_the_Dragon_Queen_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: gpt-oss:20b
+  reasoning_effort: low
+- id: ADV-0201
+  title: Foaming Mugs
+  source_book: 'Icewind Dale: Rime of the Frostmaiden'
+  publisher: Wizards of the Coast
+  page_count: 3
+  start_page: 34
+  end_page: 36
+  page_stratum: 3-10-pages
+  prompt_sha256: e1fd39ef6506178549bf2155f7b7432293a4485930e6a655412348390f7f4aae
+  schema_sha256: 842204fc5240587b2aee65c89c1ee9ec76dd3882e65422518ae1834ab7db1275
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Icewind_Dale_Rime_of_the_Frostmaiden_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: gpt-oss:20b
+  reasoning_effort: low
+- id: ADV-0112
+  title: Death at Sunset
+  source_book: Dragon Delves
+  publisher: Wizards of the Coast
+  page_count: 12
+  start_page: 12
+  end_page: 23
+  page_stratum: 11-30-pages
+  prompt_sha256: 3b6e812e21f351e22eb8c808cb5ab33c7a4f4b84c7ee4ecf05245b953298cef4
+  schema_sha256: 842204fc5240587b2aee65c89c1ee9ec76dd3882e65422518ae1834ab7db1275
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/5.5e_Dragon_Delves-s_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: gpt-oss:20b
+  reasoning_effort: low
+- id: ADV-0278
+  title: Witchlight Carnival
+  source_book: The Wild Beyond the Witchlight
+  publisher: Wizards of the Coast
+  page_count: 33
+  start_page: 23
+  end_page: 55
+  page_stratum: 31-60-pages
+  prompt_sha256: 34497d328a4667d901fedc07d17fce65c1b4c4e07a23340161a46f62db79c0cc
+  schema_sha256: 842204fc5240587b2aee65c89c1ee9ec76dd3882e65422518ae1834ab7db1275
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/The_Wild_Beyond_the_Witchlight_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: gpt-oss:20b
+  reasoning_effort: low
+- id: ADV-0199
+  title: Nature Spirits
+  source_book: 'Icewind Dale: Rime of the Frostmaiden'
+  publisher: Wizards of the Coast
+  page_count: 2
+  start_page: 25
+  end_page: 26
+  page_stratum: 1-2-pages
+  prompt_sha256: 963dc22a13a594efe2ea189847bd8be657b0faf8df78a9fd7316647f069b9846
+  schema_sha256: 842204fc5240587b2aee65c89c1ee9ec76dd3882e65422518ae1834ab7db1275
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Icewind_Dale_Rime_of_the_Frostmaiden_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: gpt-oss:20b
+  reasoning_effort: low
+- id: ADV-0274
+  title: Feeder Trenches
+  source_book: 'Phandelver and Below: The Shattered Obelisk'
+  publisher: Wizards of the Coast
+  page_count: 3
+  start_page: 161
+  end_page: 163
+  page_stratum: 3-10-pages
+  prompt_sha256: ac7fe603be41aaef3ea8a0e7d0475a4a5fc1666ebbeb7eb019657ce69f415187
+  schema_sha256: 842204fc5240587b2aee65c89c1ee9ec76dd3882e65422518ae1834ab7db1275
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Phandelver_and_Below_The_Shattered_Obelisk_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: gpt-oss:20b
+  reasoning_effort: low
+- id: ADV-0194
+  title: Heart of Ashes
+  source_book: Keys from the Golden Vault
+  publisher: Wizards of the Coast
+  page_count: 12
+  start_page: 149
+  end_page: 160
+  page_stratum: 11-30-pages
+  prompt_sha256: cf45b7b0cdd0527a1712cbed3e131e51b5fe5cf774b06764ce966608d9630dc4
+  schema_sha256: 842204fc5240587b2aee65c89c1ee9ec76dd3882e65422518ae1834ab7db1275
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Keys_from_the_Golden_Vault_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: gpt-oss:20b
+  reasoning_effort: low
+- id: ADV-0311
+  title: Quest for the Giant Relics
+  source_book: Storm King's Thunder
+  publisher: Wizards of the Coast
+  page_count: 2
+  start_page: 130
+  end_page: 131
+  page_stratum: 1-2-pages
+  prompt_sha256: 1c96a32c76359b52743eea0e37237c83be533a086633118989ae44d253ce0943
+  schema_sha256: 842204fc5240587b2aee65c89c1ee9ec76dd3882e65422518ae1834ab7db1275
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Storm_King_s_Thunder_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: gpt-oss:20b
+  reasoning_effort: low
+- id: ADV-0070
+  title: Old Bonegrinder
+  source_book: Curse of Strahd
+  publisher: Wizards of the Coast
+  page_count: 4
+  start_page: 125
+  end_page: 128
+  page_stratum: 3-10-pages
+  prompt_sha256: a214b10739dddb6149ab295661fe369014ce7c65c0e19a41f6b6ce94bfbe1941
+  schema_sha256: 842204fc5240587b2aee65c89c1ee9ec76dd3882e65422518ae1834ab7db1275
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Curse_of_Strahd_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: gpt-oss:20b
+  reasoning_effort: low
+- id: ADV-0314
+  title: Berg of the Frost Giants
+  source_book: Storm King's Thunder
+  publisher: Wizards of the Coast
+  page_count: 12
+  start_page: 155
+  end_page: 166
+  page_stratum: 11-30-pages
+  prompt_sha256: bf0f80ee2e4ee4ce81e9cf59824a3675327e53f7228799c46acccb5ae52d6a80
+  schema_sha256: 842204fc5240587b2aee65c89c1ee9ec76dd3882e65422518ae1834ab7db1275
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Storm_King_s_Thunder_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: gpt-oss:20b
+  reasoning_effort: low
+- id: ADV-0123
+  title: Robber Baron
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 15
+  end_page: 15
+  page_stratum: 1-2-pages
+  prompt_sha256: c5965050f4ed52eca7f9639368613a5a3177aaa5e80abcad1f6bc9c300826e38
+  schema_sha256: 842204fc5240587b2aee65c89c1ee9ec76dd3882e65422518ae1834ab7db1275
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/5.5e_Forgotten_Realms_Adventures_in_Faerun_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: gpt-oss:20b
+  reasoning_effort: low
+- id: ADV-0089
+  title: Presto Change-o
+  source_book: The Game Master's Book of Random Encounters
+  publisher: Topix Media Lab
+  page_count: 12
+  start_page: 12
+  end_page: 23
+  page_stratum: 11-30-pages
+  prompt_sha256: 8ef39f5ec42cb43416226e6973156218b03d8d755b4dbcf6352c4b5379111d93
+  schema_sha256: 842204fc5240587b2aee65c89c1ee9ec76dd3882e65422518ae1834ab7db1275
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/TGMBo_Random_Encounters-s_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: gpt-oss:20b
+  reasoning_effort: low
+- id: ADV-0283
+  title: Fey Beacons
+  source_book: The Wild Beyond the Witchlight
+  publisher: Wizards of the Coast
+  page_count: 2
+  start_page: 143
+  end_page: 144
+  page_stratum: 1-2-pages
+  prompt_sha256: 2e2d2eaef03bfc08f26ccd8d6c26c358b167a7bd5e678d59dd932992aa9c8889
+  schema_sha256: 842204fc5240587b2aee65c89c1ee9ec76dd3882e65422518ae1834ab7db1275
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/The_Wild_Beyond_the_Witchlight_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: gpt-oss:20b
+  reasoning_effort: low
+- id: ADV-0327
+  title: Wyllowwood
+  source_book: 'Waterdeep: Dungeon of the Mad Mage'
+  publisher: Wizards of the Coast
+  page_count: 12
+  start_page: 69
+  end_page: 80
+  page_stratum: 11-30-pages
+  prompt_sha256: d515eb0c09ab75cee8e33e0bcd22f273f16041787db55732fc18cff9dd3a9089
+  schema_sha256: 842204fc5240587b2aee65c89c1ee9ec76dd3882e65422518ae1834ab7db1275
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Waterdeep_Dungeon_of_the_Mad_Mage_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: gpt-oss:20b
+  reasoning_effort: low
+- id: ADV-0124
+  title: The Siege of Shalespire Priory
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 16
+  end_page: 16
+  page_stratum: 1-2-pages
+  prompt_sha256: ac0cbbcfd3c714ddfa02be9608dc3061ae865640333e257ea0273895d55bdff6
+  schema_sha256: 842204fc5240587b2aee65c89c1ee9ec76dd3882e65422518ae1834ab7db1275
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/5.5e_Forgotten_Realms_Adventures_in_Faerun_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: gpt-oss:20b
+  reasoning_effort: low
+- id: ADV-0231
+  title: Isle of the Abbey
+  source_book: Ghosts of Saltmarsh
+  publisher: Wizards of the Coast
+  page_count: 13
+  start_page: 97
+  end_page: 109
+  page_stratum: 11-30-pages
+  prompt_sha256: 551a78915d692c1b65ddba102a2ab93c54458885d4e0d338624699c461662254
+  schema_sha256: 842204fc5240587b2aee65c89c1ee9ec76dd3882e65422518ae1834ab7db1275
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Ghosts_of_Saltmarsh_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: gpt-oss:20b
+  reasoning_effort: low
+- id: ADV-0125
+  title: The Weeping Goddess
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 17
+  end_page: 17
+  page_stratum: 1-2-pages
+  prompt_sha256: ed04c9f8d9a167ad995d9666e5df4000a504252a587368a68dbe7e2b4d98f4b2
+  schema_sha256: 842204fc5240587b2aee65c89c1ee9ec76dd3882e65422518ae1834ab7db1275
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/5.5e_Forgotten_Realms_Adventures_in_Faerun_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: gpt-oss:20b
+  reasoning_effort: low
+- id: ADV-0021
+  title: Baldur's Gate, Southwest District
+  source_book: Heroes of Baldur's Gate
+  publisher: Arcanum Worlds
+  page_count: 13
+  start_page: 19
+  end_page: 31
+  page_stratum: 11-30-pages
+  prompt_sha256: 6f5a83655c321f18866028dbc18c17e96d902c2215df23fb67f71292d55af14e
+  schema_sha256: 842204fc5240587b2aee65c89c1ee9ec76dd3882e65422518ae1834ab7db1275
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/DM_Guild,_Heroes_of_Baldurs_Gate_v2_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: gpt-oss:20b
+  reasoning_effort: low
+- id: ADV-0126
+  title: Fury Grove
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 18
+  end_page: 18
+  page_stratum: 1-2-pages
+  prompt_sha256: '029f9a624ebce8ef8ee51e8b0ec2bab3641e349b0970786a3f161b162befd3b9'
+  schema_sha256: 842204fc5240587b2aee65c89c1ee9ec76dd3882e65422518ae1834ab7db1275
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/5.5e_Forgotten_Realms_Adventures_in_Faerun_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: gpt-oss:20b
+  reasoning_effort: low
+- id: ADV-0088
+  title: Eve of Ruin
+  source_book: 'Vecna: Eve of Ruin'
+  publisher: Wizards of the Coast
+  page_count: 13
+  start_page: 191
+  end_page: 203
+  page_stratum: 11-30-pages
+  prompt_sha256: 32ecccac0e62347c58830969346bf35ab3acd3cc8fed271d24f80bde88a7a2b7
+  schema_sha256: 842204fc5240587b2aee65c89c1ee9ec76dd3882e65422518ae1834ab7db1275
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Vecna_Eve_of_Ruin_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: gpt-oss:20b
+  reasoning_effort: low
+- id: ADV-0249
+  title: The Flying Citadel
+  source_book: 'Dragonlance: Shadow of the Dragon Queen'
+  publisher: Wizards of the Coast
+  page_count: 14
+  start_page: 171
+  end_page: 184
+  page_stratum: 11-30-pages
+  prompt_sha256: 2cdf8b2c6b2892e3f90c219e9351aefbcc82f977d159f9932ae6ba28a25b08dc
+  schema_sha256: 842204fc5240587b2aee65c89c1ee9ec76dd3882e65422518ae1834ab7db1275
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Dragonlance_Shadow_of_the_Dragon_Queen_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: gpt-oss:20b
+  reasoning_effort: low
+- id: ADV-0046
+  title: Into Dreamland
+  source_book: Labyrinth Adventures
+  publisher: Kobold Press
+  page_count: 14
+  start_page: 91
+  end_page: 104
+  page_stratum: 11-30-pages
+  prompt_sha256: d5df9b8e3cdb6d0e6d70d5b670842d93b7377891ca3aa325d3fd51863721f19e
+  schema_sha256: 842204fc5240587b2aee65c89c1ee9ec76dd3882e65422518ae1834ab7db1275
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/KP-Labyrinth-Adventures_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: gpt-oss:20b
+  reasoning_effort: low
+- id: ADV-0009
+  title: Kings of Little Kingdoms
+  source_book: Tales From Eriador
+  publisher: Free League Publishing
+  page_count: 14
+  start_page: 45
+  end_page: 58
+  page_stratum: 11-30-pages
+  prompt_sha256: e5db44b32533a785f77163cd9588f8da4a9ba861a50b2b6002a272f22c812499
+  schema_sha256: 842204fc5240587b2aee65c89c1ee9ec76dd3882e65422518ae1834ab7db1275
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Tales_From_Eriador_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: gpt-oss:20b
+  reasoning_effort: low
+- id: ADV-0031
+  title: White Plume Mountain
+  source_book: Tales from the Yawning Portal
+  publisher: Wizards of the Coast
+  page_count: 14
+  start_page: 95
+  end_page: 108
+  page_stratum: 11-30-pages
+  prompt_sha256: b106f256cb695a766f0a73ad3c6663ac406ca21534288aa99f053715245eefad
+  schema_sha256: 842204fc5240587b2aee65c89c1ee9ec76dd3882e65422518ae1834ab7db1275
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Tales_from_the_Yawning_Portal_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: gpt-oss:20b
+  reasoning_effort: low
+- id: ADV-0018
+  title: Hold My Beer
+  source_book: The Game Master's Book of Legendary Dragons
+  publisher: Media Lab Books
+  page_count: 14
+  start_page: 184
+  end_page: 197
+  page_stratum: 11-30-pages
+  prompt_sha256: cab1f4377ab9e3bbbee8af543fe99adeb512e2e99cdcd02c17e3e5ad7110d399
+  schema_sha256: 842204fc5240587b2aee65c89c1ee9ec76dd3882e65422518ae1834ab7db1275
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/TGMBo_Legendary_Dragons_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: gpt-oss:20b
+  reasoning_effort: low
+- id: ADV-0289
+  title: Fireball
+  source_book: 'Waterdeep: Dragon Heist'
+  publisher: Wizards of the Coast
+  page_count: 14
+  start_page: 43
+  end_page: 56
+  page_stratum: 11-30-pages
+  prompt_sha256: c2b7c5548ab8ea7768bd879d7bc6a0fbce7b046cc3fe0aee1ba370b13af68654
+  schema_sha256: 842204fc5240587b2aee65c89c1ee9ec76dd3882e65422518ae1834ab7db1275
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Waterdeep_Dragon_Heist_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: gpt-oss:20b
+  reasoning_effort: low
+- id: ADV-0171
+  title: The Lost Library of Lethchauntos
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 15
+  start_page: 227
+  end_page: 241
+  page_stratum: 11-30-pages
+  prompt_sha256: 16c5ca56684953183af68cfc1d1bcd29a8e4d30138f9e505a434c006377b20bf
+  schema_sha256: 842204fc5240587b2aee65c89c1ee9ec76dd3882e65422518ae1834ab7db1275
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/5.5e_Forgotten_Realms_Adventures_in_Faerun_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: gpt-oss:20b
+  reasoning_effort: low
+- id: ADV-0223
+  title: Sunblight
+  source_book: 'Icewind Dale: Rime of the Frostmaiden'
+  publisher: Wizards of the Coast
+  page_count: 15
+  start_page: 171
+  end_page: 185
+  page_stratum: 11-30-pages
+  prompt_sha256: da48451d179ad76f6186557aed8006f0ecf7b18aef766d8c28612c7b08296e5a
+  schema_sha256: 842204fc5240587b2aee65c89c1ee9ec76dd3882e65422518ae1834ab7db1275
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Icewind_Dale_Rime_of_the_Frostmaiden_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: gpt-oss:20b
+  reasoning_effort: low
+- id: ADV-0074
+  title: Amber Temple
+  source_book: Curse of Strahd
+  publisher: Wizards of the Coast
+  page_count: 16
+  start_page: 181
+  end_page: 196
+  page_stratum: 11-30-pages
+  prompt_sha256: 6cad1cffcbb44021275000644680573dfd0f7b16e272c9032aaf4101c28b417f
+  schema_sha256: 842204fc5240587b2aee65c89c1ee9ec76dd3882e65422518ae1834ab7db1275
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Curse_of_Strahd_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: gpt-oss:20b
+  reasoning_effort: low
+- id: ADV-0002
+  title: The Sea-prince of the Shore
+  source_book: Trials of Saruman
+  publisher: Free League Publishing
+  page_count: 16
+  start_page: 41
+  end_page: 56
+  page_stratum: 11-30-pages
+  prompt_sha256: 8ecddd48979972bf80964fcedc1fb19ece065733002e80fab87c38737122147c
+  schema_sha256: 842204fc5240587b2aee65c89c1ee9ec76dd3882e65422518ae1834ab7db1275
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Trials_of_Saruman_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: gpt-oss:20b
+  reasoning_effort: low
+- id: ADV-0282
+  title: Loomlurch
+  source_book: The Wild Beyond the Witchlight
+  publisher: Wizards of the Coast
+  page_count: 18
+  start_page: 113
+  end_page: 130
+  page_stratum: 11-30-pages
+  prompt_sha256: 55fda05f3e3e73cc6af0d18358c5069b7249d9486ea6435658b30b8024efcd26
+  schema_sha256: 842204fc5240587b2aee65c89c1ee9ec76dd3882e65422518ae1834ab7db1275
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/The_Wild_Beyond_the_Witchlight_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: gpt-oss:20b
+  reasoning_effort: low
+- id: ADV-0061
+  title: Enter Drakenberg Castle
+  source_book: Rise of the Ice Dragons Trilogy
+  publisher: Midnight Tower
+  page_count: 23
+  start_page: 82
+  end_page: 104
+  page_stratum: 11-30-pages
+  prompt_sha256: b7e0ba58e9ea8cb103d5bceedb9390ec875f87f879a606ecd323b6d98c532c10
+  schema_sha256: 842204fc5240587b2aee65c89c1ee9ec76dd3882e65422518ae1834ab7db1275
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/rise-of-the-ice-dragons-adventure-trilogy_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: gpt-oss:20b
+  reasoning_effort: low
+selection_strategy: stratified_page_count_source_diverse
+max_source_share: 0.35
+max_adventures_per_source_book: 14
+page_strata:
+- name: 1-2-pages
+  min_pages: 1
+  max_pages: 2
+  weight: 11
+  quota: 10
+- name: 3-10-pages
+  min_pages: 3
+  max_pages: 10
+  weight: 5
+  quota: 5
+- name: 11-30-pages
+  min_pages: 11
+  max_pages: 30
+  weight: 23
+  quota: 22
+- name: 31-60-pages
+  min_pages: 31
+  max_pages: 60
+  weight: 3
+  quota: 3
+source_counts:
+  Curse of Strahd: 2
+  Dragon Delves: 1
+  'Dragonlance: Shadow of the Dragon Queen': 3
+  'Forgotten Realms: Adventures in Faerûn': 6
+  Ghosts of Saltmarsh: 1
+  Heroes of Baldur's Gate: 2
+  'Icewind Dale: Rime of the Frostmaiden': 3
+  Journeys Through the Radiant Citadel: 1
+  Keys from the Golden Vault: 1
+  Labyrinth Adventures: 1
+  'Phandelver and Below: The Shattered Obelisk': 3
+  Quests from the Infinite Staircase: 1
+  Rise of the Ice Dragons Trilogy: 1
+  Storm King's Thunder: 2
+  Tales From Eriador: 1
+  Tales from the Yawning Portal: 1
+  The Game Master's Book of Legendary Dragons: 1
+  The Game Master's Book of Random Encounters: 1
+  The Wild Beyond the Witchlight: 4
+  Trials of Saruman: 1
+  'Vecna: Eve of Ruin': 1
+  'Waterdeep: Dragon Heist': 1
+  'Waterdeep: Dungeon of the Mad Mage': 1

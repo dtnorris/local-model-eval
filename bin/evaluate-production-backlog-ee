@@ -1,0 +1,117 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "csv"
+require "json"
+require "yaml"
+
+ROOT = File.expand_path("..", __dir__)
+QUALIFIED_PATH = File.join(ROOT, "production_backlog", "qualified_exploration_emphasis.yml")
+OPERATIONAL_FAILURE_PATTERN = /(finish_reason.{0,40}length|did not contain assistant content|missing assistant content)/i
+
+
+def abort_with(message, status = 1)
+  warn "ERROR: #{message}"
+  exit status
+end
+
+queue_arg = ARGV.shift.to_s
+abort_with("Usage: bin/evaluate-production-backlog-ee production_backlog/QUEUE", 2) if queue_arg.empty?
+abort_with("unexpected arguments: #{ARGV.join(' ')}") unless ARGV.empty?
+
+queue_dir = File.expand_path(queue_arg, ROOT)
+snapshot_path = File.join(queue_dir, "snapshot.yml")
+index_path = File.join(queue_dir, "case_index.csv")
+abort_with("missing #{snapshot_path}") unless File.file?(snapshot_path)
+abort_with("missing #{index_path}") unless File.file?(index_path)
+abort_with("missing #{QUALIFIED_PATH}") unless File.file?(QUALIFIED_PATH)
+
+snapshot = YAML.safe_load_file(snapshot_path, aliases: true)
+qualification = YAML.safe_load_file(QUALIFIED_PATH)
+abort_with("reliability gate only applies to first-wave EE queues") unless snapshot.fetch("selection_mode") == "first-wave"
+abort_with("first-wave queue is not 40 calls") unless Integer(snapshot.fetch("expected_calls")) == 40
+abort_with("qualification contract changed after queue freeze") unless snapshot.fetch("qualification_contract") == qualification
+
+gate = qualification.fetch("reliability_gate")
+rows = CSV.read(index_path, headers: true, encoding: "UTF-8")
+abort_with("case index is not 40 rows") unless rows.length == 40
+
+counts = Hash.new(0)
+operational_failures = []
+case_statuses = []
+
+rows.each do |row|
+  manifest_path = File.expand_path(row.fetch("manifest_path"), ROOT)
+  abort_with("missing manifest #{row.fetch('manifest_path')}") unless File.file?(manifest_path)
+  experiment = YAML.safe_load_file(manifest_path)
+  name = experiment.fetch("name")
+  output_dir = File.join(ROOT, "output", name)
+  metadata_paths = Dir.glob(File.join(output_dir, "runs", "*", "metadata.json")).sort
+
+  status = if metadata_paths.empty?
+             "pending"
+           elsif metadata_paths.length > 1
+             abort_with("#{row.fetch('adventure_id')} has #{metadata_paths.length} run metadata files; expected one")
+           else
+             begin
+               JSON.parse(File.read(metadata_paths.fetch(0))).fetch("status", "unknown").to_s
+             rescue JSON::ParserError
+               "unknown"
+             end
+           end
+
+  normalized = case status
+               when "complete" then "valid"
+               when "failed" then "failed"
+               when "running" then "running"
+               when "pending" then "pending"
+               else "unknown"
+               end
+  counts[normalized] += 1
+
+  if normalized == "failed"
+    run_dir = File.dirname(metadata_paths.fetch(0))
+    diagnostic = %w[stderr.log stdout.log].filter_map do |filename|
+      path = File.join(run_dir, filename)
+      File.file?(path) ? File.read(path) : nil
+    end.join("\n")
+    if diagnostic.match?(OPERATIONAL_FAILURE_PATTERN)
+      operational_failures << row.fetch("adventure_id")
+    end
+  end
+
+  case_statuses << [row.fetch("adventure_id"), normalized]
+end
+
+puts "AdventureFinder EE first-wave reliability gate"
+puts "Queue: #{snapshot.fetch('queue')}"
+puts "Valid: #{counts['valid']}/40"
+puts "Failed: #{counts['failed']}"
+puts "Running: #{counts['running']}"
+puts "Pending: #{counts['pending']}"
+puts "Unknown: #{counts['unknown']}"
+puts "Repeated-operational-failure signatures: #{operational_failures.length}"
+operational_failures.each { |id| puts "  - #{id}" }
+
+unfinished = counts["running"] + counts["pending"] + counts["unknown"]
+if unfinished.positive?
+  puts "Decision: INCOMPLETE — no expansion decision until all 40 cases are terminal."
+  exit 2
+end
+
+valid = counts["valid"]
+if gate.fetch("repeated_operational_failure_is_red") && operational_failures.length >= 2
+  puts "Decision: RED — repeated ordinary-source operational failures override the numeric validity count."
+  exit 4
+end
+
+if valid >= Integer(gate.fetch("green_min_valid"))
+  puts "Decision: GREEN — ordinary-size EE backfill is authorized."
+  exit 0
+elsif valid >= Integer(gate.fetch("yellow_min_valid"))
+  puts "Decision: YELLOW — inspect the failed cases before expansion."
+  exit 3
+else
+  puts "Decision: RED — hold EE production expansion and reopen operational review."
+  exit 4
+end
