@@ -163,9 +163,11 @@ class ProductionBacklogRuntimeSourceGateIntegrationTest < Minitest::Test
   def test_runner_stops_before_lme_when_runtime_source_preflight_fails
     Dir.mktmpdir("lme-runtime-source-gate") do |repo|
       FileUtils.mkdir_p(File.join(repo, "bin"))
+      FileUtils.mkdir_p(File.join(repo, "lib"))
       FileUtils.mkdir_p(File.join(repo, "production_backlog", "queue"))
       FileUtils.mkdir_p(File.join(repo, "experiments"))
       FileUtils.cp(File.join(ROOT, "run_production_backlog.sh"), File.join(repo, "run_production_backlog.sh"))
+      FileUtils.cp(File.join(ROOT, "lib", "batch_failure_policy.sh"), File.join(repo, "lib", "batch_failure_policy.sh"))
       FileUtils.chmod(0o755, File.join(repo, "run_production_backlog.sh"))
 
       File.write(File.join(repo, "production_backlog", "queue", "snapshot.yml"), "--- {}\n")
