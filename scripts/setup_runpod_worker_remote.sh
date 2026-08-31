@@ -2,11 +2,16 @@
 set -euo pipefail
 
 # Mac-side wrapper for configuring an already-created RunPod worker.
-# Resolves direct SSH coordinates from the repo-local .env and streams
+# Resolves direct SSH coordinates from the selected fleet environment and streams
 # setup_runpod_ollama_worker.sh into the selected pod.
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-ENV_FILE="$ROOT/.env"
+FLEET_KEY="${LME_RUNPOD_FLEET:-default}"
+if [[ "$FLEET_KEY" == "default" ]]; then
+  ENV_FILE="$ROOT/.env"
+else
+  ENV_FILE="$ROOT/output/runpod-fleets/fleets/$FLEET_KEY/fleet.env"
+fi
 REMOTE_SETUP="$ROOT/scripts/setup_runpod_ollama_worker.sh"
 WORKER=""
 SSH_USER=root
@@ -18,7 +23,7 @@ usage() {
 Usage:
   setup_runpod_worker_remote.sh --worker N [remote setup arguments]
 
-Worker addressing is loaded from repo-local .env:
+Worker addressing is loaded from the selected fleet environment file:
   RUNPOD_BURST_N_HOST
   RUNPOD_BURST_N_SSH_PORT
 
@@ -72,7 +77,7 @@ while (($#)); do
 done
 
 [[ "$WORKER" =~ ^[1-9][0-9]*$ ]] || { usage >&2; die "--worker must be a positive integer"; }
-[[ -f "$ENV_FILE" ]] || die "missing $ENV_FILE; copy .env.example to .env and fill in real RunPod values"
+[[ -f "$ENV_FILE" ]] || die "missing RunPod fleet environment file: $ENV_FILE"
 [[ -f "$REMOTE_SETUP" ]] || die "remote setup script not found: $REMOTE_SETUP"
 [[ -f "$IDENTITY" ]] || die "SSH identity not found: $IDENTITY"
 
