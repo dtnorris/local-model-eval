@@ -7,8 +7,8 @@ require_relative "runpod_fleet_state"
 module LocalModelEvaluation
   class RunpodFleet
     MAX_WORKERS = 5
-    GPU_ID = "NVIDIA A40"
-    GPU_MEMORY_GB = 48
+    GPU_ID = ENV.fetch("RUNPOD_GPU_ID", "NVIDIA A40")
+    GPU_MEMORY_GB = Integer(ENV.fetch("RUNPOD_GPU_MEMORY_GB", "48"))
     DEFAULT_CLOUD = "COMMUNITY"
     SUPPORTED_CLOUDS = %w[COMMUNITY SECURE].freeze
     CLOUD = DEFAULT_CLOUD # Backward-compatible alias; new code should use preflight.cloud.

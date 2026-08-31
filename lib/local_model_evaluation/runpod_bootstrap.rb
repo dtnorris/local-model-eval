@@ -286,6 +286,7 @@ module LocalModelEvaluation
       log_path = File.join(run_dir, "burst_#{index}.log")
       command = [@remote_setup_path, "--worker", index.to_s]
       command.concat(["--expect-gpu", expected_gpu])
+      command.concat(["--min-vram-gb", ENV.fetch("RUNPOD_GPU_MEMORY_GB", "40")])
       command << "--clean" if clean
       models.each do |model|
         command.concat(["--model", model])
