@@ -19,14 +19,13 @@ DEFAULT_AMC = File.expand_path(
 SCORER_REPO = File.expand_path(ENV.fetch("AF_SCORER_REPO", "../af-cli-scoring-utility"), ROOT)
 
 DIMENSIONS = [
-  { name: "Levels", columns: ["Level Start", "Level End"], slug: "levels", preferred: ["production-backlog-009"], max_pages: 99 },
+  { name: "Levels", columns: ["Level Start", "Level End"], slug: "levels", preferred: ["production-backlog-009"], max_pages: 99, allow_synthesize: true, synthesize_ids: %w[ADV-0031 ADV-0032 ADV-0230] },
   { name: "Combat Emphasis", columns: ["Combat Emphasis"], slug: "combat", preferred: ["production-backlog-009"], max_pages: 99 },
   { name: "Social Interaction Emphasis", columns: ["Social Interaction Emphasis"], slug: "social", preferred: ["production-backlog-009"], max_pages: 99 },
   { name: "Investigation Emphasis", columns: ["Investigation Emphasis"], slug: "investigation", preferred: ["production-backlog-009"], max_pages: 99 },
   { name: "Structural Openness", columns: ["Structural Openness"], slug: "structural-openness", preferred: ["production-backlog-009"], max_pages: 99 },
   { name: "Darkness / Horror Intensity", columns: ["Darkness / Horror Intensity"], slug: "darkness", preferred: ["production-backlog-009"], max_pages: 99 },
   { name: "Player Beginner Suitability", columns: ["Player Beginner Suitability"], slug: "player-beginner", preferred: ["production-backlog-009"], max_pages: 99 },
-  { name: "# of Sessions", columns: ["Number of Sessions"], slug: "nos", preferred: ["production-backlog-008"], max_pages: 99 },
   { name: "Exploration Emphasis", columns: ["Exploration Emphasis"], slug: "ee", preferred: ["production-ee-b001"], max_pages: 60, allow_synthesize: true },
   { name: "GM Beginner Suitability", columns: ["GM Beginner Suitability"], slug: "gmbs", preferred: ["production-backlog-010"], max_pages: 99 },
   { name: "GM Preparation Burden", columns: ["GM Preparation Burden"], slug: "gmpb", preferred: ["production-backlog-011"], max_pages: 99 },
@@ -267,8 +266,10 @@ ids.each_with_index do |id, adv_index|
       reused += 1
       validate_manifest!(manifest_abs, expected_id: id, expected_dimension: dimension.fetch(:name))
     else
-      unless dimension.fetch(:allow_synthesize, false)
-        abort_with("blank #{dimension.fetch(:name)} pair #{id} has no existing frozen production manifest; refusing to synthesize outside the explicitly authorized EE backfill path")
+      allowed_ids = dimension[:synthesize_ids]
+      synthesize_allowed = dimension.fetch(:allow_synthesize, false) && (allowed_ids.nil? || allowed_ids.include?(id))
+      unless synthesize_allowed
+        abort_with("blank #{dimension.fetch(:name)} pair #{id} has no existing frozen production manifest; refusing to synthesize outside an explicitly authorized horizontal fallback")
       end
       template = choose_entry(templates[dimension.fetch(:name)], dimension.fetch(:preferred))
       abort_with("no frozen production template found for #{dimension.fetch(:name)}") unless template
