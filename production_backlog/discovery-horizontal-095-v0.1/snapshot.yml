@@ -2,9 +2,9 @@
 version: 1
 contract_type: discovery_horizontal_priority_v1
 queue: discovery-horizontal-095-v0.1
-generated_at: '2026-08-30T22:53:28-04:00'
-local_model_eval_commit: b56ec857085c53e4934ae19b5024a68322d7cc2a
-scorer_commit: f700e49e3b11f443af0b363d16d0634de6dc89a8
+generated_at: '2026-08-30T23:06:26-04:00'
+local_model_eval_commit: 56560ab80280b764d845bebb7ae75159d98ffe9e
+scorer_commit: c5f27d1060623938fa4d338340647396fb9fdc16
 scorer_repo_path: "../af-cli-scoring-utility"
 cohort_ids_path: production_backlog/discovery-horizontal-095-v0.1-ids.txt
 cohort_count: 95
