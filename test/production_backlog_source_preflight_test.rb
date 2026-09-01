@@ -167,8 +167,11 @@ class ProductionBacklogRuntimeSourceGateIntegrationTest < Minitest::Test
       FileUtils.mkdir_p(File.join(repo, "production_backlog", "queue"))
       FileUtils.mkdir_p(File.join(repo, "experiments"))
       FileUtils.cp(File.join(ROOT, "run_production_backlog.sh"), File.join(repo, "run_production_backlog.sh"))
+      FileUtils.cp(File.join(ROOT, "bin", "classify-production-failure"), File.join(repo, "bin", "classify-production-failure"))
       FileUtils.cp(File.join(ROOT, "lib", "batch_failure_policy.sh"), File.join(repo, "lib", "batch_failure_policy.sh"))
+      FileUtils.cp(File.join(ROOT, "lib", "production_failure_classifier.rb"), File.join(repo, "lib", "production_failure_classifier.rb"))
       FileUtils.chmod(0o755, File.join(repo, "run_production_backlog.sh"))
+      FileUtils.chmod(0o755, File.join(repo, "bin", "classify-production-failure"))
 
       File.write(File.join(repo, "production_backlog", "queue", "snapshot.yml"), "--- {}\n")
       File.write(File.join(repo, "production_backlog", "queue", "run_order.txt"), "experiments/test.yml\n")

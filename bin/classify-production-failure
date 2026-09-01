@@ -1,0 +1,13 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+$LOAD_PATH.unshift File.expand_path("../lib", __dir__)
+require "production_failure_classifier"
+
+unless ARGV.length == 2
+  warn "Usage: bin/classify-production-failure MANIFEST OUTPUT_ROOT"
+  exit 2
+end
+
+manifest, output_root = ARGV
+puts LME::ProductionFailureClassifier.new(manifest: manifest, output_root: output_root).classify

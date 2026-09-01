@@ -9,6 +9,7 @@ PAUSE_FILE="$CONTROL_DIR/pause"
 CURRENT_FILE="$CONTROL_DIR/current"
 FAIL_LOG="$CONTROL_DIR/failures.log"
 BATCH_FAILURE_POLICY="$REPO/lib/batch_failure_policy.sh"
+FAILURE_CLASSIFIER="$REPO/bin/classify-production-failure"
 
 [[ -n "$QUEUE_ARG" ]] || {
   echo "Usage: ./run_production_backlog.sh production_backlog/QUEUE"
@@ -39,6 +40,9 @@ case "$CONTRACT_TYPE" in
   ee_local_qualified_v1)
     VERIFY="$REPO/verify_production_backlog_ee.sh"
     ;;
+  gmbs_local_qualified_v1)
+    VERIFY="$REPO/verify_production_backlog_gmbs.sh"
+    ;;
   seriousness_local_qualified_v1)
     VERIFY="$REPO/verify_production_backlog_seriousness.sh"
     ;;
@@ -54,6 +58,7 @@ mkdir -p "$CONTROL_DIR"
 [[ -x "$VERIFY" ]] || { echo "ERROR: missing/executable verifier $VERIFY"; exit 1; }
 [[ -x "$SOURCE_PREFLIGHT" ]] || { echo "ERROR: missing/executable runtime source preflight $SOURCE_PREFLIGHT"; exit 1; }
 [[ -r "$BATCH_FAILURE_POLICY" ]] || { echo "ERROR: missing/readable batch failure policy $BATCH_FAILURE_POLICY"; exit 1; }
+[[ -x "$FAILURE_CLASSIFIER" ]] || { echo "ERROR: missing/executable failure classifier $FAILURE_CLASSIFIER"; exit 1; }
 
 source "$BATCH_FAILURE_POLICY"
 batch_failure_policy_init
@@ -181,10 +186,28 @@ while IFS= read -r f; do
     batch_failure_record_success
     echo "[$n/$total] COMPLETE"
   else
-    batch_failure_record_failure "$status"
+    failure_class="operational_or_unknown"
+    if [[ "$status" == "failed" ]]; then
+      classified=""
+      if classified=$("$FAILURE_CLASSIFIER" "$f" "$REPO/output"); then
+        failure_class="$classified"
+      else
+        echo "WARNING: failure classifier errored; treating failure as operational/unknown."
+      fi
+    fi
+
+    if [[ "$failure_class" == "expected_model_validation" ]]; then
+      batch_failure_record_expected_model_failure "$status"
+    else
+      batch_failure_record_failure "$status"
+    fi
+
     echo "$(date '+%Y-%m-%dT%H:%M:%S%z') $status $f" >> "$FAIL_LOG"
-    echo "[$n/$total] FAILURE status=$status"
-    echo "New failures this invocation: $batch_total_new_failures; consecutive: $batch_consecutive_failures"
+    echo "[$n/$total] FAILURE status=$status class=$failure_class"
+    if [[ "$failure_class" == "expected_model_validation" ]]; then
+      echo "Expected sticky model-validation failure; excluded from consecutive operational breaker."
+    fi
+    echo "New failures this invocation: $batch_total_new_failures; consecutive operational: $batch_consecutive_failures"
 
     case "$batch_failure_action" in
       checkpoint_continue)

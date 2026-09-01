@@ -4,6 +4,7 @@
 # Call batch_failure_policy_init once, then:
 #   batch_failure_record_success
 #   batch_failure_record_failure "$persisted_status"
+#   batch_failure_record_expected_model_failure "$persisted_status"
 #
 # batch_failure_action will be one of:
 #   continue
@@ -51,6 +52,26 @@ batch_failure_record_failure() {
   if [[ "$batch_consecutive_failures" -ge "$BATCH_CONSECUTIVE_FAILURE_THRESHOLD" ]]; then
     batch_failure_action="circuit_break_consecutive"
   elif [[ "$batch_new_failures" -ge "$BATCH_ISOLATED_FAILURE_BUDGET" ]]; then
+    if safe_to_continue_isolated_failures "$persisted_status"; then
+      checkpoint_failure_budget
+    else
+      batch_failure_action="circuit_break_total"
+    fi
+  fi
+}
+
+# Record a failed sample that is known to be a terminal model/schema miss rather
+# than an operational failure. It remains sticky and counts toward total/isolated
+# failure reporting, but it resets the operational consecutive-failure counter.
+batch_failure_record_expected_model_failure() {
+  local persisted_status="${1:-unknown}"
+
+  batch_new_failures=$((batch_new_failures + 1))
+  batch_total_new_failures=$((batch_total_new_failures + 1))
+  batch_consecutive_failures=0
+  batch_failure_action="continue"
+
+  if [[ "$batch_new_failures" -ge "$BATCH_ISOLATED_FAILURE_BUDGET" ]]; then
     if safe_to_continue_isolated_failures "$persisted_status"; then
       checkpoint_failure_budget
     else

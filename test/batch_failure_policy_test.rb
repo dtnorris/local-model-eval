@@ -81,4 +81,35 @@ class BatchFailurePolicyTest < Minitest::Test
     assert status.success?, stderr
     assert_equal "circuit_break_total,3,0", stdout.strip
   end
+
+  def test_expected_model_failure_resets_consecutive_operational_failures
+    stdout, stderr, status = run_policy(<<~'BASH')
+      batch_failure_record_failure failed
+      batch_failure_record_expected_model_failure failed
+      printf '%s,%s,%s\n' \
+        "$batch_failure_action" \
+        "$batch_consecutive_failures" \
+        "$batch_total_new_failures"
+    BASH
+
+    assert status.success?, stderr
+    assert_equal "continue,0,2", stdout.strip
+  end
+
+  def test_expected_model_failures_still_count_toward_checkpoint_reporting
+    stdout, stderr, status = run_policy(<<~'BASH')
+      batch_failure_record_expected_model_failure failed
+      batch_failure_record_expected_model_failure failed
+      batch_failure_record_expected_model_failure failed
+      printf '%s,%s,%s,%s\n' \
+        "$batch_failure_action" \
+        "$batch_new_failures" \
+        "$batch_total_new_failures" \
+        "$batch_failure_budget_checkpoints"
+    BASH
+
+    assert status.success?, stderr
+    assert_equal "checkpoint_continue,0,3,1", stdout.strip
+  end
+
 end
