@@ -1,0 +1,356 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "csv"
+require "digest"
+require "fileutils"
+require "optparse"
+require "pathname"
+require "time"
+require "yaml"
+
+ROOT = File.expand_path("..", __dir__)
+QUEUE = "discovery-horizontal-095-v0.1"
+DEFAULT_IDS = File.join(ROOT, "production_backlog", "#{QUEUE}-ids.txt")
+DEFAULT_AMC = File.expand_path(
+  ENV.fetch("AF_DISCOVERY_AMC", "../af-xlsx-data-sources/5e_Adventure_Master_Catalog_2.12.2.xlsx"),
+  ROOT
+)
+SCORER_REPO = File.expand_path(ENV.fetch("AF_SCORER_REPO", "../af-cli-scoring-utility"), ROOT)
+
+DIMENSIONS = [
+  { name: "Levels", columns: ["Level Start", "Level End"], slug: "levels", preferred: ["production-backlog-009"], max_pages: 99, allow_synthesize: true, synthesize_ids: %w[ADV-0031 ADV-0032 ADV-0230] },
+  { name: "Combat Emphasis", columns: ["Combat Emphasis"], slug: "combat", preferred: ["production-backlog-009"], max_pages: 99 },
+  { name: "Social Interaction Emphasis", columns: ["Social Interaction Emphasis"], slug: "social", preferred: ["production-backlog-009"], max_pages: 99 },
+  { name: "Investigation Emphasis", columns: ["Investigation Emphasis"], slug: "investigation", preferred: ["production-backlog-009"], max_pages: 99 },
+  { name: "Structural Openness", columns: ["Structural Openness"], slug: "structural-openness", preferred: ["production-backlog-009"], max_pages: 99 },
+  { name: "Darkness / Horror Intensity", columns: ["Darkness / Horror Intensity"], slug: "darkness", preferred: ["production-backlog-009"], max_pages: 99 },
+  { name: "Player Beginner Suitability", columns: ["Player Beginner Suitability"], slug: "player-beginner", preferred: ["production-backlog-009"], max_pages: 99 },
+  { name: "Exploration Emphasis", columns: ["Exploration Emphasis"], slug: "ee", preferred: ["production-ee-b001"], max_pages: 60, allow_synthesize: true },
+  { name: "GM Beginner Suitability", columns: ["GM Beginner Suitability"], slug: "gmbs", preferred: ["production-backlog-010"], max_pages: 99 },
+  { name: "GM Preparation Burden", columns: ["GM Preparation Burden"], slug: "gmpb", preferred: ["production-backlog-011"], max_pages: 99 },
+  { name: "Seriousness", columns: ["Seriousness"], slug: "seriousness", preferred: ["production-backlog-012"], max_pages: 99 }
+].freeze
+
+
+def abort_with(message)
+  warn "ERROR: #{message}"
+  exit 1
+end
+
+
+def blank?(value)
+  value.nil? || value.to_s.strip.empty?
+end
+
+
+def canonical_header(value)
+  header = value.to_s.strip
+  header == "ADV - ID" ? "Adventure ID" : header
+end
+
+
+def integer_or_nil(value)
+  return nil if blank?(value)
+  Integer(Float(value))
+rescue ArgumentError, TypeError
+  nil
+end
+
+
+def git_head(repo)
+  out = `git -C #{Shellwords.escape(repo)} rev-parse HEAD 2>/dev/null`.strip
+  out.empty? ? nil : out
+end
+
+
+def manifest_output_status(root, manifest_path)
+  data = YAML.safe_load_file(manifest_path)
+  name = data.fetch("name")
+  metadata = Dir.glob(File.join(root, "output", name, "runs", "*", "metadata.json")).sort
+  return "pending" if metadata.empty?
+
+  require "json"
+  states = metadata.map do |path|
+    JSON.parse(File.read(path))["status"].to_s
+  rescue JSON::ParserError
+    "unknown"
+  end
+  return "complete" if states.all? { |s| s == "complete" }
+  return "failed" if states.any? { |s| s == "failed" }
+  return "running" if states.any? { |s| s == "running" }
+
+  "unknown"
+end
+
+
+def load_manifest_inventory(root, current_queue)
+  inventory = Hash.new { |h, k| h[k] = [] }
+  templates = Hash.new { |h, k| h[k] = [] }
+
+  Dir.glob(File.join(root, "production_backlog", "**", "*case_index.csv")).sort.each do |index_path|
+    queue_name = File.basename(File.dirname(index_path))
+    next if queue_name == current_queue
+
+    begin
+      rows = CSV.read(index_path, headers: true, encoding: "UTF-8")
+    rescue CSV::MalformedCSVError => e
+      warn "WARNING: skipping malformed #{index_path}: #{e.message}"
+      next
+    end
+    next unless rows.headers&.include?("adventure_id") && rows.headers&.include?("dimension") && rows.headers&.include?("manifest_path")
+
+    rows.each do |row|
+      id = row["adventure_id"].to_s.strip
+      dimension = row["dimension"].to_s.strip
+      rel = row["manifest_path"].to_s.strip
+      next if id.empty? || dimension.empty? || rel.empty?
+
+      abs = File.expand_path(rel, root)
+      next unless File.file?(abs)
+
+      entry = { queue: queue_name, relative: rel, absolute: abs }
+      inventory[[id, dimension]] << entry
+      templates[dimension] << entry
+    end
+  end
+
+  [inventory, templates]
+end
+
+
+def choose_entry(entries, preferred)
+  return nil if entries.nil? || entries.empty?
+  entries.min_by do |entry|
+    rank = preferred.index(entry.fetch(:queue))
+    [rank || 10_000, entry.fetch(:queue), entry.fetch(:relative)]
+  end
+end
+
+
+def validate_manifest!(path, expected_id:, expected_dimension:)
+  data = YAML.safe_load_file(path)
+  abort_with("#{path} has wrong adventure") unless data["adventures"] == [expected_id]
+  abort_with("#{path} has wrong dimension") unless data["dimension"].to_s == expected_dimension
+  abort_with("#{path} is not single-replicate") unless Integer(data["replicates"]) == 1
+  abort_with("#{path} is not local-worker constrained") unless data["required_worker_labels"] == ["local"]
+  abort_with("#{path} allows favorable reruns") unless data.dig("production_contract", "no_favorable_rerun") == true
+  abort_with("#{path} has nonzero external API cost") unless data.dig("production_contract", "external_api_cost_usd").to_f == 0.0
+  data
+end
+
+
+def synthesize_manifest(template_entry:, dimension:, adventure:, experiment_dir:, queue:)
+  template_path = template_entry.fetch(:absolute)
+  data = YAML.safe_load_file(template_path)
+  model_alias = Array(data["models"]).fetch(0)
+  suffix = adventure.fetch("id").split("-").last.downcase
+  name = "#{queue}-#{model_alias}-#{dimension.fetch(:slug)}-adv#{suffix}-v1"
+  target_path = File.join(experiment_dir, "#{name}.yml")
+
+  source_scorer = File.expand_path(data.dig("scorer", "repo").to_s, File.dirname(template_path))
+  target_scorer_rel = Pathname.new(source_scorer).relative_path_from(Pathname.new(experiment_dir)).to_s
+
+  data["name"] = name
+  data["purpose"] = "AdventureFinder Discovery-95 horizontal priority scoring for canonical #{adventure.fetch('id')} on #{dimension.fetch(:name)}. This manifest is mechanically cloned from the frozen qualified production template #{template_entry.fetch(:relative)} because AMC 2.12.2 is blank for this pair."
+  data["adventures"] = [adventure.fetch("id")]
+  data["scorer"]["repo"] = target_scorer_rel
+  if data["production_contract"].is_a?(Hash)
+    data["production_contract"]["queue"] = queue
+    data["production_contract"]["selection_mode"] = "discovery-horizontal" if data["production_contract"].key?("selection_mode")
+  end
+
+  File.write(target_path, YAML.dump(data))
+  validate_manifest!(target_path, expected_id: adventure.fetch("id"), expected_dimension: dimension.fetch(:name))
+  target_path
+end
+
+require "shellwords"
+abort_with("scorer checkout not found: #{SCORER_REPO}") unless File.directory?(File.join(SCORER_REPO, ".git"))
+abort_with("AMC not found: #{DEFAULT_AMC}") unless File.file?(DEFAULT_AMC)
+abort_with("AMC must be 5e_Adventure_Master_Catalog_2.12.2.xlsx; got #{File.basename(DEFAULT_AMC)}") unless File.basename(DEFAULT_AMC) == "5e_Adventure_Master_Catalog_2.12.2.xlsx"
+
+options = { ids: DEFAULT_IDS, force: false }
+OptionParser.new do |opts|
+  opts.banner = "Usage: bin/prepare-discovery-horizontal [--ids PATH] [--force]"
+  opts.on("--ids PATH", "Frozen cohort ID file") { |v| options[:ids] = File.expand_path(v, ROOT) }
+  opts.on("--force", "Replace an unstarted generated horizontal queue") { options[:force] = true }
+end.parse!
+
+ids_path = options.fetch(:ids)
+abort_with("ID file not found: #{ids_path}") unless File.file?(ids_path)
+ids = File.readlines(ids_path, chomp: true).map(&:strip).reject(&:empty?)
+abort_with("expected exactly 95 cohort IDs; got #{ids.length}") unless ids.length == 95
+abort_with("duplicate cohort IDs") unless ids.uniq.length == ids.length
+abort_with("invalid cohort ID") unless ids.all? { |id| id.match?(/\AADV-\d{4}\z/) }
+
+queue_dir = File.join(ROOT, "production_backlog", QUEUE)
+experiment_dir = File.join(ROOT, "experiments", QUEUE)
+if File.exist?(queue_dir) || File.exist?(experiment_dir)
+  abort_with("queue already exists; rerun without changing it, or use --force before inference") unless options[:force]
+  generated_names = Dir.glob(File.join(experiment_dir, "*.yml")).filter_map do |path|
+    YAML.safe_load_file(path)["name"] rescue nil
+  end
+  started = generated_names.any? do |name|
+    !Dir.glob(File.join(ROOT, "output", name.to_s, "runs", "*", "metadata.json")).empty?
+  end
+  abort_with("refusing --force because generated horizontal inference output already exists") if started
+  FileUtils.rm_rf(queue_dir)
+  FileUtils.rm_rf(experiment_dir)
+end
+FileUtils.mkdir_p(queue_dir)
+FileUtils.mkdir_p(experiment_dir)
+
+require File.join(SCORER_REPO, "lib", "af_scoring", "errors")
+require File.join(SCORER_REPO, "lib", "af_scoring", "xlsx_reader")
+rows = AFScoring::XlsxReader.new(DEFAULT_AMC).rows(sheet_name: "Adventure Catalog")
+abort_with("AMC Adventure Catalog sheet is empty") if rows.empty?
+headers = rows.shift.map { |v| canonical_header(v) }
+required = ["Adventure ID", "Adventure Title", "Page Count", *DIMENSIONS.flat_map { |d| d.fetch(:columns) }].uniq
+missing_headers = required - headers
+abort_with("AMC missing required columns: #{missing_headers.join(', ')}") unless missing_headers.empty?
+
+catalog = {}
+rows.each do |row|
+  values = headers.zip(row).to_h
+  id = values["Adventure ID"].to_s.strip
+  next if id.empty?
+  abort_with("duplicate AMC ID #{id}") if catalog.key?(id)
+  catalog[id] = values
+end
+missing_ids = ids.reject { |id| catalog.key?(id) }
+abort_with("cohort IDs absent from AMC: #{missing_ids.join(', ')}") unless missing_ids.empty?
+
+inventory, templates = load_manifest_inventory(ROOT, QUEUE)
+case_rows = []
+hold_rows = []
+run_order = []
+catalog_present_pairs = 0
+synthesized = 0
+reused = 0
+
+ids.each_with_index do |id, adv_index|
+  values = catalog.fetch(id)
+  adventure = {
+    "id" => id,
+    "title" => values["Adventure Title"].to_s,
+    "page_count" => integer_or_nil(values["Page Count"])
+  }
+  abort_with("#{id} has missing/invalid Page Count") unless adventure.fetch("page_count")
+
+  DIMENSIONS.each do |dimension|
+    columns = dimension.fetch(:columns)
+    column_values = columns.map { |column| values[column] }
+    if column_values.all? { |value| !blank?(value) }
+      catalog_present_pairs += 1
+      next
+    end
+
+    if column_values.any? { |value| !blank?(value) }
+      hold_rows << [adv_index + 1, id, adventure.fetch("title"), dimension.fetch(:name), "partial_catalog_value", columns.join(" + ")]
+      next
+    end
+
+    if adventure.fetch("page_count") > dimension.fetch(:max_pages)
+      hold_rows << [adv_index + 1, id, adventure.fetch("title"), dimension.fetch(:name), "outside_qualified_page_envelope", "#{adventure.fetch('page_count')} > #{dimension.fetch(:max_pages)}"]
+      next
+    end
+
+    pair_entries = inventory[[id, dimension.fetch(:name)]]
+    chosen = choose_entry(pair_entries, dimension.fetch(:preferred))
+    if chosen
+      manifest_abs = chosen.fetch(:absolute)
+      manifest_rel = chosen.fetch(:relative)
+      origin = "reused"
+      source_queue = chosen.fetch(:queue)
+      reused += 1
+      validate_manifest!(manifest_abs, expected_id: id, expected_dimension: dimension.fetch(:name))
+    else
+      allowed_ids = dimension[:synthesize_ids]
+      synthesize_allowed = dimension.fetch(:allow_synthesize, false) && (allowed_ids.nil? || allowed_ids.include?(id))
+      unless synthesize_allowed
+        abort_with("blank #{dimension.fetch(:name)} pair #{id} has no existing frozen production manifest; refusing to synthesize outside an explicitly authorized horizontal fallback")
+      end
+      template = choose_entry(templates[dimension.fetch(:name)], dimension.fetch(:preferred))
+      abort_with("no frozen production template found for #{dimension.fetch(:name)}") unless template
+      manifest_abs = synthesize_manifest(
+        template_entry: template,
+        dimension: dimension,
+        adventure: adventure,
+        experiment_dir: experiment_dir,
+        queue: QUEUE
+      )
+      manifest_rel = Pathname.new(manifest_abs).relative_path_from(Pathname.new(ROOT)).to_s
+      origin = "synthesized_from_frozen_template"
+      source_queue = template.fetch(:queue)
+      synthesized += 1
+    end
+
+    status = manifest_output_status(ROOT, manifest_abs)
+    run_order << manifest_rel
+    case_rows << [
+      case_rows.length + 1, adv_index + 1, id, adventure.fetch("title"), adventure.fetch("page_count"),
+      dimension.fetch(:name), columns.join(" + "), origin, source_queue, status, manifest_rel
+    ]
+  end
+end
+
+abort_with("horizontal plan produced no missing runnable pairs") if run_order.empty?
+abort_with("run order has duplicate manifest paths") unless run_order.uniq.length == run_order.length
+
+case_headers = %w[case_index adventure_order adventure_id adventure_title page_count dimension catalog_columns manifest_origin source_queue status_at_prepare manifest_path]
+CSV.open(File.join(queue_dir, "case_index.csv"), "w") do |csv|
+  csv << case_headers
+  case_rows.each { |row| csv << row }
+end
+File.write(File.join(queue_dir, "run_order.txt"), run_order.join("\n") + "\n")
+
+CSV.open(File.join(queue_dir, "holds.csv"), "w") do |csv|
+  csv << %w[adventure_order adventure_id adventure_title dimension reason detail]
+  hold_rows.each { |row| csv << row }
+end
+
+snapshot = {
+  "version" => 1,
+  "contract_type" => "discovery_horizontal_priority_v1",
+  "queue" => QUEUE,
+  "generated_at" => Time.now.iso8601,
+  "local_model_eval_commit" => git_head(ROOT),
+  "scorer_commit" => git_head(SCORER_REPO),
+  "scorer_repo_path" => Pathname.new(SCORER_REPO).relative_path_from(Pathname.new(ROOT)).to_s,
+  "cohort_ids_path" => Pathname.new(ids_path).relative_path_from(Pathname.new(ROOT)).to_s,
+  "cohort_count" => ids.length,
+  "cohort_ids" => ids,
+  "catalog_path" => DEFAULT_AMC,
+  "catalog_filename" => File.basename(DEFAULT_AMC),
+  "catalog_sha256" => Digest::SHA256.file(DEFAULT_AMC).hexdigest,
+  "catalog_present_pairs" => catalog_present_pairs,
+  "runnable_missing_pairs" => case_rows.length,
+  "reused_frozen_manifests" => reused,
+  "synthesized_from_frozen_templates" => synthesized,
+  "holds" => hold_rows.length,
+  "dimension_order" => DIMENSIONS.map { |d| d.fetch(:name) },
+  "external_api_cost_usd" => 0.0,
+  "no_favorable_rerun" => true
+}
+File.write(File.join(queue_dir, "snapshot.yml"), YAML.dump(snapshot))
+
+puts
+puts "DISCOVERY-95 HORIZONTAL PLAN PREPARED — NO INFERENCE WAS RUN"
+puts "Queue: production_backlog/#{QUEUE}"
+puts "AMC: #{File.basename(DEFAULT_AMC)}"
+puts "AMC SHA-256: #{snapshot.fetch('catalog_sha256')}"
+puts "Cohort adventures: #{ids.length}"
+puts "Catalog-present core pairs: #{catalog_present_pairs}"
+puts "Runnable blank pairs: #{case_rows.length}"
+puts "  reused frozen manifests: #{reused}"
+puts "  synthesized from frozen templates: #{synthesized}"
+puts "Holds: #{hold_rows.length}"
+puts "External/API inference cost: $0"
+puts
+puts "Status before inference:"
+case_rows.group_by { |row| row[9] }.sort.each { |status, grouped| puts "  #{status}: #{grouped.length}" }
+puts
+puts "Next:"
+puts "  ./status_discovery_horizontal.sh"
+puts "  ./run_discovery_horizontal.sh"

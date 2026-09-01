@@ -1,0 +1,5497 @@
+---
+version: 1
+contract_type: seriousness_local_qualified_v1
+queue: production-backlog-012
+generated_at: '2026-08-30T12:29:03-04:00'
+local_model_eval_commit: 02afa7b4c86f6de7c7df8fa43b885e5306304aa1
+scorer_commit: c5f27d1060623938fa4d338340647396fb9fdc16
+scorer_repo_path: "../af-cli-scoring-utility-b12"
+qualification_contract_path: production_backlog/qualified_seriousness.yml
+qualification_contract_sha256: 5b4d23f7112b4745e36cbc90053b48daa5d004b23282d77f35792af4020e1ac5
+qualification_contract:
+  version: 1
+  contract_type: seriousness_local_qualified_v1
+  dimension: Seriousness
+  slug: seriousness
+  profile: seriousness-reset-only
+  catalog_column: Seriousness
+  model_alias: qwen
+  ollama_model: qwen3.6:35b-a3b
+  qualified_scorer_baseline: c5f27d1060623938fa4d338340647396fb9fdc16
+  afao_version: 1.6.1
+  max_page_count_exclusive: 100
+  runtime_config_path: production_backlog/seriousness-reset-runtime.yml
+  reasoning_effort: low
+  max_tokens: 16384
+  temperature: 0
+  replicates: 1
+  external_api_cost_usd: 0.0
+  no_favorable_rerun: true
+runtime_config_path: production_backlog/seriousness-reset-runtime.yml
+runtime_config_sha256: 7f8bd9f3b21280fe9904bbb30e421c5fd0ea9b6997ba8492c5f3af910b7db014
+catalog_path: "/Users/davidnorris/code/af-xlsx-data-sources/5e_Adventure_Master_Catalog_2.12.xlsx"
+catalog_filename: 5e_Adventure_Master_Catalog_2.12.xlsx
+catalog_sha256: 006f00625111b980a845120540c069d6f0083a8c5026ea0db582425dca93b350
+catalog_total_adventures: 330
+catalog_under_page_limit: 321
+catalog_prepopulated_seriousness: 8
+catalog_reserved_seriousness: 0
+catalog_eligible_blank_seriousness: 313
+dimension: Seriousness
+profile: seriousness-reset-only
+model_alias: qwen
+ollama_model: qwen3.6:35b-a3b
+max_page_count_exclusive: 100
+reasoning_effort: low
+max_tokens: 16384
+temperature: 0
+pack_size: 50
+expected_calls: 313
+selected_adventures:
+- id: ADV-0200
+  title: Lake Monster
+  source_book: 'Icewind Dale: Rime of the Frostmaiden'
+  publisher: Wizards of the Coast
+  page_count: 4
+  start_page: 28
+  end_page: 31
+  prompt_sha256: 73aacb96d5ca47afecadc84fe3a44027c8b5ceff8ca1e2effae013046d914a24
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Icewind_Dale_Rime_of_the_Frostmaiden_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0288
+  title: A Friend in Need
+  source_book: 'Waterdeep: Dragon Heist'
+  publisher: Wizards of the Coast
+  page_count: 10
+  start_page: 21
+  end_page: 30
+  prompt_sha256: a1f9e25539f5ea360a136ad7118c04987176fb6b63497f4dfa1c27f1bf1cedfb
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Waterdeep_Dragon_Heist_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0032
+  title: Dead in Thay
+  source_book: Tales from the Yawning Portal
+  publisher: Wizards of the Coast
+  page_count: 56
+  start_page: 109
+  end_page: 164
+  prompt_sha256: 49406a575a162ab6e370850e83dc69a21e3bd5044dd7265c3d2703778d59845b
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Tales_from_the_Yawning_Portal_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0065
+  title: Heart of Darkness
+  source_book: Battle for the Realm Trilogy
+  publisher: Midnight Tower
+  page_count: 48
+  start_page: 4
+  end_page: 51
+  prompt_sha256: fc8c924525f2e73c6f2b59475db32562cf5634e7f19041935901dcf04e0dc4ee
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Battle-for-the-Realm-Trilogy-standard_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0076
+  title: Werewolf Den
+  source_book: Curse of Strahd
+  publisher: Wizards of the Coast
+  page_count: 5
+  start_page: 201
+  end_page: 205
+  prompt_sha256: ccc6aeb3f88d0c93af9272f9b6b40bf0216d5bc4d1aa82602716a312a2435de2
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Curse_of_Strahd_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0072
+  title: Van Richten's Tower
+  source_book: Curse of Strahd
+  publisher: Wizards of the Coast
+  page_count: 6
+  start_page: 167
+  end_page: 172
+  prompt_sha256: b40415c820e8f97f53b2453a1974cf2dbc9830978739112633feae8447459abc
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Curse_of_Strahd_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0071
+  title: Argynvostholt
+  source_book: Curse of Strahd
+  publisher: Wizards of the Coast
+  page_count: 17
+  start_page: 129
+  end_page: 145
+  prompt_sha256: abbfb222944c3cb8a50dc8836dccbaa78d16614a1f63a09fd65538a8d5514cea
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Curse_of_Strahd_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0069
+  title: Castle Ravenloft
+  source_book: Curse of Strahd
+  publisher: Wizards of the Coast
+  page_count: 40
+  start_page: 49
+  end_page: 88
+  prompt_sha256: c2c327527a49b7f5b402b1d14fad9b72645525698af9e779463c0104cea36383
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Curse_of_Strahd_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0070
+  title: Old Bonegrinder
+  source_book: Curse of Strahd
+  publisher: Wizards of the Coast
+  page_count: 4
+  start_page: 125
+  end_page: 128
+  prompt_sha256: bf67dd5e01624951bdf660587b13bc0339fc12b9308a119fd977749e866ef8ad
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Curse_of_Strahd_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0075
+  title: Yester Hill
+  source_book: Curse of Strahd
+  publisher: Wizards of the Coast
+  page_count: 4
+  start_page: 197
+  end_page: 200
+  prompt_sha256: daf408989c26b01e08f871bb33bef4a7e5602329dccc6d6a4d273d01bb3097b9
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Curse_of_Strahd_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0074
+  title: Amber Temple
+  source_book: Curse of Strahd
+  publisher: Wizards of the Coast
+  page_count: 16
+  start_page: 181
+  end_page: 196
+  prompt_sha256: 7c6eb7eb6dfe8bbecea123fe134e906921240efdefcebcc97cf86f37cc7f12c0
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Curse_of_Strahd_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0077
+  title: Death House
+  source_book: Curse of Strahd
+  publisher: Wizards of the Coast
+  page_count: 10
+  start_page: 211
+  end_page: 220
+  prompt_sha256: 9423896a5de8a679670f649020a69220c1a14f0e52231c62d5859c99c418ac72
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Curse_of_Strahd_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0073
+  title: Wizard of Wines
+  source_book: Curse of Strahd
+  publisher: Wizards of the Coast
+  page_count: 8
+  start_page: 173
+  end_page: 180
+  prompt_sha256: 45bd82289e7a1cb96ba6af3270b46e8b48e22897b0d30c78f1e3ee9ab46e275a
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Curse_of_Strahd_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0118
+  title: Before the Storm
+  source_book: Dragon Delves
+  publisher: Wizards of the Coast
+  page_count: 10
+  start_page: 129
+  end_page: 138
+  prompt_sha256: 21fd7aa37daff15f4fb362e71cf9170b3f977237c85c509473412e9760c23dfd
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/5.5e_Dragon_Delves-s_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0114
+  title: The Will of Orcus
+  source_book: Dragon Delves
+  publisher: Wizards of the Coast
+  page_count: 12
+  start_page: 49
+  end_page: 60
+  prompt_sha256: 9f781040ff3006dc426ac482b717f4dd443cc0d0fb13a3858632743db7148cf9
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/5.5e_Dragon_Delves-s_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0115
+  title: For Whom the Void Calls
+  source_book: Dragon Delves
+  publisher: Wizards of the Coast
+  page_count: 13
+  start_page: 65
+  end_page: 77
+  prompt_sha256: '08110f9331921989be86213236bd6273f4fca3d25ba65da1a4bd14139a5767c0'
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/5.5e_Dragon_Delves-s_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0112
+  title: Death at Sunset
+  source_book: Dragon Delves
+  publisher: Wizards of the Coast
+  page_count: 12
+  start_page: 12
+  end_page: 23
+  prompt_sha256: fb32038ff8c60223693c2e5da6382dcac993f1d315a98425a51d175e2ae2af91
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/5.5e_Dragon_Delves-s_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0121
+  title: Dragons of the Sandstone City
+  source_book: Dragon Delves
+  publisher: Wizards of the Coast
+  page_count: 12
+  start_page: 181
+  end_page: 192
+  prompt_sha256: ddbde378a3bb5f676943368cd8d971b48222e1f360d353c9652f7993523fe351
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/5.5e_Dragon_Delves-s_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0113
+  title: Baker's Doesn't
+  source_book: Dragon Delves
+  publisher: Wizards of the Coast
+  page_count: 14
+  start_page: 29
+  end_page: 42
+  prompt_sha256: 9d12ca97d8d97a49fc4cf1e24704fa7979fcdab4b9972e976f8bf2d8238d5a86
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/5.5e_Dragon_Delves-s_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0119
+  title: Shivering Death
+  source_book: Dragon Delves
+  publisher: Wizards of the Coast
+  page_count: 13
+  start_page: 145
+  end_page: 157
+  prompt_sha256: 98a0442299957563dd605042c9a66445f06c289248f850e08e408bda87d286b5
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/5.5e_Dragon_Delves-s_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0244
+  title: Camp Carrionclay
+  source_book: 'Dragonlance: Shadow of the Dragon Queen'
+  publisher: Wizards of the Coast
+  page_count: 2
+  start_page: 129
+  end_page: 130
+  prompt_sha256: a7291b25b569b79bc04af794f176ada711c48d1748b317ae8cd7b0076f04d9b4
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Dragonlance_Shadow_of_the_Dragon_Queen_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0240
+  title: Blue Phoenix Shrine
+  source_book: 'Dragonlance: Shadow of the Dragon Queen'
+  publisher: Wizards of the Coast
+  page_count: 4
+  start_page: 113
+  end_page: 116
+  prompt_sha256: adc14640878c50cee5500959cc17d9ae8cb2415730871af097e1b6ddbf92ca83
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Dragonlance_Shadow_of_the_Dragon_Queen_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0242
+  title: Wakenreth
+  source_book: 'Dragonlance: Shadow of the Dragon Queen'
+  publisher: Wizards of the Coast
+  page_count: 4
+  start_page: 120
+  end_page: 123
+  prompt_sha256: bc58f93ae914db2820969c2ef281d6a506e6eae266d068d3b744b66644eccfbd
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Dragonlance_Shadow_of_the_Dragon_Queen_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0243
+  title: Bluemaw Cave
+  source_book: 'Dragonlance: Shadow of the Dragon Queen'
+  publisher: Wizards of the Coast
+  page_count: 4
+  start_page: 123
+  end_page: 126
+  prompt_sha256: e4b086cf1e5e8cacd87608e55ef51f64e4bc7d0f26507e5c1d2f0d9863804c40
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Dragonlance_Shadow_of_the_Dragon_Queen_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0246
+  title: Temple of Paladine
+  source_book: 'Dragonlance: Shadow of the Dragon Queen'
+  publisher: Wizards of the Coast
+  page_count: 4
+  start_page: 149
+  end_page: 152
+  prompt_sha256: 85a47941160e5bc7c41bf0bcde80e02c8f8e7da08973fd749975b2b61da994a2
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Dragonlance_Shadow_of_the_Dragon_Queen_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0238
+  title: Wheelwatch Outpost
+  source_book: 'Dragonlance: Shadow of the Dragon Queen'
+  publisher: Wizards of the Coast
+  page_count: 5
+  start_page: 89
+  end_page: 93
+  prompt_sha256: 4b0c8f2083e3ca656b2f5a324d3a2368df671c56c5240fb5635df12919ca6366
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Dragonlance_Shadow_of_the_Dragon_Queen_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0249
+  title: The Flying Citadel
+  source_book: 'Dragonlance: Shadow of the Dragon Queen'
+  publisher: Wizards of the Coast
+  page_count: 14
+  start_page: 171
+  end_page: 184
+  prompt_sha256: cfa194460751d36713ff3ffc3d2fb4689eff80756727426f1b601695f8e9c147
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Dragonlance_Shadow_of_the_Dragon_Queen_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0236
+  title: When Home Burns
+  source_book: 'Dragonlance: Shadow of the Dragon Queen'
+  publisher: Wizards of the Coast
+  page_count: 25
+  start_page: 51
+  end_page: 75
+  prompt_sha256: 2e7e43dde041ab8440be5f15c47435d0d21f0ad42d942f47d2ecdd05d461053f
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Dragonlance_Shadow_of_the_Dragon_Queen_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0248
+  title: Siege of Kalaman
+  source_book: 'Dragonlance: Shadow of the Dragon Queen'
+  publisher: Wizards of the Coast
+  page_count: 27
+  start_page: 161
+  end_page: 187
+  prompt_sha256: e62eefa5c2d8658a089f396a7a3d998e4b43d7630e95a08b597ef52c8d00af82
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Dragonlance_Shadow_of_the_Dragon_Queen_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0237
+  title: The First Mission
+  source_book: 'Dragonlance: Shadow of the Dragon Queen'
+  publisher: Wizards of the Coast
+  page_count: 3
+  start_page: 86
+  end_page: 88
+  prompt_sha256: dda424f3fc9117506a5e606055c46056202a4c58cefe64ab4052dfe19b424bf6
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Dragonlance_Shadow_of_the_Dragon_Queen_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0241
+  title: Sunward Fortress
+  source_book: 'Dragonlance: Shadow of the Dragon Queen'
+  publisher: Wizards of the Coast
+  page_count: 5
+  start_page: 116
+  end_page: 120
+  prompt_sha256: 9fda63b7ad841b720d1749a3e37e4c54e6ace2046e72b3511755a0c95403fd45
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Dragonlance_Shadow_of_the_Dragon_Queen_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0247
+  title: Threshold of the Heavens
+  source_book: 'Dragonlance: Shadow of the Dragon Queen'
+  publisher: Wizards of the Coast
+  page_count: 7
+  start_page: 153
+  end_page: 159
+  prompt_sha256: 1bbbda749124a063079e93d73233e360fa9d308d5f0e9b50af9dc3c17f53c3e5
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Dragonlance_Shadow_of_the_Dragon_Queen_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0128
+  title: Disinterred Danger
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 20
+  end_page: 20
+  prompt_sha256: 46987f4eaa3479622234b74e27d9396f71a2e87d147ac52954954c4e07d00f7d
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/5.5e_Forgotten_Realms_Adventures_in_Faerun_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0129
+  title: The Drowning Forest
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 21
+  end_page: 21
+  prompt_sha256: d63083b9759d55ef93fb608773e92d3a64ff2eb0d3f51eb2542ddb7025e39e39
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/5.5e_Forgotten_Realms_Adventures_in_Faerun_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0130
+  title: The Lost Dawn
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 22
+  end_page: 22
+  prompt_sha256: c6797f90dceed8011520ed5b61025ca8b2de6ba302a1ab0b16be3cba63bc15c6
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/5.5e_Forgotten_Realms_Adventures_in_Faerun_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0127
+  title: The Tenebrous Stone
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 19
+  end_page: 19
+  prompt_sha256: 1c9ac08d8d3310cc328426ae3d7d94c3f2e21442ca5679c558869a80cdacd788
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/5.5e_Forgotten_Realms_Adventures_in_Faerun_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0131
+  title: Wolves of Amphail
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 23
+  end_page: 23
+  prompt_sha256: a4e91cf089f6bcfe7b15c3bc4346b1f2cfd3e02d1684c2918836db54e6894996
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/5.5e_Forgotten_Realms_Adventures_in_Faerun_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0133
+  title: Safe House Standoff
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 25
+  end_page: 25
+  prompt_sha256: f7c4a0e10ad8ceefd79666b136dfb4df0d991a7dfe99563cad6efe443ea1b321
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/5.5e_Forgotten_Realms_Adventures_in_Faerun_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0134
+  title: Tears Fall
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 26
+  end_page: 26
+  prompt_sha256: dab450de284f0a7991fffa056b7f303d53075c995fa1f85d61a736dc9dc0df2d
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/5.5e_Forgotten_Realms_Adventures_in_Faerun_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0136
+  title: Well of Lies
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 28
+  end_page: 28
+  prompt_sha256: 0e156745031498a1e9644a0b819e48fb9b90a0e654093dddb3632f7b3eae04eb
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/5.5e_Forgotten_Realms_Adventures_in_Faerun_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0137
+  title: The Raid on Noanar's Hold
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 29
+  end_page: 29
+  prompt_sha256: 63bcdbf1e60581a12458d6a52ff675e7f1d5c4a4d075dc5565924678f8c28093
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/5.5e_Forgotten_Realms_Adventures_in_Faerun_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0143
+  title: Echoes of the Shaking Plague
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 35
+  end_page: 35
+  prompt_sha256: 9bad455f0b124a319cf1e1bb39fbd43bc2042691454e0fd011b958b083a4e734
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/5.5e_Forgotten_Realms_Adventures_in_Faerun_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0144
+  title: The Ashen Faithful
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 36
+  end_page: 36
+  prompt_sha256: 9e76b234b6c6c6617d91c1f02393034118b44e11faaee0ffa77732e32201d699
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/5.5e_Forgotten_Realms_Adventures_in_Faerun_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0145
+  title: Silk and Suffering
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 37
+  end_page: 37
+  prompt_sha256: 39b7b774726ccb70fb460db99bad0f8b80b0cdeb5fd89b928b4a3381fbbfe726
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/5.5e_Forgotten_Realms_Adventures_in_Faerun_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0146
+  title: The Flying Fortress
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 38
+  end_page: 38
+  prompt_sha256: 06b9a49fb56723a1a21a8462949bed32f3961466639dbe94d1bbac68758ce0e0
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/5.5e_Forgotten_Realms_Adventures_in_Faerun_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0147
+  title: The Foehammer Horn
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 39
+  end_page: 39
+  prompt_sha256: 36959d04e9902d926235e3e090188bbd829e38524846aa4c032408873ec9ee7b
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/5.5e_Forgotten_Realms_Adventures_in_Faerun_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0148
+  title: The Blight on Soubar
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 40
+  end_page: 40
+  prompt_sha256: d03bca5896b960cfda6a2f34c86557729d514afb6fce0aef15ddf39b105eea0a
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/5.5e_Forgotten_Realms_Adventures_in_Faerun_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0149
+  title: Mystery of Myth Rodarnum
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 40
+  end_page: 40
+  prompt_sha256: a8a0b4221d929c9b9d7f018a6789a8b019c23d838e44e0887d01014a681a5f72
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/5.5e_Forgotten_Realms_Adventures_in_Faerun_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0151
+  title: Dread March of the Bone Titan
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 42
+  end_page: 42
+  prompt_sha256: b5eac2bc2b81db0da8416d828108986a93d49236d1ba0a4190330cdfe77a5e24
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/5.5e_Forgotten_Realms_Adventures_in_Faerun_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0152
+  title: Heart of Fire
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 43
+  end_page: 43
+  prompt_sha256: f53d25d959f3a77473e2e87c4ee55a8ea3294501c15423773a1b0b7abc9fbf9d
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/5.5e_Forgotten_Realms_Adventures_in_Faerun_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0153
+  title: The Tomb of Damara
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 86
+  end_page: 86
+  prompt_sha256: 77c8b6029900cc4f8681e900f038fcdb94476497144d65bf05838b480d896881
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/5.5e_Forgotten_Realms_Adventures_in_Faerun_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0154
+  title: Restoring Freedale
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 87
+  end_page: 87
+  prompt_sha256: 58b91f25cad8524912cc827a28260df785ea8114742f32d6817a2ae085a8ecf4
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/5.5e_Forgotten_Realms_Adventures_in_Faerun_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0157
+  title: Retaking the Terror
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 125
+  end_page: 125
+  prompt_sha256: 1d8d642d5d76287378432d96cd6aa7b51a12d033136dff3a9b1990045ce4e0fa
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/5.5e_Forgotten_Realms_Adventures_in_Faerun_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0158
+  title: Dougan's Hell
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 126
+  end_page: 126
+  prompt_sha256: 689ba13203751ea06be68100d8269d88cd4042f62e90e2dd0f2cbf82a008ade7
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/5.5e_Forgotten_Realms_Adventures_in_Faerun_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0159
+  title: What Wakes Below
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 127
+  end_page: 127
+  prompt_sha256: 3f315eaa3e62eb5438396bd14bccf5f9cbf8bd01b525bec5373c8c833153ce8c
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/5.5e_Forgotten_Realms_Adventures_in_Faerun_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0161
+  title: Gods Long Forgotten
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 157
+  end_page: 157
+  prompt_sha256: c137ca8606e66e5920f6fa14e55c8a23c83a53a66265864ad1888d2decea1926
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/5.5e_Forgotten_Realms_Adventures_in_Faerun_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0171
+  title: The Lost Library of Lethchauntos
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 15
+  start_page: 227
+  end_page: 241
+  prompt_sha256: 0732dc161bde3ad248adf7863717f57282e0ef853be7f378a58db6bd49f106e5
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/5.5e_Forgotten_Realms_Adventures_in_Faerun_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0168
+  title: Blood Night
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 223
+  end_page: 223
+  prompt_sha256: a687b76264ccaf209594a094a7f61507a33370f3b94081d39d761c2dfc0986f6
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/5.5e_Forgotten_Realms_Adventures_in_Faerun_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0132
+  title: The Eyes of At'ar
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 24
+  end_page: 24
+  prompt_sha256: e0b6d02fa352df02fc69e3ebcc75885e595f8905083741a07fa530b8f67fb86f
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/5.5e_Forgotten_Realms_Adventures_in_Faerun_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0150
+  title: A Restless Eternity
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 41
+  end_page: 41
+  prompt_sha256: 92ffdf7e2423734d8841de6bdff9116724107cd58e85d500f0c5ec2bbfffa86c
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/5.5e_Forgotten_Realms_Adventures_in_Faerun_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0135
+  title: Shadow of the Watch
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 27
+  end_page: 27
+  prompt_sha256: 3933368dfd91a6f27c3b98cfca9b5198713f61db7f72da7802facaffa0d03899
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/5.5e_Forgotten_Realms_Adventures_in_Faerun_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0162
+  title: The Dallabad Curse
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 158
+  end_page: 158
+  prompt_sha256: f5ac5e504cf73617df073a0b28e609f2837da68a3395eb8bd6cdfb3f9bd0b80f
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/5.5e_Forgotten_Realms_Adventures_in_Faerun_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0169
+  title: Clockwork Memories
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 224
+  end_page: 224
+  prompt_sha256: 4cf44768416bd9020555d3c4aade54ea852424691a1d9ae8a15b279c359dfa9c
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/5.5e_Forgotten_Realms_Adventures_in_Faerun_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0170
+  title: The Shadow Parliament
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 225
+  end_page: 225
+  prompt_sha256: 2c4fb82a2b9cd9009078dc46cd527685ea93efbc212150a6605887367cad07fe
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/5.5e_Forgotten_Realms_Adventures_in_Faerun_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0163
+  title: The Rushdown Well
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 187
+  end_page: 187
+  prompt_sha256: 74301fc89f663702f9e3e8258cba87ffd2f4177f3b61ef6481548cf78223080b
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/5.5e_Forgotten_Realms_Adventures_in_Faerun_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0167
+  title: Tide of Teeth
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 222
+  end_page: 222
+  prompt_sha256: df53a67bcd9e9d171bbdd13423981db4e60350bcf3272aa6836e0aeb561b3f2a
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/5.5e_Forgotten_Realms_Adventures_in_Faerun_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0164
+  title: Message in a Bottle
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 188
+  end_page: 188
+  prompt_sha256: 2a6ea15c354cde65c8a87097693a984bc6c162562dc1a5adc490b64347294b16
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/5.5e_Forgotten_Realms_Adventures_in_Faerun_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0165
+  title: Wreck of the Silverhand
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 189
+  end_page: 189
+  prompt_sha256: 96299e37fe79fa2ff10555f213c8d4ef12fee771c867b72d3a0f43d15ca35440
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/5.5e_Forgotten_Realms_Adventures_in_Faerun_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0166
+  title: The Treaty of Ostoria
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 189
+  end_page: 189
+  prompt_sha256: b419ee812199c1b2f1f755e02567dbbd0bb1fc771c8f3cfad876553085dbc673
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/5.5e_Forgotten_Realms_Adventures_in_Faerun_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0230
+  title: Salvage Operation
+  source_book: Ghosts of Saltmarsh
+  publisher: Wizards of the Coast
+  page_count: 9
+  start_page: 87
+  end_page: 95
+  prompt_sha256: 0cda53003f1d49fda17aa7edb59aaa3e1c0639f4a457dd2e2891dfc77a0d2575
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Ghosts_of_Saltmarsh_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0231
+  title: Isle of the Abbey
+  source_book: Ghosts of Saltmarsh
+  publisher: Wizards of the Coast
+  page_count: 13
+  start_page: 97
+  end_page: 109
+  prompt_sha256: 85cb9179ab196b2de893c1fb555dbb6a5bc85f8b15cbcf507e378c3c9845822c
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Ghosts_of_Saltmarsh_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0233
+  title: Tammeraut's Fate
+  source_book: Ghosts of Saltmarsh
+  publisher: Wizards of the Coast
+  page_count: 21
+  start_page: 141
+  end_page: 161
+  prompt_sha256: 82d496dbec172e2ade86ee2c7fb0595c47512a1db095e87a900de77692e151cf
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Ghosts_of_Saltmarsh_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0228
+  title: The Sinister Secret of Saltmarsh
+  source_book: Ghosts of Saltmarsh
+  publisher: Wizards of the Coast
+  page_count: 23
+  start_page: 37
+  end_page: 59
+  prompt_sha256: 2ad0a9811a68de5d573062691709b6215659d91cbbc928244391c6848c5c6f45
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Ghosts_of_Saltmarsh_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0232
+  title: The Final Enemy
+  source_book: Ghosts of Saltmarsh
+  publisher: Wizards of the Coast
+  page_count: 29
+  start_page: 111
+  end_page: 139
+  prompt_sha256: a127f4cc500a66e43e57d1d9a80790d184ec947fdaa21a9f159f3efc0dcd5d5d
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Ghosts_of_Saltmarsh_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0234
+  title: The Styes
+  source_book: Ghosts of Saltmarsh
+  publisher: Wizards of the Coast
+  page_count: 23
+  start_page: 163
+  end_page: 185
+  prompt_sha256: 276a73de71c25faedd6fdd91059cba9039eb9f55bf8bcdc82894a663a9cab47a
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Ghosts_of_Saltmarsh_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0229
+  title: Danger at Dunwater
+  source_book: Ghosts of Saltmarsh
+  publisher: Wizards of the Coast
+  page_count: 25
+  start_page: 61
+  end_page: 85
+  prompt_sha256: 1d3ca5e9f24c5375b441c49aa3f4f6e0e8d3c698feaa2c27fc79b93b63ba7586
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Ghosts_of_Saltmarsh_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0023
+  title: Cloakwood Forest
+  source_book: Heroes of Baldur's Gate
+  publisher: Arcanum Worlds
+  page_count: 5
+  start_page: 46
+  end_page: 50
+  prompt_sha256: b5385658aaa7abb02900acf9262757c6d8dc644f7b71c8ded1dd82b6208bc402
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/DM_Guild,_Heroes_of_Baldurs_Gate_v2_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0024
+  title: The Cloakwood Mines
+  source_book: Heroes of Baldur's Gate
+  publisher: Arcanum Worlds
+  page_count: 6
+  start_page: 51
+  end_page: 56
+  prompt_sha256: dea9012cba5f7a68825ecd2abfea31b35b7a4a7de5bf360358cc216f9fd0f766
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/DM_Guild,_Heroes_of_Baldurs_Gate_v2_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0021
+  title: Baldur's Gate, Southwest District
+  source_book: Heroes of Baldur's Gate
+  publisher: Arcanum Worlds
+  page_count: 13
+  start_page: 19
+  end_page: 31
+  prompt_sha256: ce9810b94f0c2c3519b6f730ef30cceacc8534e40ed00dbe15559dd7389c6458
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/DM_Guild,_Heroes_of_Baldurs_Gate_v2_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0022
+  title: Beneath Baldur's Gate
+  source_book: Heroes of Baldur's Gate
+  publisher: Arcanum Worlds
+  page_count: 14
+  start_page: 32
+  end_page: 45
+  prompt_sha256: b816297c556e907fdde12dcca70b6c3ff00cbc66c0814747d667ec2bff1f0f88
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/DM_Guild,_Heroes_of_Baldurs_Gate_v2_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0027
+  title: Return to Baldur's Gate
+  source_book: Heroes of Baldur's Gate
+  publisher: Arcanum Worlds
+  page_count: 3
+  start_page: 68
+  end_page: 70
+  prompt_sha256: 3bce7a4e20262b4147de133cde0d93acbdb5b4732ad5156d9a55d3dfcf25f9b6
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/DM_Guild,_Heroes_of_Baldurs_Gate_v2_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0026
+  title: The Nest
+  source_book: Heroes of Baldur's Gate
+  publisher: Arcanum Worlds
+  page_count: 5
+  start_page: 63
+  end_page: 67
+  prompt_sha256: 73175b07529730fea62a1329f473f23ed72f2e826e0ea73157c8be2a7cad4ac4
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/DM_Guild,_Heroes_of_Baldurs_Gate_v2_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0025
+  title: The Shadow Druids
+  source_book: Heroes of Baldur's Gate
+  publisher: Arcanum Worlds
+  page_count: 6
+  start_page: 57
+  end_page: 62
+  prompt_sha256: 5e6d12ced7afb3ad87bb870c3cbecfbd38730d4bb0631051f62c5b32c9d84e06
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/DM_Guild,_Heroes_of_Baldurs_Gate_v2_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0054
+  title: Deeper into the Woods
+  source_book: Hunter's Full Moon Trilogy
+  publisher: Midnight Tower
+  page_count: 38
+  start_page: 54
+  end_page: 91
+  prompt_sha256: e96f597c559cdf1666cd809995ad7bfd7af51a1fc61bb3ea35c7acd2476e088e
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Hunters-Full-Moon-Trilogy_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0055
+  title: Under the Black Mountains
+  source_book: Hunter's Full Moon Trilogy
+  publisher: Midnight Tower
+  page_count: 28
+  start_page: 94
+  end_page: 121
+  prompt_sha256: bac0451f477e6b24305f16040d16deaca9660ede68d2c292cb75f431bb0f6a1a
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Hunters-Full-Moon-Trilogy_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0199
+  title: Nature Spirits
+  source_book: 'Icewind Dale: Rime of the Frostmaiden'
+  publisher: Wizards of the Coast
+  page_count: 2
+  start_page: 25
+  end_page: 26
+  prompt_sha256: 471e22bf23270eea99e07fd116132e04871dddfa5fcd36317b84782482b8f958
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Icewind_Dale_Rime_of_the_Frostmaiden_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0210
+  title: Angajuk's Bell
+  source_book: 'Icewind Dale: Rime of the Frostmaiden'
+  publisher: Wizards of the Coast
+  page_count: 3
+  start_page: 114
+  end_page: 116
+  prompt_sha256: 1d400a8f7a1f0663df1d7ecdd953c494026a97a408199561809619c37bdd59b9
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Icewind_Dale_Rime_of_the_Frostmaiden_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0212
+  title: Cackling Chasm
+  source_book: 'Icewind Dale: Rime of the Frostmaiden'
+  publisher: Wizards of the Coast
+  page_count: 4
+  start_page: 121
+  end_page: 124
+  prompt_sha256: defb1bbd3924a3c40266c3c2dedba6ab64c59ce995fc4bce02fa3686dd36372b
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Icewind_Dale_Rime_of_the_Frostmaiden_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0213
+  title: Cave of the Berserkers
+  source_book: 'Icewind Dale: Rime of the Frostmaiden'
+  publisher: Wizards of the Coast
+  page_count: 4
+  start_page: 124
+  end_page: 127
+  prompt_sha256: 69397482d2e87f2d147b713f7d060337bc0d7949889eea7fd29b5b5056802218
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Icewind_Dale_Rime_of_the_Frostmaiden_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0216
+  title: Jarlmoot
+  source_book: 'Icewind Dale: Rime of the Frostmaiden'
+  publisher: Wizards of the Coast
+  page_count: 4
+  start_page: 137
+  end_page: 140
+  prompt_sha256: 4618cabcfd462502d4d06b9b612c9d3310d788ab1fbfbdb3843661138c021a12
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Icewind_Dale_Rime_of_the_Frostmaiden_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0221
+  title: Wyrmdoom Crag
+  source_book: 'Icewind Dale: Rime of the Frostmaiden'
+  publisher: Wizards of the Coast
+  page_count: 4
+  start_page: 166
+  end_page: 169
+  prompt_sha256: 2d079b810257162323c5b7bd46a8566bcef8a1d3fd02c1f19fab78975043c893
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Icewind_Dale_Rime_of_the_Frostmaiden_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0198
+  title: Cold-Hearted Killer
+  source_book: 'Icewind Dale: Rime of the Frostmaiden'
+  publisher: Wizards of the Coast
+  page_count: 3
+  start_page: 22
+  end_page: 24
+  prompt_sha256: b1a90a4e380e731c49052f0496c0fabd54075bf144c80d99ae8684eeccc234bb
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Icewind_Dale_Rime_of_the_Frostmaiden_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0223
+  title: Sunblight
+  source_book: 'Icewind Dale: Rime of the Frostmaiden'
+  publisher: Wizards of the Coast
+  page_count: 15
+  start_page: 171
+  end_page: 185
+  prompt_sha256: 5d83d59de280d15c7f9d8c80a4d53fe3bda3d4bfae6af7494ccb671c9682ddaa
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Icewind_Dale_Rime_of_the_Frostmaiden_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0227
+  title: Doom of Ythryn
+  source_book: 'Icewind Dale: Rime of the Frostmaiden'
+  publisher: Wizards of the Coast
+  page_count: 30
+  start_page: 231
+  end_page: 260
+  prompt_sha256: 2e375933179cbf913ab537a2911fb216a73ec1c26255df76291bab249e56f9be
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Icewind_Dale_Rime_of_the_Frostmaiden_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0201
+  title: Foaming Mugs
+  source_book: 'Icewind Dale: Rime of the Frostmaiden'
+  publisher: Wizards of the Coast
+  page_count: 3
+  start_page: 34
+  end_page: 36
+  prompt_sha256: 22a3a52e87c27bae38143d56524e18e5dc7459c1e9cd0361c6e9566ac8400aaa
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Icewind_Dale_Rime_of_the_Frostmaiden_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0203
+  title: The Unseen
+  source_book: 'Icewind Dale: Rime of the Frostmaiden'
+  publisher: Wizards of the Coast
+  page_count: 6
+  start_page: 47
+  end_page: 52
+  prompt_sha256: 0f01ae7c72fcdc33060ae36cce98d1f39cf7eea6f70e156743bf78e1b08dc21c
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Icewind_Dale_Rime_of_the_Frostmaiden_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0204
+  title: Holed Up
+  source_book: 'Icewind Dale: Rime of the Frostmaiden'
+  publisher: Wizards of the Coast
+  page_count: 6
+  start_page: 53
+  end_page: 58
+  prompt_sha256: f6c9c415b8f7835dae70d34ab0f0e41e5bb19d7d541b5370f64c49999625c1bc
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Icewind_Dale_Rime_of_the_Frostmaiden_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0175
+  title: Wages of Vice
+  source_book: Journeys Through the Radiant Citadel
+  publisher: Wizards of the Coast
+  page_count: 10
+  start_page: 66
+  end_page: 75
+  prompt_sha256: 1c8fa251b82554b6ed8ac6d0e4c6b7b53935e767c604cfcfd317b8081605567b
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Journeys_Through_the_Radiant_Citadel_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0179
+  title: In the Mists of Manivarsha
+  source_book: Journeys Through the Radiant Citadel
+  publisher: Wizards of the Coast
+  page_count: 10
+  start_page: 120
+  end_page: 129
+  prompt_sha256: 1c2b1cc4c1db07de5a8742732cc44c127f2d425f84c4abef158dcf149389d7e4
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Journeys_Through_the_Radiant_Citadel_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0177
+  title: Gold for Fools and Princes
+  source_book: Journeys Through the Radiant Citadel
+  publisher: Wizards of the Coast
+  page_count: 11
+  start_page: 92
+  end_page: 102
+  prompt_sha256: c44e6ced06baa2e36ce5608b4738806eb56630a0170a6acf29a4bd3562615240
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Journeys_Through_the_Radiant_Citadel_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0178
+  title: Trail of Destruction
+  source_book: Journeys Through the Radiant Citadel
+  publisher: Wizards of the Coast
+  page_count: 11
+  start_page: 106
+  end_page: 116
+  prompt_sha256: 2b8ffc8d1079ca6adfc72cbab93109242f34763200f04accae9387db3f57c6e6
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Journeys_Through_the_Radiant_Citadel_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0176
+  title: Sins of Our Elders
+  source_book: Journeys Through the Radiant Citadel
+  publisher: Wizards of the Coast
+  page_count: 12
+  start_page: 78
+  end_page: 89
+  prompt_sha256: ee5be55fee1a9ad2885b9918daeffdb0d767d0cfedc63cbcc428a2ca01e90dd5
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Journeys_Through_the_Radiant_Citadel_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0173
+  title: Written in Blood
+  source_book: Journeys Through the Radiant Citadel
+  publisher: Wizards of the Coast
+  page_count: 11
+  start_page: 34
+  end_page: 44
+  prompt_sha256: bdff8f8653e7df9ba7d94f26cfee19b66270080f6736b3aab2535ed79c2790d9
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Journeys_Through_the_Radiant_Citadel_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0172
+  title: Salted Legacy
+  source_book: Journeys Through the Radiant Citadel
+  publisher: Wizards of the Coast
+  page_count: 13
+  start_page: 18
+  end_page: 30
+  prompt_sha256: a047ebe08c34bb3d1fa17c71502540621387fd21e025f700bf6662b0f57f7067
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Journeys_Through_the_Radiant_Citadel_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0180
+  title: Between Tangled Roots
+  source_book: Journeys Through the Radiant Citadel
+  publisher: Wizards of the Coast
+  page_count: 12
+  start_page: 134
+  end_page: 145
+  prompt_sha256: d09495f3079c4d1b105fabf403517a78538d20afb3fa553cf7c922cbb5b630a7
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Journeys_Through_the_Radiant_Citadel_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0189
+  title: Tockworth's Clockworks
+  source_book: Keys from the Golden Vault
+  publisher: Wizards of the Coast
+  page_count: 16
+  start_page: 71
+  end_page: 86
+  prompt_sha256: 9a814949da74161c06d5d5b26721a6450f6b946b32cd19066b481c9fab1b4500
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Keys_from_the_Golden_Vault_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0185
+  title: The Murkmire Malevolence
+  source_book: Keys from the Golden Vault
+  publisher: Wizards of the Coast
+  page_count: 16
+  start_page: 11
+  end_page: 26
+  prompt_sha256: 18107a4f268969a39fa23029a760020d6a715761c9192f0105a726b00cd4cfad
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Keys_from_the_Golden_Vault_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0195
+  title: Affair on the Concordant Express
+  source_book: Keys from the Golden Vault
+  publisher: Wizards of the Coast
+  page_count: 16
+  start_page: 161
+  end_page: 176
+  prompt_sha256: d4066585c54589f63fc0097f846bfc3be6b4597e871ccae6bd84f2c22af5d838
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Keys_from_the_Golden_Vault_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0197
+  title: Fire and Darkness
+  source_book: Keys from the Golden Vault
+  publisher: Wizards of the Coast
+  page_count: 13
+  start_page: 195
+  end_page: 207
+  prompt_sha256: da709ecd1a793a209e8049470e77e897620e6937954e939ffb7e781d86ef1f2f
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Keys_from_the_Golden_Vault_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0044
+  title: The Golden Acorn Heist
+  source_book: Labyrinth Adventures
+  publisher: Kobold Press
+  page_count: 15
+  start_page: 57
+  end_page: 71
+  prompt_sha256: f77ae1761ec9c1dd190006363f2312da948ad56ec542068cc28aaefce9235f74
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/KP-Labyrinth-Adventures_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0042
+  title: Chasing the Inferno
+  source_book: Labyrinth Adventures
+  publisher: Kobold Press
+  page_count: 16
+  start_page: 25
+  end_page: 40
+  prompt_sha256: 5807633684f9d4d02e3a61b7919a86ac2d4793bb31b32fec60f4a3158c40cef2
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/KP-Labyrinth-Adventures_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0046
+  title: Into Dreamland
+  source_book: Labyrinth Adventures
+  publisher: Kobold Press
+  page_count: 14
+  start_page: 91
+  end_page: 104
+  prompt_sha256: 3d01ef078ee980d84ad3449b8b76f920e401c18f4f6b3f3cc8d061acd2a02da2
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/KP-Labyrinth-Adventures_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0043
+  title: Song of the Void
+  source_book: Labyrinth Adventures
+  publisher: Kobold Press
+  page_count: 16
+  start_page: 41
+  end_page: 56
+  prompt_sha256: d2c7a713dcecf8cd18479d125c077c6554eb7a27cf8565f87214b16e8b48347a
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/KP-Labyrinth-Adventures_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0049
+  title: In the Court of the Clockwork Queen
+  source_book: Labyrinth Adventures
+  publisher: Kobold Press
+  page_count: 16
+  start_page: 142
+  end_page: 157
+  prompt_sha256: 3f213d49d2b6e9fa654f851366d0d10b558f8877b63810c3ab8a6fb1e8b5294a
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/KP-Labyrinth-Adventures_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0274
+  title: Feeder Trenches
+  source_book: 'Phandelver and Below: The Shattered Obelisk'
+  publisher: Wizards of the Coast
+  page_count: 3
+  start_page: 161
+  end_page: 163
+  prompt_sha256: 242476d41716eec44d474fcb364a11981c9c330819a981daed80aa71e7e77c26
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Phandelver_and_Below_The_Shattered_Obelisk_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0275
+  title: Labyrinth of Eyes
+  source_book: 'Phandelver and Below: The Shattered Obelisk'
+  publisher: Wizards of the Coast
+  page_count: 4
+  start_page: 164
+  end_page: 167
+  prompt_sha256: 0ff73c7ec98747c4dc6abb06294735b05415d3f8ff9bbc72afaea3a62cc024b4
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Phandelver_and_Below_The_Shattered_Obelisk_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0266
+  title: Cragmaw Castle
+  source_book: 'Phandelver and Below: The Shattered Obelisk'
+  publisher: Wizards of the Coast
+  page_count: 6
+  start_page: 58
+  end_page: 63
+  prompt_sha256: b5f964ad86a037568259f16a04e638cc2776621ab7ef11c3b8320727309a4341
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Phandelver_and_Below_The_Shattered_Obelisk_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0271
+  title: Crypt of the Talhund
+  source_book: 'Phandelver and Below: The Shattered Obelisk'
+  publisher: Wizards of the Coast
+  page_count: 11
+  start_page: 117
+  end_page: 127
+  prompt_sha256: eae21e57c7174377b276865a5a710b071b035ee625a8fcd468b033d8dc85bb81
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Phandelver_and_Below_The_Shattered_Obelisk_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0272
+  title: Gibbet Crossing
+  source_book: 'Phandelver and Below: The Shattered Obelisk'
+  publisher: Wizards of the Coast
+  page_count: 11
+  start_page: 127
+  end_page: 137
+  prompt_sha256: 40de8e3f2aa5282daf6bdc2aa51f5adb12135ba36b39a6b65a06765af75a4bd0
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Phandelver_and_Below_The_Shattered_Obelisk_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0269
+  title: Zorzula's Rest
+  source_book: 'Phandelver and Below: The Shattered Obelisk'
+  publisher: Wizards of the Coast
+  page_count: 14
+  start_page: 88
+  end_page: 101
+  prompt_sha256: f97c97fe97530dce6694b337c3b5cd877ed7024bcae15f302d3c212c8a94d68d
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Phandelver_and_Below_The_Shattered_Obelisk_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0267
+  title: Wave Echo Cave
+  source_book: 'Phandelver and Below: The Shattered Obelisk'
+  publisher: Wizards of the Coast
+  page_count: 11
+  start_page: 65
+  end_page: 75
+  prompt_sha256: 6a81c69400ec6228c4532d5beb9fb5e9f5e125267de10255b7037e7d6e9c28a2
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Phandelver_and_Below_The_Shattered_Obelisk_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0276
+  title: Beyond a Lightless Star
+  source_book: 'Phandelver and Below: The Shattered Obelisk'
+  publisher: Wizards of the Coast
+  page_count: 32
+  start_page: 169
+  end_page: 200
+  prompt_sha256: 1f4bddcbb838fa68b226b0eed7e15bbcac2ef2bc7b6dcc611414d9452ca3cc5f
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Phandelver_and_Below_The_Shattered_Obelisk_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0263
+  title: Cragmaw Hideout
+  source_book: 'Phandelver and Below: The Shattered Obelisk'
+  publisher: Wizards of the Coast
+  page_count: 7
+  start_page: 19
+  end_page: 25
+  prompt_sha256: 8608a6328d79c4db15edfdd83cc902cf107454fdf9097881cf391d3bd467772d
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Phandelver_and_Below_The_Shattered_Obelisk_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0265
+  title: Ruins of Thundertree
+  source_book: 'Phandelver and Below: The Shattered Obelisk'
+  publisher: Wizards of the Coast
+  page_count: 8
+  start_page: 50
+  end_page: 57
+  prompt_sha256: 9c68a0114b641764b85d821fa012a68a5ccd133dbc0098a6bc3ee67fdc43ca21
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Phandelver_and_Below_The_Shattered_Obelisk_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0273
+  title: Illithinoch
+  source_book: 'Phandelver and Below: The Shattered Obelisk'
+  publisher: Wizards of the Coast
+  page_count: 15
+  start_page: 146
+  end_page: 160
+  prompt_sha256: 2615569d84d8e088733065dfe5f03c60fc2cbdc35090bc3f6f2668ded5ca07ea
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Phandelver_and_Below_The_Shattered_Obelisk_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0037
+  title: Beyond the Crystal Cave
+  source_book: Quests from the Infinite Staircase
+  publisher: Wizards of the Coast
+  page_count: 26
+  start_page: 76
+  end_page: 101
+  prompt_sha256: 8cc04556d6cede1b851b894650fd384225123fce0c1664b3b40c1d96915a56e5
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Quests_From_the_Infinite_Staircase_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0057
+  title: Find the Lost Expedition
+  source_book: Secrets of the Drow Trilogy
+  publisher: Midnight Tower
+  page_count: 40
+  start_page: 44
+  end_page: 83
+  prompt_sha256: 7ebf1124e109ab3200809e0f7caf0a331196f380992e9ee1cea308a48d04e5a7
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Secrets-of-the-Drow-Trilogy_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0056
+  title: Troubles in Winterhold
+  source_book: Secrets of the Drow Trilogy
+  publisher: Midnight Tower
+  page_count: 40
+  start_page: 4
+  end_page: 43
+  prompt_sha256: fa78057d43531891715de82b004dc29b8c05750721d2bcb117ce3baeb3318364
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Secrets-of-the-Drow-Trilogy_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0014
+  title: Expert Treasure Hunters
+  source_book: Shire Adventures
+  publisher: Free League Publishing
+  page_count: 6
+  start_page: 64
+  end_page: 69
+  prompt_sha256: 29957c8008f73fd385325363883f90f6f98e111fb00edc33e147e236904a0a48
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/shire-adventures_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0015
+  title: Most Excellent Fireworks
+  source_book: Shire Adventures
+  publisher: Free League Publishing
+  page_count: 4
+  start_page: 70
+  end_page: 73
+  prompt_sha256: 41963f51f8c2019299b26a2925215567785d41e30da5f30d391196ff4400b9ca
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/shire-adventures_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0016
+  title: Involuntary Postmen
+  source_book: Shire Adventures
+  publisher: Free League Publishing
+  page_count: 5
+  start_page: 74
+  end_page: 78
+  prompt_sha256: 9330fac1ca399d286814cf1b6bdc03403c9b76054f5aa1ab5c1806a5f45ca5fb
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/shire-adventures_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0017
+  title: To Soothe a Savage Beast
+  source_book: Shire Adventures
+  publisher: Free League Publishing
+  page_count: 7
+  start_page: 79
+  end_page: 85
+  prompt_sha256: 2554167893ffea160bfb5206763687e2994e1103edebb1ea391378c6e8a35246
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/shire-adventures_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0311
+  title: Quest for the Giant Relics
+  source_book: Storm King's Thunder
+  publisher: Wizards of the Coast
+  page_count: 2
+  start_page: 130
+  end_page: 131
+  prompt_sha256: 56b231291fd2f1fd5c15c7219b6b0d14da6e4a45102d2ee24d28ab0435653ee7
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Storm_King_s_Thunder_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0319
+  title: The Grand Dame
+  source_book: Storm King's Thunder
+  publisher: Wizards of the Coast
+  page_count: 4
+  start_page: 216
+  end_page: 219
+  prompt_sha256: bee372034073375ee355629d6faa862a7a6024d9e490a1d082df9664715ecc51
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Storm_King_s_Thunder_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0305
+  title: Dripping Caves
+  source_book: Storm King's Thunder
+  publisher: Wizards of the Coast
+  page_count: 5
+  start_page: 28
+  end_page: 32
+  prompt_sha256: a8e6f65a6b026c39e2ceb3dac832d3e7e26634ce8fee0ed53e714c05fcb08283
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Storm_King_s_Thunder_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0314
+  title: Berg of the Frost Giants
+  source_book: Storm King's Thunder
+  publisher: Wizards of the Coast
+  page_count: 12
+  start_page: 155
+  end_page: 166
+  prompt_sha256: 725444a9516985b78c437eff1e52633fd01246d7eb4d179ad69063479b3e74cb
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Storm_King_s_Thunder_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0304
+  title: A Great Upheaval
+  source_book: Storm King's Thunder
+  publisher: Wizards of the Coast
+  page_count: 14
+  start_page: 19
+  end_page: 32
+  prompt_sha256: 2563f63d6c07d06bc09d920e20528f5048a05927e5a0e68658f87d55037dca55
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Storm_King_s_Thunder_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0316
+  title: Castle of the Cloud Giants
+  source_book: Storm King's Thunder
+  publisher: Wizards of the Coast
+  page_count: 14
+  start_page: 187
+  end_page: 200
+  prompt_sha256: 91e0b82abed85a08c5b38676e2dd509e7df0ea6f18c60e158b75637e92591f87
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Storm_King_s_Thunder_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0306
+  title: Tower of Zephyros
+  source_book: Storm King's Thunder
+  publisher: Wizards of the Coast
+  page_count: 5
+  start_page: 32
+  end_page: 36
+  prompt_sha256: 2ab546fb2aa3ac159e2da46311b1a34a68b8485523ac45362d47e1897a77ef86
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Storm_King_s_Thunder_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0310
+  title: Eye of the All-Father
+  source_book: Storm King's Thunder
+  publisher: Wizards of the Coast
+  page_count: 16
+  start_page: 121
+  end_page: 136
+  prompt_sha256: 2a9d8dd62e54aaf244b536e8fb6ef7523595a55f65f5d61a24ca7601ab388683
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Storm_King_s_Thunder_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0317
+  title: Hold of the Storm Giants
+  source_book: Storm King's Thunder
+  publisher: Wizards of the Coast
+  page_count: 14
+  start_page: 201
+  end_page: 214
+  prompt_sha256: a4bce3bf06986e8bf5b9784894098ced7258128a1d943418afb3bb5106a855db
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Storm_King_s_Thunder_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0253
+  title: Secrets in Sedgemoor
+  source_book: 'Strixhaven: A Curriculum of Chaos'
+  publisher: Wizards of the Coast
+  page_count: 4
+  start_page: 92
+  end_page: 95
+  prompt_sha256: 47b75aabce7148a4793ecf62fe56705ad6a80d6d77a0de36fd51410f94f96a9d
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Strixhaven_A_Curriculum_of_Chaos_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0255
+  title: The Scriptoria Collections
+  source_book: 'Strixhaven: A Curriculum of Chaos'
+  publisher: Wizards of the Coast
+  page_count: 5
+  start_page: 114
+  end_page: 118
+  prompt_sha256: 1829ff2c727d2fd2273af3fd35177c6dc4a64a0a05aace71e1bc3b0d460fae82
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Strixhaven_A_Curriculum_of_Chaos_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0256
+  title: Fate at Furygale
+  source_book: 'Strixhaven: A Curriculum of Chaos'
+  publisher: Wizards of the Coast
+  page_count: 5
+  start_page: 130
+  end_page: 134
+  prompt_sha256: 0373d2c7df11e201748712054000fca7f1538b55581bb0108d3a1207e66976cc
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Strixhaven_A_Curriculum_of_Chaos_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0251
+  title: Campus Kerfuffle
+  source_book: 'Strixhaven: A Curriculum of Chaos'
+  publisher: Wizards of the Coast
+  page_count: 36
+  start_page: 60
+  end_page: 95
+  prompt_sha256: 9f0b102c7ae14a94e8fe0654a2ab3e1880e17f9998ab64e3a71c259947ffdbbd
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Strixhaven_A_Curriculum_of_Chaos_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0257
+  title: The Magister's Masquerade
+  source_book: 'Strixhaven: A Curriculum of Chaos'
+  publisher: Wizards of the Coast
+  page_count: 31
+  start_page: 125
+  end_page: 155
+  prompt_sha256: 2fc6e4acdb0b81ea126dd8c83f69acd044a8650465b28d4a02ea4a35c44f450f
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Strixhaven_A_Curriculum_of_Chaos_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0258
+  title: Midnight at Lorehold
+  source_book: 'Strixhaven: A Curriculum of Chaos'
+  publisher: Wizards of the Coast
+  page_count: 7
+  start_page: 149
+  end_page: 155
+  prompt_sha256: bc9caab523231c9d88b5c39283509b617c22fddbdfac4020b6aa0216f48e5dbf
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Strixhaven_A_Curriculum_of_Chaos_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0260
+  title: Clue in the Bayou
+  source_book: 'Strixhaven: A Curriculum of Chaos'
+  publisher: Wizards of the Coast
+  page_count: 6
+  start_page: 160
+  end_page: 165
+  prompt_sha256: 073d7b3a94c9d50b84488064a7802b4684b8da6ed8c8b678bac8d8d84b4a99ff
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Strixhaven_A_Curriculum_of_Chaos_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0259
+  title: A Reckoning in Ruins
+  source_book: 'Strixhaven: A Curriculum of Chaos'
+  publisher: Wizards of the Coast
+  page_count: 25
+  start_page: 157
+  end_page: 181
+  prompt_sha256: 89f526e9dd118d32c1106951445b665a90fe0827faf51a7273ab8f1096c6d6f8
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Strixhaven_A_Curriculum_of_Chaos_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0009
+  title: Kings of Little Kingdoms
+  source_book: Tales From Eriador
+  publisher: Free League Publishing
+  page_count: 14
+  start_page: 45
+  end_page: 58
+  prompt_sha256: a18775985b449943d07ffb2d6c4b5dca811266ae66e2c8683f41302398fb04a3
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Tales_From_Eriador_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0010
+  title: Not To Strike Without Need
+  source_book: Tales From Eriador
+  publisher: Free League Publishing
+  page_count: 16
+  start_page: 59
+  end_page: 74
+  prompt_sha256: d08ddb08fe1821f919efc60fa65e11fc3323a800a91a32691fd6e915a02a41ad
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Tales_From_Eriador_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0007
+  title: A Troll-hole, if Ever There Was One
+  source_book: Tales From Eriador
+  publisher: Free League Publishing
+  page_count: 18
+  start_page: 9
+  end_page: 26
+  prompt_sha256: 33966e08622e4a10c6c7fce04f89bc4030fbe66b367ed107d211105d997c2009
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Tales_From_Eriador_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0008
+  title: Messing About in Boats
+  source_book: Tales From Eriador
+  publisher: Free League Publishing
+  page_count: 18
+  start_page: 27
+  end_page: 44
+  prompt_sha256: 14005f0ea409a83bbc1d92cd6d71a18a98d7938824c86381b8a25f9a740afd0d
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Tales_From_Eriador_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0031
+  title: White Plume Mountain
+  source_book: Tales from the Yawning Portal
+  publisher: Wizards of the Coast
+  page_count: 14
+  start_page: 95
+  end_page: 108
+  prompt_sha256: 8801cd4625dddbf18d985ffdf0f77f3eefd49a3f695f2a7b3c75be1800a9040f
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Tales_from_the_Yawning_Portal_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0028
+  title: The Sunless Citadel
+  source_book: Tales from the Yawning Portal
+  publisher: Wizards of the Coast
+  page_count: 24
+  start_page: 9
+  end_page: 32
+  prompt_sha256: 93d0c7bee07f09e5f414a7ffac5d83e92e50b80e3d797705dc55d929f32702c1
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Tales_from_the_Yawning_Portal_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0030
+  title: The Hidden Shrine of Tamoachan
+  source_book: Tales from the Yawning Portal
+  publisher: Wizards of the Coast
+  page_count: 34
+  start_page: 61
+  end_page: 94
+  prompt_sha256: 9993e82ce328b711d2119050ac894b9d9015ca759906a6827ea03d0f899221fa
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Tales_from_the_Yawning_Portal_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0033
+  title: Against the Giants
+  source_book: Tales from the Yawning Portal
+  publisher: Wizards of the Coast
+  page_count: 46
+  start_page: 165
+  end_page: 210
+  prompt_sha256: 7e49663a2249e3ca0e67371e9c2fe2f3b49db63858aa763d674156c1e9a9040e
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Tales_from_the_Yawning_Portal_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0029
+  title: The Forge of Fury
+  source_book: Tales from the Yawning Portal
+  publisher: Wizards of the Coast
+  page_count: 28
+  start_page: 33
+  end_page: 60
+  prompt_sha256: a10ee4af4d5f714830b693789c9f71da456a2d156a80d0ed230aa3aac192f16e
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Tales_from_the_Yawning_Portal_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0018
+  title: Hold My Beer
+  source_book: The Game Master's Book of Legendary Dragons
+  publisher: Media Lab Books
+  page_count: 14
+  start_page: 184
+  end_page: 197
+  prompt_sha256: ef85691a3885f2edca12163588d08f530d6432ea638955b11a1110d6f56cf45a
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/TGMBo_Legendary_Dragons_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0019
+  title: Dragon Hunt
+  source_book: The Game Master's Book of Legendary Dragons
+  publisher: Media Lab Books
+  page_count: 24
+  start_page: 198
+  end_page: 221
+  prompt_sha256: b56000e5f4cff4eb1b5712ea39ae06adb454a71b4a3c264fa236602b079987ba
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/TGMBo_Legendary_Dragons_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0020
+  title: Hell Hath Fury
+  source_book: The Game Master's Book of Legendary Dragons
+  publisher: Media Lab Books
+  page_count: 10
+  start_page: 222
+  end_page: 231
+  prompt_sha256: fe4d6e9c385be6d80c48e47fba5ce1e5d797dcb207ea03546a2fc8a3591cd23e
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/TGMBo_Legendary_Dragons_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0090
+  title: Mother Knows Best
+  source_book: The Game Master's Book of Random Encounters
+  publisher: Topix Media Lab
+  page_count: 8
+  start_page: 24
+  end_page: 31
+  prompt_sha256: 936cd5ae41a992e08436ded1e4107835b70019988f67dd8b96683cbb217dcaae
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/TGMBo_Random_Encounters-s_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0091
+  title: Special Delivery
+  source_book: The Game Master's Book of Random Encounters
+  publisher: Topix Media Lab
+  page_count: 10
+  start_page: 32
+  end_page: 41
+  prompt_sha256: a15d4e4eabcc5d48fbae703f196a0b73e0424cd74d71ab9f6ddd09bcaba87ba1
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/TGMBo_Random_Encounters-s_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0093
+  title: The Tomb of the Forgotten Paladin
+  source_book: The Game Master's Book of Random Encounters
+  publisher: Topix Media Lab
+  page_count: 10
+  start_page: 58
+  end_page: 67
+  prompt_sha256: c75cb346d6d4698baca4774b9d6decf908f896454f16cb74d9770207542e4f9b
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/TGMBo_Random_Encounters-s_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0089
+  title: Presto Change-o
+  source_book: The Game Master's Book of Random Encounters
+  publisher: Topix Media Lab
+  page_count: 12
+  start_page: 12
+  end_page: 23
+  prompt_sha256: 675146b2929ca48b66d2d142e0ddff5250e965bd393cdb178e3ab7d1fb724363
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/TGMBo_Random_Encounters-s_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0095
+  title: One Last Job
+  source_book: The Game Master's Book of Random Encounters
+  publisher: Topix Media Lab
+  page_count: 14
+  start_page: 78
+  end_page: 91
+  prompt_sha256: b9c410263b893d6fd4bf542f115db30f1b39026afe40382255503f7bc28ccbbd
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/TGMBo_Random_Encounters-s_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0092
+  title: An Actor's Life
+  source_book: The Game Master's Book of Random Encounters
+  publisher: Topix Media Lab
+  page_count: 16
+  start_page: 42
+  end_page: 57
+  prompt_sha256: '0659fb3b3d8b9cc5bb600f9c833822f390f8f609ce45fb84f3a0254b7823c900'
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/TGMBo_Random_Encounters-s_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0094
+  title: Nature vs. Nurture
+  source_book: The Game Master's Book of Random Encounters
+  publisher: Topix Media Lab
+  page_count: 10
+  start_page: 68
+  end_page: 77
+  prompt_sha256: e1134bc9dc0e41e4ac8681a9126aba1a67057058c9c2af435a8f56f50472a0f7
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/TGMBo_Random_Encounters-s_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0064
+  title: The Sunken Temple of Sirenholm
+  source_book: The Prophecy of Nine Omens Trilogy
+  publisher: Midnight Tower
+  page_count: 36
+  start_page: 78
+  end_page: 113
+  prompt_sha256: 24f79a913dc0c2dc81fa2969ea53bb27b8ebe3a26bebe602e319ff89bc3e6a1c
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/The-Prophecy-Of-Nine-Omens-Trilogy_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0280
+  title: Free Sir Talavar
+  source_book: The Wild Beyond the Witchlight
+  publisher: Wizards of the Coast
+  page_count: 4
+  start_page: 68
+  end_page: 71
+  prompt_sha256: b7241d63e9e78292bc92bec1e11ae1a5228b4aa9b6ebe9f9776ae78bd4018aa1
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/The_Wild_Beyond_the_Witchlight_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0285
+  title: Motherhorn
+  source_book: The Wild Beyond the Witchlight
+  publisher: Wizards of the Coast
+  page_count: 21
+  start_page: 149
+  end_page: 169
+  prompt_sha256: b0e88d7588d87b11533ef017ae8165de6386f0711d1f0a5eb7e18fd3d9302641
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/The_Wild_Beyond_the_Witchlight_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0286
+  title: Palace of Heart's Desire
+  source_book: The Wild Beyond the Witchlight
+  publisher: Wizards of the Coast
+  page_count: 37
+  start_page: 171
+  end_page: 207
+  prompt_sha256: 1baee4e664433ca640fc7e039cb3f5abb554c8093459d12d183d3bad05aededd
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/The_Wild_Beyond_the_Witchlight_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0279
+  title: Burly's Plan / The Heist
+  source_book: The Wild Beyond the Witchlight
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 51
+  end_page: 51
+  prompt_sha256: 440633a1e80e818bbb0c1fc1520dddc7015b73dca31c8b1d0e06b6df77204423
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/The_Wild_Beyond_the_Witchlight_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0283
+  title: Fey Beacons
+  source_book: The Wild Beyond the Witchlight
+  publisher: Wizards of the Coast
+  page_count: 2
+  start_page: 143
+  end_page: 144
+  prompt_sha256: 43e74a965040cf585ce42c32cec0d0aeb6f0593d5e3f02ec306683e31d8c316b
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/The_Wild_Beyond_the_Witchlight_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0284
+  title: Brigganock Mine
+  source_book: The Wild Beyond the Witchlight
+  publisher: Wizards of the Coast
+  page_count: 5
+  start_page: 145
+  end_page: 149
+  prompt_sha256: a5d9f3c5ed6a05ca89acd621431e78ee5c58dfe95d50a770a6b8913fc6a423f1
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/The_Wild_Beyond_the_Witchlight_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0282
+  title: Loomlurch
+  source_book: The Wild Beyond the Witchlight
+  publisher: Wizards of the Coast
+  page_count: 18
+  start_page: 113
+  end_page: 130
+  prompt_sha256: cbb4a088608915ea09bc1a3ef76f2b0238cc89665ff4bed7a95981925e35c939
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/The_Wild_Beyond_the_Witchlight_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0281
+  title: Downfall
+  source_book: The Wild Beyond the Witchlight
+  publisher: Wizards of the Coast
+  page_count: 24
+  start_page: 74
+  end_page: 97
+  prompt_sha256: f5ee71af2071f8f81375b79e6206158103e28fc075c91e1076653bd520e4876c
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/The_Wild_Beyond_the_Witchlight_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0002
+  title: The Sea-prince of the Shore
+  source_book: Trials of Saruman
+  publisher: Free League Publishing
+  page_count: 16
+  start_page: 41
+  end_page: 56
+  prompt_sha256: 53d2f43a5dd9528f4f7d108464c92aa1733c303b3173d3ecd4a48ae054769920
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Trials_of_Saruman_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0003
+  title: The Disaster of the Gladden Fields
+  source_book: Trials of Saruman
+  publisher: Free League Publishing
+  page_count: 18
+  start_page: 57
+  end_page: 74
+  prompt_sha256: 73c1c4fee9f09b7e6a69bdd8f88edb984cd4096de8f1f6122c3f9fba73e72aee
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Trials_of_Saruman_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0005
+  title: The Quest of Moria
+  source_book: Trials of Saruman
+  publisher: Free League Publishing
+  page_count: 18
+  start_page: 97
+  end_page: 114
+  prompt_sha256: 197e7af30b525a02b440e4656ac7ef5e9741b0bc1f604debf2a60ae5e67fcf42
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Trials_of_Saruman_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0088
+  title: Eve of Ruin
+  source_book: 'Vecna: Eve of Ruin'
+  publisher: Wizards of the Coast
+  page_count: 13
+  start_page: 191
+  end_page: 203
+  prompt_sha256: 171baf98db92925860bd1f30a6b7eeff1f63f9740dc8188938f16a86534a9868
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Vecna_Eve_of_Ruin_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0291
+  title: 'Encounter 2: Mistshore'
+  source_book: 'Waterdeep: Dragon Heist'
+  publisher: Wizards of the Coast
+  page_count: 4
+  start_page: 65
+  end_page: 68
+  prompt_sha256: b4b6f5bedefe892e9b10006b42fa5b5cdac7e88d4a9526b260154bfd775935c3
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Waterdeep_Dragon_Heist_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0292
+  title: 'Encounter 4: Mausoleum'
+  source_book: 'Waterdeep: Dragon Heist'
+  publisher: Wizards of the Coast
+  page_count: 4
+  start_page: 69
+  end_page: 72
+  prompt_sha256: '09d48a6dda7ad204720289636f1e0024397f08424ac545c2111f405b5507d8d9'
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Waterdeep_Dragon_Heist_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0293
+  title: 'Encounter 6: Theater'
+  source_book: 'Waterdeep: Dragon Heist'
+  publisher: Wizards of the Coast
+  page_count: 4
+  start_page: 73
+  end_page: 76
+  prompt_sha256: 21729b4708666b3e65835418a2da3f2164416ae89fa91d84fda2afdead364699
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Waterdeep_Dragon_Heist_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0289
+  title: Fireball
+  source_book: 'Waterdeep: Dragon Heist'
+  publisher: Wizards of the Coast
+  page_count: 14
+  start_page: 43
+  end_page: 56
+  prompt_sha256: 1dd70b8d19a46aca584bb4dad7510d77de3538658dc5cdb88a2fb1f66673128a
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Waterdeep_Dragon_Heist_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0299
+  title: Spring Madness
+  source_book: 'Waterdeep: Dragon Heist'
+  publisher: Wizards of the Coast
+  page_count: 16
+  start_page: 99
+  end_page: 114
+  prompt_sha256: 291667fc583ec19875d87a5c48bd5fda190561d0d0caf05fa668d33717847bd3
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Waterdeep_Dragon_Heist_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0300
+  title: Hell of a Summer
+  source_book: 'Waterdeep: Dragon Heist'
+  publisher: Wizards of the Coast
+  page_count: 16
+  start_page: 115
+  end_page: 130
+  prompt_sha256: 6181c7fb7e278c25b4e959e082e3b72ac52ef8085f29d2d4c3ffa3090749e66b
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Waterdeep_Dragon_Heist_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0330
+  title: Slitherswamp
+  source_book: 'Waterdeep: Dungeon of the Mad Mage'
+  publisher: Wizards of the Coast
+  page_count: 8
+  start_page: 109
+  end_page: 116
+  prompt_sha256: cc4d3fa70b848d3a05714231ae2485cc6832e2629c8de75b4887c73c438390d4
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Waterdeep_Dungeon_of_the_Mad_Mage_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0333
+  title: Troglodyte Warrens
+  source_book: 'Waterdeep: Dungeon of the Mad Mage'
+  publisher: Wizards of the Coast
+  page_count: 8
+  start_page: 151
+  end_page: 158
+  prompt_sha256: c3bef742282ce03031e4c6fb5135199702e285fce789d1088799bc02bc2a0bf4
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Waterdeep_Dungeon_of_the_Mad_Mage_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0326
+  title: Twisted Caverns
+  source_book: 'Waterdeep: Dungeon of the Mad Mage'
+  publisher: Wizards of the Coast
+  page_count: 10
+  start_page: 59
+  end_page: 68
+  prompt_sha256: 601b39fbd653eb880bbbfdf4036f82e8f320fb179139b15db5e8b9687868aedb
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Waterdeep_Dungeon_of_the_Mad_Mage_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0334
+  title: Maze Level
+  source_book: 'Waterdeep: Dungeon of the Mad Mage'
+  publisher: Wizards of the Coast
+  page_count: 12
+  start_page: 159
+  end_page: 170
+  prompt_sha256: c30cfa7d52af5368fe80c93f5c31b86d8de19018893e92bd19800d3c04608eb3
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Waterdeep_Dungeon_of_the_Mad_Mage_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0338
+  title: Crystal Labyrinth / Stardock
+  source_book: 'Waterdeep: Dungeon of the Mad Mage'
+  publisher: Wizards of the Coast
+  page_count: 12
+  start_page: 209
+  end_page: 220
+  prompt_sha256: 7493ac23f55c5ca4c25f74a6a6053539dae0fb250d9e28c7e4e5efbd0a700be9
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Waterdeep_Dungeon_of_the_Mad_Mage_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0335
+  title: Trobriand's Graveyard
+  source_book: 'Waterdeep: Dungeon of the Mad Mage'
+  publisher: Wizards of the Coast
+  page_count: 8
+  start_page: 171
+  end_page: 178
+  prompt_sha256: 503f3f1ef72fd8aa4dd6bb367692ffa4f8bd3865c9b825828b6e1180995f12f6
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Waterdeep_Dungeon_of_the_Mad_Mage_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0327
+  title: Wyllowwood
+  source_book: 'Waterdeep: Dungeon of the Mad Mage'
+  publisher: Wizards of the Coast
+  page_count: 12
+  start_page: 69
+  end_page: 80
+  prompt_sha256: 204018a0c67602d2424b75eb76d746d660892b914ce2d714bc2dd70a6e4e3bfe
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Waterdeep_Dungeon_of_the_Mad_Mage_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0345
+  title: Mad Wizard's Lair
+  source_book: 'Waterdeep: Dungeon of the Mad Mage'
+  publisher: Wizards of the Coast
+  page_count: 14
+  start_page: 289
+  end_page: 302
+  prompt_sha256: e03ee34aa6c8c764f7f3b4064a50afc5e29cdcc3013dad5ecfb411e5f9a7a042
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Waterdeep_Dungeon_of_the_Mad_Mage_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0337
+  title: Obstacle Course
+  source_book: 'Waterdeep: Dungeon of the Mad Mage'
+  publisher: Wizards of the Coast
+  page_count: 16
+  start_page: 193
+  end_page: 208
+  prompt_sha256: 1de798f6c4e8ec402e36dc2bbe8bfdb20edeaa95827591f609a182a1cac118e6
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Waterdeep_Dungeon_of_the_Mad_Mage_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0323
+  title: Dungeon Level
+  source_book: 'Waterdeep: Dungeon of the Mad Mage'
+  publisher: Wizards of the Coast
+  page_count: 14
+  start_page: 13
+  end_page: 26
+  prompt_sha256: 655dd6c0ffd7a1ba6a4d5925691e32d47ae96a158ba87360cb13559487b842d8
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Waterdeep_Dungeon_of_the_Mad_Mage_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0339
+  title: Seadeeps
+  source_book: 'Waterdeep: Dungeon of the Mad Mage'
+  publisher: Wizards of the Coast
+  page_count: 10
+  start_page: 221
+  end_page: 230
+  prompt_sha256: 1bf7c088b44c0a8d8b7241e761e5cdf0faab7fb36a523163834ab1c8be2fbe18
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Waterdeep_Dungeon_of_the_Mad_Mage_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0340
+  title: Vanrakdoom
+  source_book: 'Waterdeep: Dungeon of the Mad Mage'
+  publisher: Wizards of the Coast
+  page_count: 12
+  start_page: 231
+  end_page: 242
+  prompt_sha256: 7cc9218c2e820b929fa2420e96de7850cb305827fab8773bc6068a9c85fbf539
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Waterdeep_Dungeon_of_the_Mad_Mage_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0342
+  title: Runestone Caverns
+  source_book: 'Waterdeep: Dungeon of the Mad Mage'
+  publisher: Wizards of the Coast
+  page_count: 12
+  start_page: 253
+  end_page: 264
+  prompt_sha256: 1498e8fa6355eee91d98381ea73dfcbd6bbbe8e8aeadd4b7bb18e43897896d94
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Waterdeep_Dungeon_of_the_Mad_Mage_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0205
+  title: Toil and Trouble
+  source_book: 'Icewind Dale: Rime of the Frostmaiden'
+  publisher: Wizards of the Coast
+  page_count: 6
+  start_page: 62
+  end_page: 67
+  prompt_sha256: 9789bf0bbf4426d85722bdd49acc80437835260f704208a2b274c30ffc3eb0a5
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Icewind_Dale_Rime_of_the_Frostmaiden_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0206
+  title: The Mead Must Flow
+  source_book: 'Icewind Dale: Rime of the Frostmaiden'
+  publisher: Wizards of the Coast
+  page_count: 6
+  start_page: 73
+  end_page: 78
+  prompt_sha256: 7dca9148278bf421ac21acff84af08953df950b9e84fe4e0b6088babd005b286
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Icewind_Dale_Rime_of_the_Frostmaiden_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0207
+  title: The White Moose
+  source_book: 'Icewind Dale: Rime of the Frostmaiden'
+  publisher: Wizards of the Coast
+  page_count: 6
+  start_page: 80
+  end_page: 85
+  prompt_sha256: 16e678f142e1d02f006b69806d05943101bbd908d8a9d567127fdebca1459ade
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Icewind_Dale_Rime_of_the_Frostmaiden_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0208
+  title: Mountain Climb
+  source_book: 'Icewind Dale: Rime of the Frostmaiden'
+  publisher: Wizards of the Coast
+  page_count: 6
+  start_page: 87
+  end_page: 92
+  prompt_sha256: ea4c48bcc0e92c3404dcc35fd6c3f3feaaae073bf305663e39972f84b386fda2
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Icewind_Dale_Rime_of_the_Frostmaiden_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0041
+  title: The Lost Book of Mektar
+  source_book: Labyrinth Adventures
+  publisher: Kobold Press
+  page_count: 18
+  start_page: 7
+  end_page: 24
+  prompt_sha256: 0b32b6b91eea42bd3cf4a88ed3be52f7667fe6bc2c0f168b18f6008ae36a11d3
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/KP-Labyrinth-Adventures_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0252
+  title: Campus Daredevils
+  source_book: 'Strixhaven: A Curriculum of Chaos'
+  publisher: Wizards of the Coast
+  page_count: 9
+  start_page: 78
+  end_page: 86
+  prompt_sha256: 7c935d1bbfd962c0c7aed51cf261900aa00c20ef6027b8f2f3b8e90dd4df4005
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Strixhaven_A_Curriculum_of_Chaos_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0264
+  title: Redbrands' Hideout
+  source_book: 'Phandelver and Below: The Shattered Obelisk'
+  publisher: Wizards of the Coast
+  page_count: 10
+  start_page: 36
+  end_page: 45
+  prompt_sha256: e579290c1ff1733834ba6d2d64d02899db023a4ac02e5cea1d6217c33f4414fe
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Phandelver_and_Below_The_Shattered_Obelisk_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0160
+  title: Calim Crossing
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 2
+  start_page: 156
+  end_page: 157
+  prompt_sha256: 705b8159808775c2449077dd28e56d3818c34d5bfdd0bc4806b329938d113a42
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/5.5e_Forgotten_Realms_Adventures_in_Faerun_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0254
+  title: Hunt for Mage Tower
+  source_book: 'Strixhaven: A Curriculum of Chaos'
+  publisher: Wizards of the Coast
+  page_count: 27
+  start_page: 97
+  end_page: 123
+  prompt_sha256: e17a593dc80dac1824b04ffdd2c3f78a347a7fdb4016cc1dcfb766df5080d582
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Strixhaven_A_Curriculum_of_Chaos_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0174
+  title: The Fiend of Hollow Mine
+  source_book: Journeys Through the Radiant Citadel
+  publisher: Wizards of the Coast
+  page_count: 15
+  start_page: 48
+  end_page: 62
+  prompt_sha256: 451f085fcaba2d2b06de6e39e2a4d88690751b8f61da1ee25d1709fbe5c33a8e
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Journeys_Through_the_Radiant_Citadel_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0036
+  title: When a Star Falls
+  source_book: Quests from the Infinite Staircase
+  publisher: Wizards of the Coast
+  page_count: 30
+  start_page: 46
+  end_page: 75
+  prompt_sha256: 563ff6e78c45b1b049fb2fcc6f0f2051b0fb9634d4a363627a6d7b0992c589e8
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Quests_From_the_Infinite_Staircase_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0117
+  title: The Forbidden Vale
+  source_book: Dragon Delves
+  publisher: Wizards of the Coast
+  page_count: 19
+  start_page: 105
+  end_page: 123
+  prompt_sha256: 0ddcb47cdcfbd00359881813ec81782749400b5b46196b4b7d8088ea7ebf64f1
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/5.5e_Dragon_Delves-s_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0301
+  title: Maestro's Fall
+  source_book: 'Waterdeep: Dragon Heist'
+  publisher: Wizards of the Coast
+  page_count: 16
+  start_page: 131
+  end_page: 146
+  prompt_sha256: 6d8a8aa8bfda78f4878cf2475844c62eaacc7e5303bb3af483309d86567865ed
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Waterdeep_Dragon_Heist_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0239
+  title: The Lord's Arrival
+  source_book: 'Dragonlance: Shadow of the Dragon Queen'
+  publisher: Wizards of the Coast
+  page_count: 9
+  start_page: 95
+  end_page: 103
+  prompt_sha256: f248cdf7c84bff145837174b025a6a0b29a81d84d4811c90ece3841eab4947e4
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Dragonlance_Shadow_of_the_Dragon_Queen_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0302
+  title: Winter Wizardry
+  source_book: 'Waterdeep: Dragon Heist'
+  publisher: Wizards of the Coast
+  page_count: 16
+  start_page: 147
+  end_page: 162
+  prompt_sha256: ddfa8bfaa681350d02cd5179b4218a6d924cb38c259ab4421245c91b3ae92b1f
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Waterdeep_Dragon_Heist_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0048
+  title: Threading Rava's Needle
+  source_book: Labyrinth Adventures
+  publisher: Kobold Press
+  page_count: 18
+  start_page: 124
+  end_page: 141
+  prompt_sha256: 3f9a5a95aad30bbfd66f734d683287b373c668eae4c4e84ebc7a3712e0cf9a5a
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/KP-Labyrinth-Adventures_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0011
+  title: Wonder of the Northern World
+  source_book: Tales From Eriador
+  publisher: Free League Publishing
+  page_count: 18
+  start_page: 75
+  end_page: 92
+  prompt_sha256: 0dbbc9961237ffedfd1d27043382414b495974b54cc4ebdae029812a2fd78515
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Tales_From_Eriador_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0050
+  title: Champion of Undeath
+  source_book: Labyrinth Adventures
+  publisher: Kobold Press
+  page_count: 17
+  start_page: 158
+  end_page: 174
+  prompt_sha256: 5bb6b029395afec03055d0b2da8a930bef3237b31409ee1dc9988ca50c023ab5
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/KP-Labyrinth-Adventures_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0004
+  title: There Let Them Lie Until the End
+  source_book: Trials of Saruman
+  publisher: Free League Publishing
+  page_count: 22
+  start_page: 75
+  end_page: 96
+  prompt_sha256: 4c4719e8fe9640b3e2b3ceff677be44ed5eb1e49c4aaa81b70567344fc88cdfe
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Trials_of_Saruman_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0012
+  title: The Quest of Amon Guruthos
+  source_book: Tales From Eriador
+  publisher: Free League Publishing
+  page_count: 22
+  start_page: 93
+  end_page: 114
+  prompt_sha256: 98687858d0ddaa24e8ab1b0812109d4dfc3f6b95db37765921ef2d499344fe96
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Tales_From_Eriador_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0038
+  title: Pharaoh
+  source_book: Quests from the Infinite Staircase
+  publisher: Wizards of the Coast
+  page_count: 26
+  start_page: 102
+  end_page: 127
+  prompt_sha256: 76ad4b492b876c80d5779d8169fed9d650a9e9d2c4f17044ed5b30b3f452ef45
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Quests_From_the_Infinite_Staircase_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0155
+  title: The Temple of Transmutation
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 2
+  start_page: 88
+  end_page: 89
+  prompt_sha256: 0df0221c67494dbb72c410f091146cb49a8fa348703d79c5bbb05aad6adda9db
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/5.5e_Forgotten_Realms_Adventures_in_Faerun_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0006
+  title: The Ithil-stone
+  source_book: Trials of Saruman
+  publisher: Free League Publishing
+  page_count: 27
+  start_page: 115
+  end_page: 141
+  prompt_sha256: b44f1fd6432b9c92156b6f88679e290086d0749b05777399f0dbfd627c2c4adc
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Trials_of_Saruman_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0315
+  title: Forge of the Fire Giants
+  source_book: Storm King's Thunder
+  publisher: Wizards of the Coast
+  page_count: 20
+  start_page: 167
+  end_page: 186
+  prompt_sha256: c94a0b49736bdb97ad9153387030769c138d51468f2c73b83c29fb2d91b662b9
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Storm_King_s_Thunder_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0096
+  title: The Portal Prison
+  source_book: The Game Master's Book of Random Encounters
+  publisher: Topix Media Lab
+  page_count: 10
+  start_page: 92
+  end_page: 101
+  prompt_sha256: 921bb9f88e13be2df53d0e459bc22a9f33df79c1eae6ed412c24f59e91703239
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/TGMBo_Random_Encounters-s_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0120
+  title: A Copper for a Song
+  source_book: Dragon Delves
+  publisher: Wizards of the Coast
+  page_count: 14
+  start_page: 163
+  end_page: 176
+  prompt_sha256: 786b7743887cedb96d5531198bfcb924eb84186cd3dbc6de95a6001a341e430c
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/5.5e_Dragon_Delves-s_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0328
+  title: Lost Level
+  source_book: 'Waterdeep: Dungeon of the Mad Mage'
+  publisher: Wizards of the Coast
+  page_count: 14
+  start_page: 81
+  end_page: 94
+  prompt_sha256: e8f93c1e4abc1efd14888f1bc8ba6e0b99cf175dec9577cf64c42c105de2e37d
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Waterdeep_Dungeon_of_the_Mad_Mage_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0329
+  title: Maddgoth's Castle
+  source_book: 'Waterdeep: Dungeon of the Mad Mage'
+  publisher: Wizards of the Coast
+  page_count: 14
+  start_page: 95
+  end_page: 108
+  prompt_sha256: 233cfc71def46e228ea8c463285b2c5265c7cdb3c5ce4c4afdb801982a22e4e3
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Waterdeep_Dungeon_of_the_Mad_Mage_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0261
+  title: Fortress Badlands
+  source_book: 'Strixhaven: A Curriculum of Chaos'
+  publisher: Wizards of the Coast
+  page_count: 7
+  start_page: 166
+  end_page: 172
+  prompt_sha256: e26d0adfe487b2b56567d03b99ceaae67cdde14968c42d679417a7ce0fd3f792
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Strixhaven_A_Curriculum_of_Chaos_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0039
+  title: The Lost Caverns of Tsojcanth
+  source_book: Quests from the Infinite Staircase
+  publisher: Wizards of the Coast
+  page_count: 28
+  start_page: 128
+  end_page: 155
+  prompt_sha256: d403ba9bf96da2b68e647550ea6246c3fd45304897408c7676aa6296e3641cad
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Quests_From_the_Infinite_Staircase_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0321
+  title: Doom of the Desert
+  source_book: Storm King's Thunder
+  publisher: Wizards of the Coast
+  page_count: 6
+  start_page: 225
+  end_page: 230
+  prompt_sha256: 5fe7a7e11be2985368f4d1a6aae0e98cc639193a93ee37ad4a0c0cf46d30586c
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Storm_King_s_Thunder_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0182
+  title: The Nightsea's Succor
+  source_book: Journeys Through the Radiant Citadel
+  publisher: Wizards of the Coast
+  page_count: 15
+  start_page: 168
+  end_page: 182
+  prompt_sha256: ee0eb0ef8383d8826298bca0153a9142b0e07020181f0eed48e9b747837413ed
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Journeys_Through_the_Radiant_Citadel_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0183
+  title: Buried Dynasty
+  source_book: Journeys Through the Radiant Citadel
+  publisher: Wizards of the Coast
+  page_count: 14
+  start_page: 186
+  end_page: 199
+  prompt_sha256: 025afbfdf6cdcabc3c2be92d8f74d5072f4cb4b198a3b4f1c6287b039fd09049
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Journeys_Through_the_Radiant_Citadel_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0341
+  title: Caverns of Ooze
+  source_book: 'Waterdeep: Dungeon of the Mad Mage'
+  publisher: Wizards of the Coast
+  page_count: 10
+  start_page: 243
+  end_page: 252
+  prompt_sha256: 2c3466ac813b7ffe9e7b37b8c4608dce64dba60e14112f7768368f1f8e380600
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Waterdeep_Dungeon_of_the_Mad_Mage_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0343
+  title: Terminus Level
+  source_book: 'Waterdeep: Dungeon of the Mad Mage'
+  publisher: Wizards of the Coast
+  page_count: 12
+  start_page: 265
+  end_page: 276
+  prompt_sha256: c212fd4703af5a89420ba0d78041497b440ffe70267efa9df6ab36b95def84b3
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Waterdeep_Dungeon_of_the_Mad_Mage_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0344
+  title: Shadowdusk Hold
+  source_book: 'Waterdeep: Dungeon of the Mad Mage'
+  publisher: Wizards of the Coast
+  page_count: 12
+  start_page: 277
+  end_page: 288
+  prompt_sha256: 376044d7cff89e7657472bbcd33752e326684d2d4b132360514c3838d18ad121
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Waterdeep_Dungeon_of_the_Mad_Mage_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0294
+  title: 'Encounter 7: Old Tower'
+  source_book: 'Waterdeep: Dragon Heist'
+  publisher: Wizards of the Coast
+  page_count: 5
+  start_page: 76
+  end_page: 80
+  prompt_sha256: a494064bef3453137fe346f051e71db529e75b78bd66fcad68553c39c8766e29
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Waterdeep_Dragon_Heist_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0307
+  title: Bryn Shander
+  source_book: Storm King's Thunder
+  publisher: Wizards of the Coast
+  page_count: 7
+  start_page: 38
+  end_page: 44
+  prompt_sha256: 6b2c35038d51d8593d35e6800dd3e9a12b0521d134ecb746123faddc16f99568
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Storm_King_s_Thunder_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0290
+  title: 'Encounter 1: Alley'
+  source_book: 'Waterdeep: Dragon Heist'
+  publisher: Wizards of the Coast
+  page_count: 5
+  start_page: 61
+  end_page: 65
+  prompt_sha256: a75e94db3293f8c286397f9d2ec91eb429d3dc7ffa5a0a1189202142d6f46eb5
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Waterdeep_Dragon_Heist_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0116
+  title: The Dragon of Najkir
+  source_book: Dragon Delves
+  publisher: Wizards of the Coast
+  page_count: 16
+  start_page: 83
+  end_page: 98
+  prompt_sha256: 7f93492b752b76ed5f06e67e0a934a2578953c033bd8509dbd71971fa1cc47f7
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/5.5e_Dragon_Delves-s_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0209
+  title: A Beautiful Mine
+  source_book: 'Icewind Dale: Rime of the Frostmaiden'
+  publisher: Wizards of the Coast
+  page_count: 6
+  start_page: 94
+  end_page: 99
+  prompt_sha256: 2cb6b6819c2bccf247423add9f90b33d164ed8da1d75b674d55a1a174fbcf22b
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Icewind_Dale_Rime_of_the_Frostmaiden_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0202
+  title: Black Swords
+  source_book: 'Icewind Dale: Rime of the Frostmaiden'
+  publisher: Wizards of the Coast
+  page_count: 8
+  start_page: 38
+  end_page: 45
+  prompt_sha256: a93e43535535415faf8bb1c4538e338a028a1ac9738bd41e32cd834dcbfaba98
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Icewind_Dale_Rime_of_the_Frostmaiden_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0045
+  title: Missing Darkness
+  source_book: Labyrinth Adventures
+  publisher: Kobold Press
+  page_count: 19
+  start_page: 72
+  end_page: 90
+  prompt_sha256: ccb1f40d38ad42a9397ee6c9d0ce6f2941cb1e3679823280a5a3942ffb1de86d
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/KP-Labyrinth-Adventures_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0211
+  title: Black Cabin
+  source_book: 'Icewind Dale: Rime of the Frostmaiden'
+  publisher: Wizards of the Coast
+  page_count: 6
+  start_page: 116
+  end_page: 121
+  prompt_sha256: a749510ff58029676b1f6a051f43118806f2173b66b78fbed2427f3d0a0455b1
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Icewind_Dale_Rime_of_the_Frostmaiden_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0220
+  title: Skytower Shelter
+  source_book: 'Icewind Dale: Rime of the Frostmaiden'
+  publisher: Wizards of the Coast
+  page_count: 6
+  start_page: 161
+  end_page: 166
+  prompt_sha256: 5ac329225f2851c8b144a117626bd606ec46d318642eca6f31b800381dfe0af1
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Icewind_Dale_Rime_of_the_Frostmaiden_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0218
+  title: Lost Spire of Netheril
+  source_book: 'Icewind Dale: Rime of the Frostmaiden'
+  publisher: Wizards of the Coast
+  page_count: 8
+  start_page: 145
+  end_page: 152
+  prompt_sha256: 92ee13d5014159483e4c6da0687fea45728f883fc9e2452c6ff97dc5f6e7f517
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Icewind_Dale_Rime_of_the_Frostmaiden_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0214
+  title: Dark Duchess
+  source_book: 'Icewind Dale: Rime of the Frostmaiden'
+  publisher: Wizards of the Coast
+  page_count: 6
+  start_page: 127
+  end_page: 132
+  prompt_sha256: 1485176006fd3f95301c98475266e2341e6fab7c565a89636d5343d52b5db73f
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Icewind_Dale_Rime_of_the_Frostmaiden_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0215
+  title: Id Ascendant
+  source_book: 'Icewind Dale: Rime of the Frostmaiden'
+  publisher: Wizards of the Coast
+  page_count: 6
+  start_page: 132
+  end_page: 137
+  prompt_sha256: c7a91293918ea73c8a780d5a1dc1132349741f6086facb70be9f74b5f242cf41
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Icewind_Dale_Rime_of_the_Frostmaiden_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0217
+  title: Karkolohk
+  source_book: 'Icewind Dale: Rime of the Frostmaiden'
+  publisher: Wizards of the Coast
+  page_count: 6
+  start_page: 140
+  end_page: 145
+  prompt_sha256: c7a0895d84314d293034ad98ed48613b623905357903f5b742d480536f2690ab
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Icewind_Dale_Rime_of_the_Frostmaiden_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0219
+  title: Revel's End
+  source_book: 'Icewind Dale: Rime of the Frostmaiden'
+  publisher: Wizards of the Coast
+  page_count: 8
+  start_page: 154
+  end_page: 161
+  prompt_sha256: a45a8d676ff139dfc2e49f277759320de8f8b385e49652d39cf3262c372fa043
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Icewind_Dale_Rime_of_the_Frostmaiden_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0047
+  title: A Clockwork Mind
+  source_book: Labyrinth Adventures
+  publisher: Kobold Press
+  page_count: 19
+  start_page: 105
+  end_page: 123
+  prompt_sha256: 54b3a1c8a0e54744468a8df4481464f248d07dbc469ce1919df5f385225f360c
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/KP-Labyrinth-Adventures_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0297
+  title: 'Encounter 10: Converted Windmill'
+  source_book: 'Waterdeep: Dragon Heist'
+  publisher: Wizards of the Coast
+  page_count: 5
+  start_page: 86
+  end_page: 90
+  prompt_sha256: 9a31b6f3aa04c4cf36851c84653a1dfe047cab2f242e309c39f53126269834eb
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Waterdeep_Dragon_Heist_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0298
+  title: Vault of Dragons
+  source_book: 'Waterdeep: Dragon Heist'
+  publisher: Wizards of the Coast
+  page_count: 9
+  start_page: 90
+  end_page: 98
+  prompt_sha256: 574697e4d836ea5ad5d5c43555b8ef5066f27db0a2f89758c5f3b75439d981a5
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Waterdeep_Dragon_Heist_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0309
+  title: Triboar
+  source_book: Storm King's Thunder
+  publisher: Wizards of the Coast
+  page_count: 10
+  start_page: 53
+  end_page: 62
+  prompt_sha256: 2a255f9cbcfe3f542f375efc25c9c006934fa909cc2352bf537c6c2502f054ae
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Storm_King_s_Thunder_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0324
+  title: Arcane Chambers
+  source_book: 'Waterdeep: Dungeon of the Mad Mage'
+  publisher: Wizards of the Coast
+  page_count: 16
+  start_page: 27
+  end_page: 42
+  prompt_sha256: 825bff199a2d8c24f3ecf72a8b62c91e783bbb9a27829c23b6abcda8c9a5ca7f
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Waterdeep_Dungeon_of_the_Mad_Mage_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0058
+  title: The Spider Queen's Ritual
+  source_book: Secrets of the Drow Trilogy
+  publisher: Midnight Tower
+  page_count: 41
+  start_page: 84
+  end_page: 124
+  prompt_sha256: dae379b308dca944189725c80524e63c86587f82a20f3734f04e402d25bd85ff
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Secrets-of-the-Drow-Trilogy_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0051
+  title: Maze Runner
+  source_book: Labyrinth Adventures
+  publisher: Kobold Press
+  page_count: 19
+  start_page: 175
+  end_page: 193
+  prompt_sha256: e70fd812fc7c2faddac6deb54e9fe1ca269c0698d4ad331e0654ec3e3720ef18
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/KP-Labyrinth-Adventures_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0224
+  title: Destruction's Light
+  source_book: 'Icewind Dale: Rime of the Frostmaiden'
+  publisher: Wizards of the Coast
+  page_count: 7
+  start_page: 187
+  end_page: 193
+  prompt_sha256: '0029db4b0d7c29b8eb09006df479dbcb599be753efbed5c20f629b37f767e508'
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Icewind_Dale_Rime_of_the_Frostmaiden_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0325
+  title: Sargauth Level
+  source_book: 'Waterdeep: Dungeon of the Mad Mage'
+  publisher: Wizards of the Coast
+  page_count: 16
+  start_page: 43
+  end_page: 58
+  prompt_sha256: 9c8474bef0d655b2bb9af31a5fff465c45972b2933249ac26b81ebc6ab2a02d9
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Waterdeep_Dungeon_of_the_Mad_Mage_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0052
+  title: What Dwells Beneath
+  source_book: Labyrinth Adventures
+  publisher: Kobold Press
+  page_count: 20
+  start_page: 194
+  end_page: 213
+  prompt_sha256: 5f9aec97061e13a24eee47ba370f0624be12daab347a386090a562ac1d14655d
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/KP-Labyrinth-Adventures_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0312
+  title: Den of the Hill Giants
+  source_book: Storm King's Thunder
+  publisher: Wizards of the Coast
+  page_count: 8
+  start_page: 137
+  end_page: 144
+  prompt_sha256: 1d0d667882b6ee43cfac3d96e951571eab617eafc2339ed17b9351a40297ecd1
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Storm_King_s_Thunder_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0313
+  title: Canyon of the Stone Giants
+  source_book: Storm King's Thunder
+  publisher: Wizards of the Coast
+  page_count: 10
+  start_page: 145
+  end_page: 154
+  prompt_sha256: 56daa1406e08be8babd7b52d41537dbbc248ba25e5b8f730ef79cfefcb4b3e59
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Storm_King_s_Thunder_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0331
+  title: Dweomercore
+  source_book: 'Waterdeep: Dungeon of the Mad Mage'
+  publisher: Wizards of the Coast
+  page_count: 18
+  start_page: 117
+  end_page: 134
+  prompt_sha256: 6da18e59d7d97df253efe478ff0dfa2a84f375b16c7da67f5c8a865a23e0d53d
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Waterdeep_Dungeon_of_the_Mad_Mage_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0181
+  title: Shadow of the Sun
+  source_book: Journeys Through the Radiant Citadel
+  publisher: Wizards of the Coast
+  page_count: 17
+  start_page: 148
+  end_page: 164
+  prompt_sha256: 922c65fb76bcc280b42ff4d7ff3fc2528408522b170057ab1c4bb00bd5668cdf
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Journeys_Through_the_Radiant_Citadel_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0063
+  title: Sea Monsters Ahead, Captain!
+  source_book: The Prophecy of Nine Omens Trilogy
+  publisher: Midnight Tower
+  page_count: 44
+  start_page: 34
+  end_page: 77
+  prompt_sha256: 220ef195f32c687fa089380bce137ff0484c4f7da97ffa82236faeddb61adad4
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/The-Prophecy-Of-Nine-Omens-Trilogy_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0332
+  title: Muiral's Gauntlet
+  source_book: 'Waterdeep: Dungeon of the Mad Mage'
+  publisher: Wizards of the Coast
+  page_count: 16
+  start_page: 135
+  end_page: 150
+  prompt_sha256: 45b06ed37cb287350d061add55aac4c8ada383076da9aa36715fcdfe198b280d
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Waterdeep_Dungeon_of_the_Mad_Mage_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0336
+  title: Arcturiadoom
+  source_book: 'Waterdeep: Dungeon of the Mad Mage'
+  publisher: Wizards of the Coast
+  page_count: 14
+  start_page: 179
+  end_page: 192
+  prompt_sha256: fe728524f1a4d935940d6010ec1457ec475302e0239d07220429a524665d08be
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Waterdeep_Dungeon_of_the_Mad_Mage_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0184
+  title: Orchids of the Invisible Mountain
+  source_book: Journeys Through the Radiant Citadel
+  publisher: Wizards of the Coast
+  page_count: 17
+  start_page: 202
+  end_page: 218
+  prompt_sha256: 96709673a44bc5ac9834430ee123fa0de99ea5f2223ccfdbadb9ec534ad60d73
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Journeys_Through_the_Radiant_Citadel_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0066
+  title: Three Witches and a Missing Princess
+  source_book: Battle for the Realm Trilogy
+  publisher: Midnight Tower
+  page_count: 52
+  start_page: 52
+  end_page: 103
+  prompt_sha256: b9ed399ca1b1fa718939a07bf58681e6a94b6de4d5a7dce77b3812aed7981deb
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Battle-for-the-Realm-Trilogy-standard_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0067
+  title: At the Gate to the Abyss
+  source_book: Battle for the Realm Trilogy
+  publisher: Midnight Tower
+  page_count: 53
+  start_page: 104
+  end_page: 156
+  prompt_sha256: ffc07b53fe75c3d3eadec138908fe4411c9af417a99033fa28725c231cae4787
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Battle-for-the-Realm-Trilogy-standard_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0308
+  title: Goldenfields
+  source_book: Storm King's Thunder
+  publisher: Wizards of the Coast
+  page_count: 10
+  start_page: 44
+  end_page: 53
+  prompt_sha256: 87f3b3de49a790e6849494eb6633b8b207058bbb5dfdecb530979c04ee131f06
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Storm_King_s_Thunder_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0122
+  title: The Curse on Humble Hill
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 14
+  end_page: 14
+  prompt_sha256: 0c93070ec4dce8604a8086b02f614957f473f25fbe4665f77f909c681d72e442
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/5.5e_Forgotten_Realms_Adventures_in_Faerun_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0123
+  title: Robber Baron
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 15
+  end_page: 15
+  prompt_sha256: 9c7cb128268c1d570a5faacc0f7b14074923143a7fc36de1f53a671b15795d6d
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/5.5e_Forgotten_Realms_Adventures_in_Faerun_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0124
+  title: The Siege of Shalespire Priory
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 16
+  end_page: 16
+  prompt_sha256: 9fc77db0bed9fa7fc355bee3b9197cfff4f957d701a70776fbc3501a5c97a20c
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/5.5e_Forgotten_Realms_Adventures_in_Faerun_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0125
+  title: The Weeping Goddess
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 17
+  end_page: 17
+  prompt_sha256: 9e786d8dffb0cc65e7aed661057be9ed5e25241791ae1af8f4f30efca641dd03
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/5.5e_Forgotten_Realms_Adventures_in_Faerun_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0126
+  title: Fury Grove
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 18
+  end_page: 18
+  prompt_sha256: 9aa5b4775b196aa21f1ca227012258b97915f580a6d2d65434adf01abdaccb98
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/5.5e_Forgotten_Realms_Adventures_in_Faerun_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0138
+  title: In for a Penny
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 30
+  end_page: 30
+  prompt_sha256: fa1620aa1f0479f60bf1e1ff6e74a36bdd4a793a318f9d4256fcf340034034df
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/5.5e_Forgotten_Realms_Adventures_in_Faerun_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0139
+  title: Hell Ship
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 31
+  end_page: 31
+  prompt_sha256: 1b5051fadbeeb1cdf0d8d4d3c5eeed84aad449b252f5360219406c6c9952adbc
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/5.5e_Forgotten_Realms_Adventures_in_Faerun_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0140
+  title: The Summerlight Ceremony
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 32
+  end_page: 32
+  prompt_sha256: d19bd0e1d843e687572a1bfd889dc682249708da5522431064a63932d7fa8605
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/5.5e_Forgotten_Realms_Adventures_in_Faerun_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0141
+  title: The Vault of Velsharoon
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 33
+  end_page: 33
+  prompt_sha256: 4588da08300265c48715d08b265bb00402c5cf877e2b6dcfc7f4547c6dff486b
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/5.5e_Forgotten_Realms_Adventures_in_Faerun_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0142
+  title: Dragon Orb
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 34
+  end_page: 34
+  prompt_sha256: 9dd8f0be88d0e049eb4449ba0d2d127647863acf4b3168c0950b4c0c6b363128
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/5.5e_Forgotten_Realms_Adventures_in_Faerun_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0156
+  title: The Cost of Warmth
+  source_book: 'Forgotten Realms: Adventures in Faerûn'
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 124
+  end_page: 124
+  prompt_sha256: 6a6c4620521321056bd67898b3852fb4897a90f496f37c7fdfa9bc6b5aa1089c
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/5.5e_Forgotten_Realms_Adventures_in_Faerun_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0320
+  title: The Morkoth
+  source_book: Storm King's Thunder
+  publisher: Wizards of the Coast
+  page_count: 4
+  start_page: 221
+  end_page: 224
+  prompt_sha256: b42f983fd0ec0b36732cca8439731fbb7e896876dc7357817eb51e803c36c7a8
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Storm_King_s_Thunder_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0295
+  title: 'Encounter 8: Courthouse'
+  source_book: 'Waterdeep: Dragon Heist'
+  publisher: Wizards of the Coast
+  page_count: 4
+  start_page: 80
+  end_page: 83
+  prompt_sha256: 593fa5ebb5dc0f15dd0d71616fac6dc8f0adc4211eef38ff0ea297818f6ba74b
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Waterdeep_Dragon_Heist_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0296
+  title: 'Encounter 9: Cellar Complex'
+  source_book: 'Waterdeep: Dragon Heist'
+  publisher: Wizards of the Coast
+  page_count: 4
+  start_page: 83
+  end_page: 86
+  prompt_sha256: cf70cc91fde9e34a488c762cf7804b5d2743233d0899ccad70bcefe08a1191cf
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Waterdeep_Dragon_Heist_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0270
+  title: Talhundereth
+  source_book: 'Phandelver and Below: The Shattered Obelisk'
+  publisher: Wizards of the Coast
+  page_count: 10
+  start_page: 108
+  end_page: 117
+  prompt_sha256: c025bb41078ee3bfa1d8ba07c9fe07fe4e1082f77b50fd97b6f423350c462e9c
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Phandelver_and_Below_The_Shattered_Obelisk_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0318
+  title: Caught in the Tentacles
+  source_book: Storm King's Thunder
+  publisher: Wizards of the Coast
+  page_count: 10
+  start_page: 215
+  end_page: 224
+  prompt_sha256: 9054eca5b0a058bb5e60c729a266995c9416ab573de3fbea54c659a403ae1f07
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Storm_King_s_Thunder_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0194
+  title: Heart of Ashes
+  source_book: Keys from the Golden Vault
+  publisher: Wizards of the Coast
+  page_count: 12
+  start_page: 149
+  end_page: 160
+  prompt_sha256: 5ec685f171aac74ef681c4f26a399e12eb591ba66c2de836e2e152a82b3bbca1
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Keys_from_the_Golden_Vault_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0186
+  title: The Stygian Gambit
+  source_book: Keys from the Golden Vault
+  publisher: Wizards of the Coast
+  page_count: 14
+  start_page: 27
+  end_page: 40
+  prompt_sha256: d509d1461c9cf38b2e4dca2db13f5f376df3ef4c80e3e9db802e420e80527203
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Keys_from_the_Golden_Vault_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0187
+  title: Reach for the Stars
+  source_book: Keys from the Golden Vault
+  publisher: Wizards of the Coast
+  page_count: 14
+  start_page: 41
+  end_page: 54
+  prompt_sha256: 432e26a1cf089ddee454c380b4f0e849ea16a62b74276ceac3d7b9c244c4e36c
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Keys_from_the_Golden_Vault_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0192
+  title: Vidorant's Vault
+  source_book: Keys from the Golden Vault
+  publisher: Wizards of the Coast
+  page_count: 14
+  start_page: 119
+  end_page: 132
+  prompt_sha256: f9cec9d829c8813296a955fbd4a8dda0c84fe852cf0fe55b89f00f89784c740c
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Keys_from_the_Golden_Vault_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0226
+  title: Caves of Hunger
+  source_book: 'Icewind Dale: Rime of the Frostmaiden'
+  publisher: Wizards of the Coast
+  page_count: 16
+  start_page: 215
+  end_page: 230
+  prompt_sha256: d4a5a86a94d76000fb97edff6cf433a1300be6ed66c4458b94a656ed5fc8cdee
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Icewind_Dale_Rime_of_the_Frostmaiden_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0188
+  title: Prisoner 13
+  source_book: Keys from the Golden Vault
+  publisher: Wizards of the Coast
+  page_count: 16
+  start_page: 55
+  end_page: 70
+  prompt_sha256: 91a0b071b52c8f844b38f63ee43d2b3b88b964393f57978cb3cc8600089a604b
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Keys_from_the_Golden_Vault_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0190
+  title: Masterpiece Imbroglio
+  source_book: Keys from the Golden Vault
+  publisher: Wizards of the Coast
+  page_count: 16
+  start_page: 87
+  end_page: 102
+  prompt_sha256: 36f4ab5e9af23bb32697b5e544215d62a25140ab8484a4d6572e600baeb80b88
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Keys_from_the_Golden_Vault_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0191
+  title: Axe from the Grave
+  source_book: Keys from the Golden Vault
+  publisher: Wizards of the Coast
+  page_count: 16
+  start_page: 103
+  end_page: 118
+  prompt_sha256: 762fca12a71f4c9ea29f6b86a9f7d1fb9db8bacbaa354956f7e54321dc457e82
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Keys_from_the_Golden_Vault_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0193
+  title: Shard of the Accursed
+  source_book: Keys from the Golden Vault
+  publisher: Wizards of the Coast
+  page_count: 16
+  start_page: 133
+  end_page: 148
+  prompt_sha256: 9a320a939fc5df794fd8cbe7dcc35274eaf60ec4a2ff3e2d2a049abab54aa94e
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Keys_from_the_Golden_Vault_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0087
+  title: The War of Pandesmos
+  source_book: 'Vecna: Eve of Ruin'
+  publisher: Wizards of the Coast
+  page_count: 16
+  start_page: 175
+  end_page: 190
+  prompt_sha256: 474175f10a8e921aa6cfac3856b54cb08e67edd0393699d44cacce977266a483
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Vecna_Eve_of_Ruin_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0081
+  title: The Lambent Zenith's Last Voyage
+  source_book: 'Vecna: Eve of Ruin'
+  publisher: Wizards of the Coast
+  page_count: 16
+  start_page: 57
+  end_page: 72
+  prompt_sha256: 0f70f9179e712f978f2b0030230d05a2a947fc70da497fdfc31dee8bc2168713
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Vecna_Eve_of_Ruin_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0225
+  title: Auril's Abode
+  source_book: 'Icewind Dale: Rime of the Frostmaiden'
+  publisher: Wizards of the Coast
+  page_count: 18
+  start_page: 197
+  end_page: 214
+  prompt_sha256: bad1b6ef37f2838221c63c46fdfc3b035fd868598e7f8ee1c79645fc59ef2d90
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Icewind_Dale_Rime_of_the_Frostmaiden_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0196
+  title: Party at Paliset Hall
+  source_book: Keys from the Golden Vault
+  publisher: Wizards of the Coast
+  page_count: 18
+  start_page: 177
+  end_page: 194
+  prompt_sha256: 6321b71ed61795a76f4cf8028c50f7365a66eb399b5cf66859654aceaf5f67b9
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Keys_from_the_Golden_Vault_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0085
+  title: Tomb of Wayward Souls
+  source_book: 'Vecna: Eve of Ruin'
+  publisher: Wizards of the Coast
+  page_count: 18
+  start_page: 131
+  end_page: 148
+  prompt_sha256: 0fd843b391b02964908acb43a41ecbfff9276a967fcfd94af41765c35d925781
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Vecna_Eve_of_Ruin_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0083
+  title: Death House
+  source_book: 'Vecna: Eve of Ruin'
+  publisher: Wizards of the Coast
+  page_count: 18
+  start_page: 93
+  end_page: 110
+  prompt_sha256: 409ec30df6aa8959dc1d8adaba64c3f9619097b871f1a8739fbf9fd8b0850a0a
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Vecna_Eve_of_Ruin_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0001
+  title: The Beast of Dunland
+  source_book: Trials of Saruman
+  publisher: Free League Publishing
+  page_count: 20
+  start_page: 21
+  end_page: 40
+  prompt_sha256: 070a112de5abc64542edddd898effb03f88432adc406196c9d3be2a716f9cbb0
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Trials_of_Saruman_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0084
+  title: Night of Blue Fire
+  source_book: 'Vecna: Eve of Ruin'
+  publisher: Wizards of the Coast
+  page_count: 20
+  start_page: 111
+  end_page: 130
+  prompt_sha256: 993c237287f607c967590c2762aa55c4d9051ba4a9ef36e675fa6ed4999d885f
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Vecna_Eve_of_Ruin_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0086
+  title: The Dragon Queen's Pride
+  source_book: 'Vecna: Eve of Ruin'
+  publisher: Wizards of the Coast
+  page_count: 20
+  start_page: 149
+  end_page: 168
+  prompt_sha256: b90c40c4b44a59f8a0581e9ebc7719547966903772ac40683424a37b5d030f61
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Vecna_Eve_of_Ruin_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0079
+  title: Return from Neverdeath Graveyard
+  source_book: 'Vecna: Eve of Ruin'
+  publisher: Wizards of the Coast
+  page_count: 20
+  start_page: 17
+  end_page: 36
+  prompt_sha256: 0a94a9096edab158d3969ea702439212ebf3231f98b64cc9cf4c45491b77e28d
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Vecna_Eve_of_Ruin_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0080
+  title: The Wizards Three
+  source_book: 'Vecna: Eve of Ruin'
+  publisher: Wizards of the Coast
+  page_count: 20
+  start_page: 37
+  end_page: 56
+  prompt_sha256: 176af6cd13e6cb3b3959600dd0e2790d0015bb512620a0755a9c20f54be9f852
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Vecna_Eve_of_Ruin_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0082
+  title: The Ruined Colossus
+  source_book: 'Vecna: Eve of Ruin'
+  publisher: Wizards of the Coast
+  page_count: 20
+  start_page: 73
+  end_page: 92
+  prompt_sha256: 7453fcec3737361550f04f57b275c2ae1d74da9224ebf1aabf6e80733a95dfff
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Vecna_Eve_of_Ruin_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0061
+  title: Enter Drakenberg Castle
+  source_book: Rise of the Ice Dragons Trilogy
+  publisher: Midnight Tower
+  page_count: 23
+  start_page: 82
+  end_page: 104
+  prompt_sha256: e8d03c76f4fd77c8f658dd71ec1b621cc50429b5f55bf4b205f794e8d3694733
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/rise-of-the-ice-dragons-adventure-trilogy_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0245
+  title: City of Lost Names
+  source_book: 'Dragonlance: Shadow of the Dragon Queen'
+  publisher: Wizards of the Coast
+  page_count: 26
+  start_page: 135
+  end_page: 160
+  prompt_sha256: 59451c5cfc802bf8c60a63b85f825ca7e00238728259cf5b09bf2c1ace6b5475
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Dragonlance_Shadow_of_the_Dragon_Queen_LLM_Edition.md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0035
+  title: The Lost City
+  source_book: Quests from the Infinite Staircase
+  publisher: Wizards of the Coast
+  page_count: 31
+  start_page: 15
+  end_page: 45
+  prompt_sha256: 50d3c18b238cb2cdc7150c484d69ef3c60969c8cddcb77b79a45bde22dd17b30
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/Quests_From_the_Infinite_Staircase_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0059
+  title: The Frozen Labyrinth
+  source_book: Rise of the Ice Dragons Trilogy
+  publisher: Midnight Tower
+  page_count: 34
+  start_page: 4
+  end_page: 37
+  prompt_sha256: 8f7c79da2aa21e5bb167bebfecba24406b7b6215628033f08d1da265b25d39ed
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/rise-of-the-ice-dragons-adventure-trilogy_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness
+- id: ADV-0060
+  title: The Quest for the Last Orbstone
+  source_book: Rise of the Ice Dragons Trilogy
+  publisher: Midnight Tower
+  page_count: 44
+  start_page: 38
+  end_page: 81
+  prompt_sha256: 734b8ebf4d2281f1fbb8029d5afae0f1d8b40997d1a0a39378b1d81b14add8b7
+  schema_sha256: 9c2f31df2cb09f74d2b5c6f11d9c439f046e379153c70d6447160ade2132ce86
+  source_file: "/Users/davidnorris/code/md-for-llm-book-content/rise-of-the-ice-dragons-adventure-trilogy_LLM_Edition
+    (from PDF).md"
+  source_scope: canonical_page_slice
+  afao_version: 1.6.1
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  dimensions:
+  - Seriousness

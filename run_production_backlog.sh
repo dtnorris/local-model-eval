@@ -8,6 +8,7 @@ CONTROL_DIR="$REPO/output/production-backlog-control"
 PAUSE_FILE="$CONTROL_DIR/pause"
 CURRENT_FILE="$CONTROL_DIR/current"
 FAIL_LOG="$CONTROL_DIR/failures.log"
+BATCH_FAILURE_POLICY="$REPO/lib/batch_failure_policy.sh"
 
 [[ -n "$QUEUE_ARG" ]] || {
   echo "Usage: ./run_production_backlog.sh production_backlog/QUEUE"
@@ -21,6 +22,7 @@ else
 fi
 ORDER="$QUEUE_DIR/run_order.txt"
 SNAPSHOT="$QUEUE_DIR/snapshot.yml"
+SOURCE_PREFLIGHT="$REPO/bin/preflight-production-backlog-sources"
 
 CONTRACT_TYPE="$(
   ruby - "$SNAPSHOT" <<'RUBY'
@@ -37,6 +39,9 @@ case "$CONTRACT_TYPE" in
   ee_local_qualified_v1)
     VERIFY="$REPO/verify_production_backlog_ee.sh"
     ;;
+  seriousness_local_qualified_v1)
+    VERIFY="$REPO/verify_production_backlog_seriousness.sh"
+    ;;
   *)
     VERIFY="$REPO/verify_production_backlog.sh"
     ;;
@@ -47,6 +52,11 @@ mkdir -p "$CONTROL_DIR"
 
 [[ -f "$ORDER" ]] || { echo "ERROR: missing $ORDER"; exit 1; }
 [[ -x "$VERIFY" ]] || { echo "ERROR: missing/executable verifier $VERIFY"; exit 1; }
+[[ -x "$SOURCE_PREFLIGHT" ]] || { echo "ERROR: missing/executable runtime source preflight $SOURCE_PREFLIGHT"; exit 1; }
+[[ -r "$BATCH_FAILURE_POLICY" ]] || { echo "ERROR: missing/readable batch failure policy $BATCH_FAILURE_POLICY"; exit 1; }
+
+source "$BATCH_FAILURE_POLICY"
+batch_failure_policy_init
 
 if [[ -f "$PAUSE_FILE" ]]; then
   echo "Background production is paused. Resume with:"
@@ -61,6 +71,13 @@ fi
 
 export AF_SOCIAL_INTERACTION_GUARDRAIL_PROFILE=phase6-v0.3
 export AF_INVESTIGATION_GUARDRAIL_PROFILE=phase6-v0.4
+
+echo
+echo "Checking runtime source resolution against the active scorer checkout..."
+"$SOURCE_PREFLIGHT" "$QUEUE_ARG" || {
+  echo "ERROR: runtime source preflight failed. No inference launched."
+  exit 1
+}
 
 manifest_status() {
   local manifest="$1"
@@ -109,8 +126,6 @@ cleanup() {
 trap cleanup EXIT INT TERM
 
 total=$(grep -c '^experiments/' "$ORDER" || true)
-new_failures=0
-consecutive_failures=0
 n=0
 
 echo
@@ -163,22 +178,43 @@ while IFS= read -r f; do
   status=$(manifest_status "$f")
 
   if [[ "$command_ok" == true && "$status" == "complete" ]]; then
-    consecutive_failures=0
+    batch_failure_record_success
     echo "[$n/$total] COMPLETE"
   else
-    new_failures=$((new_failures + 1))
-    consecutive_failures=$((consecutive_failures + 1))
+    batch_failure_record_failure "$status"
     echo "$(date '+%Y-%m-%dT%H:%M:%S%z') $status $f" >> "$FAIL_LOG"
     echo "[$n/$total] FAILURE status=$status"
-    echo "New failures this invocation: $new_failures; consecutive: $consecutive_failures"
+    echo "New failures this invocation: $batch_total_new_failures; consecutive: $batch_consecutive_failures"
 
-    if [[ "$consecutive_failures" -ge 2 || "$new_failures" -ge 3 ]]; then
-      echo
-      echo "CIRCUIT BREAKER: stopping unattended production."
-      echo "Reason: >=2 consecutive failures or >=3 total new failures."
-      echo "Inspect $FAIL_LOG before resuming."
-      exit 1
-    fi
+    case "$batch_failure_action" in
+      checkpoint_continue)
+        echo
+        echo "FAILURE BUDGET CHECKPOINT: $batch_last_checkpoint_size isolated persisted failures reached."
+        echo "Failures remain sticky (no favorable rerun); resetting the isolated-failure budget and continuing."
+        echo "Failure budget checkpoints this invocation: $batch_failure_budget_checkpoints"
+        ;;
+      circuit_break_consecutive)
+        echo
+        echo "CIRCUIT BREAKER: stopping unattended production."
+        echo "Reason: >=${BATCH_CONSECUTIVE_FAILURE_THRESHOLD} consecutive failures."
+        echo "Inspect $FAIL_LOG before resuming."
+        exit 1
+        ;;
+      circuit_break_total)
+        echo
+        echo "CIRCUIT BREAKER: stopping unattended production."
+        echo "Reason: isolated-failure budget reached, but the latest failure is not safely persisted as failed."
+        echo "Inspect $FAIL_LOG before resuming."
+        exit 1
+        ;;
+      continue)
+        ;;
+      *)
+        echo
+        echo "CIRCUIT BREAKER: unknown batch failure-policy action: $batch_failure_action"
+        exit 1
+        ;;
+    esac
   fi
 
   rm -f "$CURRENT_FILE"
@@ -196,4 +232,5 @@ echo "================================================================"
 echo "BACKGROUND PRODUCTION QUEUE FINISHED"
 echo "================================================================"
 echo "Queue: $QUEUE_ARG"
-echo "New failures this invocation: $new_failures"
+echo "New failures this invocation: $batch_total_new_failures"
+echo "Failure budget checkpoints this invocation: $batch_failure_budget_checkpoints"

@@ -195,8 +195,10 @@ GPU_NAME="${GPU_LINE%,*}"
 GPU_VRAM_MIB="${GPU_LINE##*,}"
 GPU_VRAM_MIB="${GPU_VRAM_MIB// /}"
 MIN_VRAM_MIB=$((MIN_VRAM_GB * 1024))
+VRAM_REPORTING_TOLERANCE_MIB=64
 info "GPU detected: $GPU_NAME (${GPU_VRAM_MIB} MiB VRAM)"
-((GPU_VRAM_MIB >= MIN_VRAM_MIB)) || die "GPU has less than required ${MIN_VRAM_GB} GiB VRAM"
+((GPU_VRAM_MIB + VRAM_REPORTING_TOLERANCE_MIB >= MIN_VRAM_MIB)) || \
+  die "GPU has less than required ${MIN_VRAM_GB} GiB VRAM (allowing ${VRAM_REPORTING_TOLERANCE_MIB} MiB reporting tolerance)"
 if [[ -n "$EXPECTED_GPU_NAME" && "$GPU_NAME" != "$EXPECTED_GPU_NAME" ]]; then
   die "GPU mismatch: expected '$EXPECTED_GPU_NAME', got '$GPU_NAME'"
 fi

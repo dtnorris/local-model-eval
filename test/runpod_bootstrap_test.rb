@@ -192,7 +192,7 @@ class RunpodBootstrapTest < Minitest::Test
     bootstrap_root = File.join(@state_root, @fleet.fetch("fleet_id"), "bootstrap")
     run_id = File.read(File.join(bootstrap_root, "current")).strip
     log = File.read(File.join(bootstrap_root, run_id, "burst_2.log"))
-    assert_includes log, "ARGS=--worker|2|--expect-gpu|NVIDIA A40|--clean|--model|gemma4:26b|--expect-digest|gemma4:26b=#{DIGEST}|--context|262144"
+    assert_includes log, "ARGS=--worker|2|--expect-gpu|NVIDIA A40|--min-vram-gb|40|--clean|--model|gemma4:26b|--expect-digest|gemma4:26b=#{DIGEST}|--context|262144"
     assert_includes log, "STDIN_BYTES=0"
   end
 

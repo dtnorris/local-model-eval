@@ -1,0 +1,53 @@
+---
+name: discovery-horizontal-095-v0.1-gptoss-ee-adv0243-v1
+purpose: AdventureFinder Discovery-95 horizontal priority scoring for canonical ADV-0243
+  on Exploration Emphasis. This manifest is mechanically cloned from the frozen qualified
+  production template experiments/production-ee-b001/production-ee-b001-gptoss-ee-adv0002-v1.yml
+  because AMC 2.12.2 is blank for this pair.
+dispatch: pool
+models:
+- gptoss
+dimension: Exploration Emphasis
+adventures:
+- ADV-0243
+replicates: 1
+workers:
+- mac
+required_worker_labels:
+- local
+scorer:
+  repo: "../../../af-cli-scoring-utility"
+  mode: positional
+  extra_args:
+  - "--config"
+  - "${LME_REPO}/production_backlog/ee-v0.5-runtime.yml"
+production_contract:
+  contract_type: ee_local_qualified_v1
+  disposition: local-qualified-background
+  queue: discovery-horizontal-095-v0.1
+  selection_mode: discovery-horizontal
+  candidate_model: gptoss
+  qualified_profile: ee-clean-reset-v0.5
+  qualified_scorer_baseline: 4f11e25c99b4f408f88bf7205395d31f8ab325e8
+  provider: ollama
+  reasoning_effort: low
+  max_tokens: 4096
+  temperature: 0
+  replicate_count: 1
+  no_favorable_rerun: true
+  external_api_cost_usd: 0.0
+success_criteria:
+- Structured scorer output validates and remains grounded to the complete canonical
+  adventure source unit.
+- Use the frozen EE clean-reset v0.5 prompt and AFAO 1.6.1 Exploration Emphasis rubric.
+- Use ordinary Ollama with gpt-oss:20b, reasoning effort low, temperature 0, and max
+  tokens 4096.
+- Preserve the single completed sample as the first-pass proposed production assessment
+  pending QC/ingestion.
+- Do not use an existing accepted EE score, calibration target, or prior EE production
+  result as expected-answer context.
+stop_conditions:
+- Do not rerun a completed case to seek a more favorable sample.
+- Repeated ordinary-source length or missing-assistant-content failures stop EE expansion
+  for review.
+cost_cap_usd: 0.01

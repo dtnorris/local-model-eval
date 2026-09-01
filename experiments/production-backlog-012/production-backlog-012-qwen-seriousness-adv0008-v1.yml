@@ -1,0 +1,57 @@
+name: production-backlog-012-qwen-seriousness-adv0008-v1
+purpose: >
+  Interruptible AdventureFinder local production scoring. Produce one proposed
+  Seriousness assessment for canonical ADV-0008 using the locally
+  qualified qwen3.6:35b-a3b reset-only Seriousness profile. The accepted AMC
+  Seriousness value was blank when this queue was generated.
+dispatch: pool
+
+models:
+  - qwen
+
+dimension: "Seriousness"
+
+adventures:
+  - ADV-0008
+
+replicates: 1
+
+workers:
+  - mac
+
+required_worker_labels:
+  - local
+
+scorer:
+  repo: ../../../af-cli-scoring-utility-b12
+  mode: positional
+  extra_args:
+    - --config
+    - ${LME_REPO}/production_backlog/seriousness-reset-runtime.yml
+
+production_contract:
+  contract_type: seriousness_local_qualified_v1
+  disposition: local-qualified-background
+  queue: production-backlog-012
+  candidate_model: qwen
+  qualified_profile: seriousness-reset-only
+  qualified_scorer_baseline: c5f27d1060623938fa4d338340647396fb9fdc16
+  reasoning_effort: low
+  max_tokens: 16384
+  temperature: 0
+  replicate_count: 1
+  no_favorable_rerun: true
+  external_api_cost_usd: 0.0
+
+success_criteria:
+  - Structured scorer output validates and remains grounded to the complete canonical adventure source unit.
+  - Use the frozen reset-only Seriousness profile with qwen3.6:35b-a3b.
+  - Use reasoning effort low, temperature 0, and max tokens 16384.
+  - Preserve the single completed sample as a proposed production assessment pending QC/ingestion.
+  - Do not use an existing accepted Seriousness score or calibration target as expected-answer context.
+
+stop_conditions:
+  - Do not rerun a completed case to seek a more favorable sample.
+  - Queue-level repeated operational failures trigger the background runner circuit breaker.
+
+cost_cap_usd: 0.01
