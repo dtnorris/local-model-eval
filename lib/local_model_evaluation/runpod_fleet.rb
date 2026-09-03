@@ -6,7 +6,7 @@ require_relative "runpod_fleet_state"
 
 module LocalModelEvaluation
   class RunpodFleet
-    MAX_WORKERS = 5
+    MAX_WORKERS = 8
     GPU_ID = ENV.fetch("RUNPOD_GPU_ID", "NVIDIA A40")
     GPU_MEMORY_GB = Integer(ENV.fetch("RUNPOD_GPU_MEMORY_GB", "48"))
     DEFAULT_CLOUD = "COMMUNITY"
@@ -138,7 +138,7 @@ module LocalModelEvaluation
         raise Error, "refusing to create duplicate managed pods: #{names}; destroy the existing fleet first"
       end
 
-      gpu = @client.list_gpu_types(cloud:, count: 1).find { |candidate| candidate["id"] == GPU_ID }
+      gpu = @client.list_gpu_types(cloud:, count: worker_count).find { |candidate| candidate["id"] == GPU_ID }
       raise Error, "RunPod catalog did not return #{GPU_ID}" unless gpu
       raise Error, "#{GPU_ID} reports only #{gpu['memory']} GB VRAM; #{GPU_MEMORY_GB} GB is required" if gpu["memory"].to_i < GPU_MEMORY_GB
       raise Error, "#{GPU_ID} is not available on #{cloud} cloud" unless gpu[cloud.downcase] == true

@@ -99,7 +99,7 @@ class RunpodFleetTest < Minitest::Test
     assert_equal "HIGH", result.availability
     assert_in_delta 0.44, result.hourly_rate, 0.0001
     assert_in_delta 2.20, result.fleet_hourly_rate, 0.0001
-    assert_equal [["COMMUNITY", 1]], @client.catalog_calls
+    assert_equal [["COMMUNITY", 5]], @client.catalog_calls
     assert_empty @client.created_bodies
   end
 
@@ -109,7 +109,7 @@ class RunpodFleetTest < Minitest::Test
     assert_equal "SECURE", result.cloud
     assert_in_delta 0.69, result.hourly_rate, 0.0001
     assert_in_delta 3.45, result.fleet_hourly_rate, 0.0001
-    assert_equal [["SECURE", 1]], @client.catalog_calls
+    assert_equal [["SECURE", 5]], @client.catalog_calls
     assert_empty @client.created_bodies
   end
 

@@ -1,0 +1,324 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+WORKERS=8
+MODEL="gpt-oss:20b"
+CONTEXT=32768
+CLOUD="COMMUNITY"
+FLEET="${LME_RUNPOD_FLEET:-matcher-gptoss}"
+MATCHER_REPO="${AF_MATCHER_REPO_PATH:-"$ROOT/../af-matcher-cli"}"
+MAX_HOURLY_USD="${RUNPOD_MAX_FLEET_HOURLY_USD:-3.00}"
+MAX_TOTAL_HOURLY_USD="${RUNPOD_MAX_TOTAL_HOURLY_USD:-6.00}"
+WATCHDOG_MINUTES="${LME_MATCHER_BURST_WATCHDOG_MINUTES:-25}"
+LOCAL_OLLAMA_URL="${LOCAL_OLLAMA_URL:-http://127.0.0.1:11434}"
+MODEL_DIGEST="${AF_MATCHER_MODEL_DIGEST:-}"
+DRY_RUN=0
+ASSUME_YES=0
+
+CASES=(
+  "Q1:1"
+  "Q2:1"
+  "Q3:1"
+  "Q4:1"
+  "Q1:2"
+  "Q2:2"
+  "Q3:2"
+  "Q4:2"
+)
+
+usage() {
+  cat <<'USAGE'
+Usage:
+  bin/lme-matcher-burst [options]
+
+Runs the frozen af-matcher-cli 4-query x 2-repeat pilot as eight independent
+requests on eight RunPod workers, then tears the fleet down.
+
+Options:
+  --dry-run                 Local validation + read-only RunPod price/availability check.
+  --yes                     Skip RunPod's paid-create confirmation.
+  --cloud TIER              COMMUNITY or SECURE (default: COMMUNITY).
+  --fleet KEY               Named LME RunPod fleet (default: matcher-gptoss).
+  --matcher-repo PATH       Local af-matcher-cli checkout.
+  --digest SHA256           Exact Ollama model digest; otherwise read from local Ollama.
+  --max-hourly-usd USD      Per-fleet hourly safety cap (default: 3.00).
+  --max-total-hourly-usd USD
+                            Aggregate managed RunPod hourly safety cap (default: 6.00).
+  --watchdog-minutes N      Best-effort paid-fleet teardown watchdog (default: 25).
+  -h, --help                Show this help.
+
+The calibrated experiment is intentionally fixed:
+  model:      gpt-oss:20b
+  workers:    8
+  context:    32768
+  cases:      Q1:R1 Q2:R1 Q3:R1 Q4:R1 Q1:R2 Q2:R2 Q3:R2 Q4:R2
+  sampling:   af-matcher-cli defaults (temperature/seed unset)
+USAGE
+}
+
+die() { printf 'ERROR: %s\n' "$*" >&2; exit 1; }
+info() { printf '[matcher-burst] %s\n' "$*"; }
+
+while (($#)); do
+  case "$1" in
+    --dry-run) DRY_RUN=1; shift ;;
+    --yes) ASSUME_YES=1; shift ;;
+    --cloud)
+      [[ $# -ge 2 ]] || die "--cloud requires a value"
+      CLOUD="$(printf '%s' "$2" | tr '[:lower:]' '[:upper:]')"; shift 2 ;;
+    --fleet)
+      [[ $# -ge 2 ]] || die "--fleet requires a value"
+      FLEET="$2"; shift 2 ;;
+    --matcher-repo)
+      [[ $# -ge 2 ]] || die "--matcher-repo requires a path"
+      MATCHER_REPO="$2"; shift 2 ;;
+    --digest)
+      [[ $# -ge 2 ]] || die "--digest requires a SHA-256"
+      MODEL_DIGEST="$2"; shift 2 ;;
+    --max-hourly-usd)
+      [[ $# -ge 2 ]] || die "--max-hourly-usd requires a value"
+      MAX_HOURLY_USD="$2"; shift 2 ;;
+    --max-total-hourly-usd)
+      [[ $# -ge 2 ]] || die "--max-total-hourly-usd requires a value"
+      MAX_TOTAL_HOURLY_USD="$2"; shift 2 ;;
+    --watchdog-minutes)
+      [[ $# -ge 2 ]] || die "--watchdog-minutes requires an integer"
+      WATCHDOG_MINUTES="$2"; shift 2 ;;
+    -h|--help) usage; exit 0 ;;
+    *) die "unknown argument: $1" ;;
+  esac
+done
+
+[[ "$CLOUD" == "COMMUNITY" || "$CLOUD" == "SECURE" ]] || die "--cloud must be COMMUNITY or SECURE"
+[[ "$WATCHDOG_MINUTES" =~ ^[1-9][0-9]*$ ]] || die "--watchdog-minutes must be a positive integer"
+[[ -d "$MATCHER_REPO" ]] || die "af-matcher-cli checkout not found: $MATCHER_REPO"
+[[ -x "$MATCHER_REPO/bin/af-matcher" ]] || die "missing executable: $MATCHER_REPO/bin/af-matcher"
+[[ -x "$MATCHER_REPO/bin/test" ]] || die "missing executable: $MATCHER_REPO/bin/test"
+command -v ruby >/dev/null 2>&1 || die "ruby is required"
+command -v bundle >/dev/null 2>&1 || die "bundler is required"
+command -v curl >/dev/null 2>&1 || die "curl is required"
+command -v git >/dev/null 2>&1 || die "git is required"
+command -v zip >/dev/null 2>&1 || die "zip is required"
+
+info "Local preflight: af-matcher-cli tests and dependencies"
+(
+  cd "$MATCHER_REPO"
+  bundle check >/dev/null
+  bin/test
+  bin/af-matcher help | grep -q "run-case"
+)
+
+if [[ -z "$MODEL_DIGEST" ]]; then
+  info "Reading exact $MODEL digest from local Ollama at $LOCAL_OLLAMA_URL"
+  tags="$(curl -fsS "${LOCAL_OLLAMA_URL%/}/api/tags")" || \
+    die "cannot read local Ollama tags; start Ollama or pass --digest"
+  MODEL_DIGEST="$(
+    printf '%s' "$tags" | ruby -rjson -e '
+      model = ARGV.fetch(0)
+      rows = Array(JSON.parse(STDIN.read)["models"])
+      row = rows.find { |r| [r["name"], r["model"]].compact.any? { |n| n == model || n.sub(/:latest\z/, "") == model.sub(/:latest\z/, "") } }
+      print(row && row["digest"].to_s)
+    ' "$MODEL"
+  )"
+fi
+[[ "$MODEL_DIGEST" =~ ^[0-9a-fA-F]{64}$ ]] || die "model digest must be exactly 64 hexadecimal characters"
+
+MATCHER_SHA="$(git -C "$MATCHER_REPO" rev-parse HEAD)"
+LME_SHA="$(git -C "$ROOT" rev-parse HEAD)"
+
+info "Frozen pilot:"
+info "  model=$MODEL digest=$MODEL_DIGEST"
+info "  context=$CONTEXT workers=$WORKERS cloud=$CLOUD fleet=$FLEET"
+info "  matcher=$MATCHER_REPO @ $MATCHER_SHA"
+for i in "${!CASES[@]}"; do
+  info "  burst_$((i + 1)) -> ${CASES[$i]}"
+done
+
+create_args=(
+  runpod-create
+  --workers "$WORKERS"
+  --cloud "$CLOUD"
+  --max-hourly-usd "$MAX_HOURLY_USD"
+  --max-total-hourly-usd "$MAX_TOTAL_HOURLY_USD"
+)
+
+if ((DRY_RUN)); then
+  info "Read-only RunPod preflight; no pods will be created."
+  LME_RUNPOD_FLEET="$FLEET" "$ROOT/bin/lme" "${create_args[@]}" --dry-run
+  exit 0
+fi
+
+if ((ASSUME_YES)); then
+  create_args+=(--yes)
+fi
+
+STAMP="$(date -u '+%Y%m%dT%H%M%SZ')"
+RUN_ROOT="$ROOT/output/matcher-burst/${STAMP}__gpt-oss_20b"
+mkdir -p "$RUN_ROOT"
+FLEET_CREATED=0
+TUNNELS_STARTED=0
+WATCHDOG_PID=""
+PIDS=()
+
+cleanup() {
+  rc=$?
+  trap - EXIT INT TERM
+
+  for pid in "${PIDS[@]}"; do
+    kill "$pid" 2>/dev/null || true
+  done
+
+  if [[ -n "$WATCHDOG_PID" ]]; then
+    kill "$WATCHDOG_PID" 2>/dev/null || true
+    wait "$WATCHDOG_PID" 2>/dev/null || true
+  fi
+
+  if ((TUNNELS_STARTED)); then
+    info "Stopping matcher-burst tunnels ..."
+    LME_RUNPOD_FLEET="$FLEET" "$ROOT/bin/lme" runpod-tunnels stop --workers 1-8 >/dev/null 2>&1 || true
+  fi
+
+  if ((FLEET_CREATED)); then
+    info "Destroying paid matcher-burst fleet ..."
+    if ! LME_RUNPOD_FLEET="$FLEET" "$ROOT/bin/lme" runpod-destroy --workers 1-8 --yes; then
+      printf 'WARNING: automatic RunPod teardown failed; run manually:\n' >&2
+      printf '  LME_RUNPOD_FLEET=%q %q runpod-destroy --workers 1-8 --yes\n' "$FLEET" "$ROOT/bin/lme" >&2
+      [[ $rc -ne 0 ]] || rc=1
+    fi
+  fi
+
+  if [[ -d "$RUN_ROOT" ]]; then
+    printf 'Matcher burst artifacts: %s\n' "$RUN_ROOT"
+    [[ -f "${RUN_ROOT}.zip" ]] && printf 'Matcher burst ZIP: %s\n' "${RUN_ROOT}.zip"
+  fi
+  exit "$rc"
+}
+trap cleanup EXIT INT TERM
+
+info "Creating paid 8-worker RunPod fleet ..."
+printf 'driver_started_at_utc=%s\n' "$(date -u '+%Y%m%dT%H%M%SZ')" >"$RUN_ROOT/timing.env"
+LME_RUNPOD_FLEET="$FLEET" "$ROOT/bin/lme" "${create_args[@]}" | tee "$RUN_ROOT/create.log"
+FLEET_CREATED=1
+printf 'fleet_ready_at_utc=%s\n' "$(date -u '+%Y%m%dT%H%M%SZ')" >>"$RUN_ROOT/timing.env"
+
+(
+  sleep "$((WATCHDOG_MINUTES * 60))"
+  printf '[matcher-burst] WATCHDOG: %s minutes elapsed; destroying paid fleet.\n' "$WATCHDOG_MINUTES" >&2
+  LME_RUNPOD_FLEET="$FLEET" "$ROOT/bin/lme" runpod-destroy --workers 1-8 --yes \
+    >"$RUN_ROOT/watchdog-teardown.log" 2>&1 || true
+) &
+WATCHDOG_PID=$!
+
+info "Bootstrapping $MODEL on all 8 workers in parallel ..."
+LME_RUNPOD_FLEET="$FLEET" "$ROOT/bin/lme" runpod-bootstrap \
+  --workers 1-8 \
+  --model "$MODEL" \
+  --expect-digest "$MODEL=$MODEL_DIGEST" \
+  --context "$CONTEXT" \
+  --clean | tee "$RUN_ROOT/bootstrap.log"
+printf 'bootstrap_finished_at_utc=%s\n' "$(date -u '+%Y%m%dT%H%M%SZ')" >>"$RUN_ROOT/timing.env"
+
+info "Opening eight local Ollama tunnels ..."
+LME_RUNPOD_FLEET="$FLEET" "$ROOT/bin/lme" runpod-tunnels start --workers 1-8 | tee "$RUN_ROOT/tunnels-start.log"
+TUNNELS_STARTED=1
+
+if [[ "$FLEET" == "default" ]]; then
+  FLEET_ENV="$ROOT/.env"
+else
+  FLEET_ENV="$ROOT/output/runpod-fleets/fleets/$FLEET/fleet.env"
+fi
+[[ -f "$FLEET_ENV" ]] || die "fleet environment file missing: $FLEET_ENV"
+set -a
+# shellcheck disable=SC1090
+source "$FLEET_ENV"
+set +a
+
+ACTUAL_FLEET_HOURLY_USD="$(ruby -e 'puts (1..8).sum { |i| ENV.fetch("RUNPOD_BURST_#{i}_HOURLY_RATE").to_f }')"
+
+cat >"$RUN_ROOT/provenance.txt" <<EOF
+created_at_utc=$STAMP
+model=$MODEL
+model_digest=$MODEL_DIGEST
+context_length=$CONTEXT
+worker_count=$WORKERS
+cloud=$CLOUD
+fleet=$FLEET
+max_fleet_hourly_usd=$MAX_HOURLY_USD
+max_total_hourly_usd=$MAX_TOTAL_HOURLY_USD
+actual_fleet_hourly_usd=$ACTUAL_FLEET_HOURLY_USD
+watchdog_minutes=$WATCHDOG_MINUTES
+matcher_repo=$MATCHER_REPO
+matcher_git_sha=$MATCHER_SHA
+lme_git_sha=$LME_SHA
+EOF
+printf 'worker\tcase\tollama_url\toutput_root\tlog\n' >"$RUN_ROOT/case-map.tsv"
+
+printf 'inference_started_at_utc=%s\n' "$(date -u '+%Y%m%dT%H%M%SZ')" >>"$RUN_ROOT/timing.env"
+for i in "${!CASES[@]}"; do
+  worker=$((i + 1))
+  case_spec="${CASES[$i]}"
+  query_id="${case_spec%%:*}"
+  repeat="${case_spec##*:}"
+  url_var="LME_BURST_${worker}_URL"
+  url="${!url_var:-}"
+  [[ -n "$url" ]] || die "$url_var is missing after tunnel startup"
+
+  worker_root="$RUN_ROOT/burst_${worker}"
+  worker_log="$RUN_ROOT/burst_${worker}.log"
+  mkdir -p "$worker_root"
+  printf '%s\t%s\t%s\t%s\t%s\n' "$worker" "$case_spec" "$url" "$worker_root" "$worker_log" >>"$RUN_ROOT/case-map.tsv"
+
+  info "Dispatching burst_$worker -> $case_spec via $url"
+  (
+    cd "$MATCHER_REPO"
+    OLLAMA_BASE_URL="$url" \
+    AF_MATCHER_MODEL="$MODEL" \
+    AF_MATCHER_REPEATS=2 \
+    AF_MATCHER_NUM_CTX="$CONTEXT" \
+    AF_MATCHER_TEMPERATURE="" \
+    AF_MATCHER_SEED="" \
+    AF_MATCHER_OUTPUT_ROOT="$worker_root" \
+      bin/af-matcher run-case "$query_id" "$repeat"
+  ) >"$worker_log" 2>&1 &
+  PIDS+=("$!")
+done
+
+FAILURES=0
+for i in "${!PIDS[@]}"; do
+  worker=$((i + 1))
+  if wait "${PIDS[$i]}"; then
+    info "PASS burst_$worker (${CASES[$i]})"
+  else
+    info "FAIL burst_$worker (${CASES[$i]}); see $RUN_ROOT/burst_${worker}.log"
+    FAILURES=$((FAILURES + 1))
+  fi
+done
+
+printf 'inference_finished_at_utc=%s\n' "$(date -u '+%Y%m%dT%H%M%SZ')" >>"$RUN_ROOT/timing.env"
+printf 'finished_at_utc=%s\n' "$(date -u '+%Y%m%dT%H%M%SZ')" >>"$RUN_ROOT/provenance.txt"
+printf 'failed_cases=%d\n' "$FAILURES" >>"$RUN_ROOT/provenance.txt"
+
+if ((FAILURES > 0)); then
+  die "$FAILURES matcher case(s) failed"
+fi
+
+info "All 8 matcher cases completed; tearing down paid resources before packaging."
+LME_RUNPOD_FLEET="$FLEET" "$ROOT/bin/lme" runpod-tunnels stop --workers 1-8 | tee "$RUN_ROOT/tunnels-stop.log"
+TUNNELS_STARTED=0
+LME_RUNPOD_FLEET="$FLEET" "$ROOT/bin/lme" runpod-destroy --workers 1-8 --yes | tee "$RUN_ROOT/runpod-destroy.log"
+FLEET_CREATED=0
+printf 'fleet_destroyed_at_utc=%s\n' "$(date -u '+%Y%m%dT%H%M%SZ')" >>"$RUN_ROOT/timing.env"
+
+if [[ -n "$WATCHDOG_PID" ]]; then
+  kill "$WATCHDOG_PID" 2>/dev/null || true
+  wait "$WATCHDOG_PID" 2>/dev/null || true
+  WATCHDOG_PID=""
+fi
+
+(
+  cd "$(dirname "$RUN_ROOT")"
+  zip -qr "$(basename "$RUN_ROOT").zip" "$(basename "$RUN_ROOT")"
+)
+
+info "Burst pilot complete and paid fleet destroyed."
