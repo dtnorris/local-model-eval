@@ -21,7 +21,7 @@ REST_API_BASE = "https://rest.runpod.io/v1"
 JOB_API_BASE = "https://api.runpod.ai/v2"
 WORKER_COUNT = 8
 MODEL_NAME = "openai/gpt-oss-20b"
-IMAGE_NAME = "runpod/worker-v1-vllm:2.26.0"
+IMAGE_NAME = "runpod/worker-v1-vllm:v2.26.0"
 GPU_TYPE = "NVIDIA GeForce RTX 4090"
 GPU_PRICE_PER_SECOND_USD = 0.00031
 DEFAULT_DEADLINE_SECONDS = 90
@@ -187,12 +187,15 @@ class ServerlessBurstProbe:
         self.endpoint_id: str | None = None
         self.submit_origin_ns: int | None = None
         self._stop = threading.Event()
+        self.driver_origin_ns = time.monotonic_ns()
 
     def log(self, message: str) -> None:
-        print(f"[serverless-burst-probe] {message}", flush=True)
+        elapsed_seconds = (time.monotonic_ns() - self.driver_origin_ns) / 1e9
+        print(f"[serverless-burst-probe +{elapsed_seconds:06.1f}s] {message}", flush=True)
 
     def create_resources(self, name_suffix: str) -> None:
         template_name = f"lme-burst-probe-{name_suffix}"
+        started = time.monotonic()
         self.log(f"Creating disposable template {template_name}")
         template = api_request(
             "POST",
@@ -218,8 +221,10 @@ class ServerlessBurstProbe:
         )
         self.template_id = template["id"]
         self._write_resource_ids()
+        self.log(f"Template created in {time.monotonic() - started:.1f}s (id={self.template_id})")
 
         endpoint_name = f"lme-scale-zero-eight-{name_suffix}"
+        started = time.monotonic()
         self.log(f"Creating scale-zero endpoint {endpoint_name}")
         endpoint = api_request(
             "POST",
@@ -242,6 +247,7 @@ class ServerlessBurstProbe:
         )
         self.endpoint_id = endpoint["id"]
         self._write_resource_ids()
+        self.log(f"Endpoint created in {time.monotonic() - started:.1f}s (id={self.endpoint_id})")
         self.artifacts.json("created-template.json", template)
         self.artifacts.json("created-endpoint.json", endpoint)
 
@@ -270,7 +276,9 @@ class ServerlessBurstProbe:
 
     def wait_for_scale_zero(self, timeout_seconds: int = 15) -> dict[str, Any]:
         assert self.endpoint_id
-        deadline = time.monotonic() + timeout_seconds
+        started = time.monotonic()
+        self.log("Waiting for endpoint health to confirm scale zero")
+        deadline = started + timeout_seconds
         latest: dict[str, Any] = {}
         while time.monotonic() < deadline:
             latest = api_request(
@@ -280,6 +288,7 @@ class ServerlessBurstProbe:
             count = int(workers.get("idle", 0)) + int(workers.get("running", 0))
             if count == 0:
                 self.artifacts.json("scale-zero-health.json", latest)
+                self.log(f"Scale zero confirmed in {time.monotonic() - started:.1f}s")
                 return latest
             time.sleep(0.5)
         raise RuntimeError(f"Endpoint did not reach scale zero: {latest}")
@@ -327,6 +336,7 @@ class ServerlessBurstProbe:
         self.artifacts.jsonl(
             "timeline.jsonl", {"event": "burst_submission_started", "elapsed_ms": 0.0}
         )
+        self.log(f"Submitting {WORKER_COUNT} requests concurrently")
         barrier = threading.Barrier(WORKER_COUNT)
         executor = concurrent.futures.ThreadPoolExecutor(max_workers=WORKER_COUNT)
         try:
@@ -339,6 +349,10 @@ class ServerlessBurstProbe:
         self.artifacts.jsonl(
             "timeline.jsonl",
             {"event": "all_jobs_submitted", "elapsed_ms": self._elapsed_ms(latest)},
+        )
+        self.log(
+            f"All {WORKER_COUNT} requests accepted by burst "
+            f"+{self._elapsed_seconds(latest):.3f}s"
         )
         return observations
 
@@ -360,6 +374,10 @@ class ServerlessBurstProbe:
                         if text and observation.first_token_ns is None:
                             observation.first_token_ns = time.monotonic_ns()
                             observation.first_text = text[:80]
+                            self.log(
+                                f"slot {observation.slot} first token at burst "
+                                f"+{self._elapsed_seconds(observation.first_token_ns):.3f}s"
+                            )
                             self.artifacts.jsonl(
                                 "timeline.jsonl",
                                 {
@@ -385,6 +403,9 @@ class ServerlessBurstProbe:
         all_workers_ns: int | None = None
         all_first_tokens_ns: int | None = None
         last_status_poll = 0.0
+        last_progress_log = 0.0
+        last_health_signature: tuple[int, ...] | None = None
+        self.log(f"Monitoring burst for up to {self.deadline_seconds}s")
         try:
             while time.monotonic_ns() < deadline_ns:
                 now = time.monotonic()
@@ -402,6 +423,35 @@ class ServerlessBurstProbe:
                         "health": health,
                     },
                 )
+                jobs = health.get("jobs") or {}
+                health_signature = (
+                    int(jobs.get("inQueue", 0)),
+                    int(jobs.get("inProgress", 0)),
+                    int(jobs.get("completed", 0)),
+                    int(jobs.get("failed", 0)),
+                    int(workers.get("idle", 0)),
+                    int(workers.get("initializing", 0)),
+                    int(workers.get("ready", 0)),
+                    int(workers.get("running", 0)),
+                    int(workers.get("throttled", 0)),
+                    int(workers.get("unhealthy", 0)),
+                )
+                progress_now = time.monotonic()
+                if (
+                    health_signature != last_health_signature
+                    or progress_now - last_progress_log >= 5.0
+                ):
+                    self.log(
+                        f"burst +{self._elapsed_seconds(sampled_ns):.1f}s | "
+                        f"jobs queue={health_signature[0]} progress={health_signature[1]} "
+                        f"completed={health_signature[2]} failed={health_signature[3]} | "
+                        f"workers idle={health_signature[4]} initializing={health_signature[5]} "
+                        f"ready={health_signature[6]} running={health_signature[7]} "
+                        f"throttled={health_signature[8]} unhealthy={health_signature[9]}"
+                    )
+                    last_health_signature = health_signature
+                    last_progress_log = progress_now
+
                 if worker_count >= WORKER_COUNT and all_workers_ns is None:
                     all_workers_ns = sampled_ns
                     self.artifacts.jsonl(
@@ -435,6 +485,10 @@ class ServerlessBurstProbe:
                             observation.terminal_status = state
                             observation.terminal_ns = time.monotonic_ns()
                             observation.worker_id = status.get("workerId") or status.get("worker_id")
+                            self.log(
+                                f"slot {observation.slot} terminal={state} at burst "
+                                f"+{self._elapsed_seconds(observation.terminal_ns):.3f}s"
+                            )
                             if state != "COMPLETED":
                                 observation.error = json.dumps(status, sort_keys=True)[:1000]
                     last_status_poll = now
@@ -446,6 +500,8 @@ class ServerlessBurstProbe:
                 ):
                     break
                 time.sleep(0.25)
+            if time.monotonic_ns() >= deadline_ns:
+                self.log(f"Burst deadline reached at +{self.deadline_seconds}s")
         finally:
             self._stop.set()
             for future in stream_futures:

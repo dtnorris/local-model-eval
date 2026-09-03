@@ -7,7 +7,7 @@ and deletes both resources on success, failure, timeout, or interrupt.
 
 ## Frozen experiment
 
-- runtime: `runpod/worker-v1-vllm:2.26.0`
+- runtime: `runpod/worker-v1-vllm:v2.26.0`
 - model: `openai/gpt-oss-20b`
 - GPU: 8 × Secure RTX 4090
 - scale: `workersMin=0`, `workersMax=8`
