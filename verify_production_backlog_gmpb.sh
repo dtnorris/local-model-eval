@@ -212,6 +212,11 @@ headers = rows.shift.map { |v| v.to_s.strip == "ADV - ID" ? "Adventure ID" : v.t
 blank = ->(v) { v.nil? || v.to_s.strip.empty? }
 int = ->(v) { begin Integer(Float(v)) rescue nil end }
 
+current_index = CSV.read(index_path, headers: true, encoding: "UTF-8")
+current_manifest_by_id = current_index.to_h do |r|
+  [r["adventure_id"].to_s.strip, r["manifest_path"].to_s.strip]
+end
+
 reserved = {}
 queue = snapshot.fetch("queue")
 Dir.glob(File.join(repo_root, "production_backlog", "**", "*case_index.csv")).sort.each do |path|
@@ -223,7 +228,12 @@ Dir.glob(File.join(repo_root, "production_backlog", "**", "*case_index.csv")).so
     rs.each do |r|
       next unless r["dimension"].to_s.strip == q.fetch("dimension")
       id = r["adventure_id"].to_s.strip
-      reserved[id] = true unless id.empty?
+      next if id.empty?
+
+      manifest_path = r["manifest_path"].to_s.strip
+      next if !manifest_path.empty? && current_manifest_by_id[id] == manifest_path
+
+      reserved[id] = true
     end
   rescue CSV::MalformedCSVError
   end

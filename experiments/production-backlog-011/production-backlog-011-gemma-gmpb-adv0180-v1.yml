@@ -27,7 +27,7 @@ scorer:
   mode: positional
   extra_args:
     - --config
-    - ../local-model-eval2spd/production_backlog/gmpb-v0.6-runtime.yml
+    - ${LME_REPO}/production_backlog/gmpb-v0.6-runtime.yml
 
 production_contract:
   contract_type: gmpb_local_qualified_v1

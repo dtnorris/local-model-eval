@@ -43,6 +43,9 @@ case "$CONTRACT_TYPE" in
   gmbs_local_qualified_v1)
     VERIFY="$REPO/verify_production_backlog_gmbs.sh"
     ;;
+  gmpb_local_qualified_v1)
+    VERIFY="$REPO/verify_production_backlog_gmpb.sh"
+    ;;
   seriousness_local_qualified_v1)
     VERIFY="$REPO/verify_production_backlog_seriousness.sh"
     ;;
