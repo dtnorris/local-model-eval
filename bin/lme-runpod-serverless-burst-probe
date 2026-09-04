@@ -1,0 +1,139 @@
+#!/usr/bin/env python3
+"""Run the disposable RunPod Serverless scale-zero-to-eight probe."""
+
+from __future__ import annotations
+
+import argparse
+import json
+import pathlib
+import signal
+import sys
+import time
+import uuid
+
+REPO_ROOT = pathlib.Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(REPO_ROOT / "lib"))
+
+from serverless_burst_probe import (  # noqa: E402
+    ArtifactLog,
+    JOB_API_BASE,
+    REST_API_BASE,
+    ServerlessBurstProbe,
+    api_request,
+    frozen_plan,
+    load_api_key,
+    utc_now,
+)
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description=(
+            "Submit eight trivial requests to a scale-zero RunPod Serverless endpoint, "
+            "measure eight workers/eight first tokens, then delete every created resource."
+        )
+    )
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Authenticate and print the frozen plan without creating anything.",
+    )
+    parser.add_argument("--yes", action="store_true", help="Skip the paid-run confirmation.")
+    parser.add_argument(
+        "--deadline-seconds", type=int, default=90, help="Hard burst deadline (default: 90)."
+    )
+    return parser.parse_args()
+
+
+def confirm() -> bool:
+    try:
+        answer = input("Type RUN to submit the paid eight-request burst: ").strip()
+    except EOFError:
+        return False
+    return answer == "RUN"
+
+
+def main() -> int:
+    args = parse_args()
+    if args.deadline_seconds < 10 or args.deadline_seconds > 300:
+        print("ERROR: --deadline-seconds must be between 10 and 300", file=sys.stderr)
+        return 2
+    key = load_api_key(REPO_ROOT)
+    if not key:
+        print("ERROR: RUNPOD_API_KEY is not set and was not found in repo .env", file=sys.stderr)
+        return 2
+
+    plan = frozen_plan(args.deadline_seconds)
+    print(json.dumps(plan, indent=2, sort_keys=True))
+
+    if args.dry_run:
+        # These are intentionally read-only and also verify the credential/API path.
+        endpoints = api_request("GET", f"{REST_API_BASE}/endpoints", key)
+        templates = api_request("GET", f"{REST_API_BASE}/templates", key)
+        endpoint_count = len(endpoints) if isinstance(endpoints, list) else len(endpoints.get("data", []))
+        template_count = len(templates) if isinstance(templates, list) else len(templates.get("data", []))
+        print(f"Authenticated read-only preflight: {endpoint_count} endpoints, {template_count} templates.")
+        print("No resources created; no jobs submitted; no charge initiated.")
+        return 0
+
+    if not args.yes and not confirm():
+        print("Aborted before any resource was created.")
+        return 2
+
+    stamp = time.strftime("%Y%m%dT%H%M%SZ", time.gmtime())
+    run_root = REPO_ROOT / "output" / "serverless-burst-probe" / f"{stamp}__{uuid.uuid4().hex[:8]}"
+    artifacts = ArtifactLog(run_root)
+    artifacts.json("plan.json", {"created_at_utc": utc_now(), **plan})
+    probe = ServerlessBurstProbe(key, artifacts, args.deadline_seconds)
+    observations = []
+    all_workers_ns = None
+    all_first_tokens_ns = None
+    cleanup = {"all_deleted": False, "note": "cleanup not yet attempted"}
+    run_error = None
+
+    def request_cleanup(_signum, _frame):
+        raise KeyboardInterrupt
+
+    signal.signal(signal.SIGTERM, request_cleanup)
+    if hasattr(signal, "SIGHUP"):
+        signal.signal(signal.SIGHUP, request_cleanup)
+
+    print(f"Artifacts: {run_root}")
+    try:
+        probe.create_resources(f"{stamp.lower()}-{uuid.uuid4().hex[:6]}")
+        probe.wait_for_scale_zero()
+        observations = probe.submit_burst()
+        all_workers_ns, all_first_tokens_ns = probe.measure(observations)
+    except KeyboardInterrupt:
+        run_error = "interrupted"
+        print("Interrupted; tearing down resources.", file=sys.stderr)
+    except Exception as error:
+        run_error = f"{type(error).__name__}: {error}"
+        print(f"ERROR: {run_error}", file=sys.stderr)
+    finally:
+        cleanup = probe.cleanup()
+
+    summary = probe.summary(observations, all_workers_ns, all_first_tokens_ns, cleanup) if probe.submit_origin_ns else {
+        "result": "FAIL",
+        "error": run_error or "failed before burst submission",
+        "cleanup": cleanup,
+    }
+    if probe.submit_origin_ns is None:
+        artifacts.json("summary.json", summary)
+    elif run_error:
+        summary["error"] = run_error
+        artifacts.json("summary.json", summary)
+
+    print(json.dumps(summary, indent=2, sort_keys=True))
+    print(f"Artifacts: {run_root}")
+    if not cleanup.get("all_deleted"):
+        print(
+            f"ERROR: teardown was not fully confirmed; use {run_root / 'resource-ids.json'}",
+            file=sys.stderr,
+        )
+        return 1
+    return 0 if summary.get("result") in {"PASS", "STRONG PASS"} else 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
