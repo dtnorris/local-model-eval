@@ -4,6 +4,7 @@ require "minitest/autorun"
 require "tmpdir"
 require "fileutils"
 require "open3"
+require_relative "../lib/local_model_evaluation/runpod_workers"
 
 class RunpodScriptsTest < Minitest::Test
   REPO_ROOT = File.expand_path("..", __dir__)
@@ -214,7 +215,7 @@ class RunpodScriptsTest < Minitest::Test
     # real worker coordinates leak into these isolated script fixtures.
     env["LME_RUNPOD_FLEET_DIR"] = nil
 
-    (1..5).each do |worker|
+    (1..LocalModelEvaluation::RunpodWorkers::MAX_WORKERS).each do |worker|
       env["LME_BURST_#{worker}_URL"] = nil
       env["RUNPOD_BURST_#{worker}_HOST"] = nil
       env["RUNPOD_BURST_#{worker}_SSH_PORT"] = nil

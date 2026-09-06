@@ -152,6 +152,15 @@ class RunpodStatusTest < Minitest::Test
     assert_includes output, "WARNING: burst_1 is ACTIVE in LME state but RunPod status is MISSING"
   end
 
+  def test_status_routes_worker_sixteen_from_fleet_state
+    fleet = fleet_record(workers: [worker(16, "pod_16", 0.44)])
+    status = build_status(fleet, client: FakeClient.new("pod_16" => { "status" => "RUNNING", "cost" => 0.44 }))
+
+    snapshot = status.snapshot
+    assert_equal 16, snapshot.fetch("workers").first.fetch("index")
+    assert_includes status.render(snapshot), "burst_16"
+  end
+
   def test_no_current_fleet_is_a_clean_zero_state
     state = FakeFleetState.new(root: @tmp, current: nil)
     status = LocalModelEvaluation::RunpodStatus.new(fleet_state: state, wall_clock: -> { @now })

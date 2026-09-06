@@ -84,8 +84,10 @@ class RunpodMultiFleetTest < Minitest::Test
     qwen_ns = namespace("qwen", create: true)
     gptoss_ns = namespace("gptoss", create: true)
 
-    assert_equal 11_451, qwen_ns.local_port_base
-    assert_equal 11_461, gptoss_ns.local_port_base
+    assert_equal 11_457, qwen_ns.local_port_base
+    assert_equal 11_473, gptoss_ns.local_port_base
+    assert_operator qwen_ns.local_port_base + LocalModelEvaluation::RunpodWorkers::MAX_WORKERS - 1,
+                    :<, gptoss_ns.local_port_base
     refute_equal qwen_ns.state_root, gptoss_ns.state_root
     refute_equal qwen_ns.env_path, gptoss_ns.env_path
 
@@ -112,11 +114,11 @@ class RunpodMultiFleetTest < Minitest::Test
     gptoss_state = gptoss.fleet_state.current
     assert_equal "active", qwen_state.fetch("status")
     assert_equal "active", gptoss_state.fetch("status")
-    assert_equal "http://127.0.0.1:11451", qwen_state.fetch("workers").first.fetch("local_ollama_url")
-    assert_equal "http://127.0.0.1:11461", gptoss_state.fetch("workers").first.fetch("local_ollama_url")
+    assert_equal "http://127.0.0.1:11457", qwen_state.fetch("workers").first.fetch("local_ollama_url")
+    assert_equal "http://127.0.0.1:11473", gptoss_state.fetch("workers").first.fetch("local_ollama_url")
 
-    assert_includes File.read(qwen_ns.env_path), "LME_BURST_1_URL=http://127.0.0.1:11451"
-    assert_includes File.read(gptoss_ns.env_path), "LME_BURST_1_URL=http://127.0.0.1:11461"
+    assert_includes File.read(qwen_ns.env_path), "LME_BURST_1_URL=http://127.0.0.1:11457"
+    assert_includes File.read(gptoss_ns.env_path), "LME_BURST_1_URL=http://127.0.0.1:11473"
     assert_in_delta 0.88, qwen_ns.total_active_hourly_usd, 0.0001
 
     assert_equal [1], qwen.destroy(worker_indices: [1])
@@ -128,7 +130,7 @@ class RunpodMultiFleetTest < Minitest::Test
   def test_provisional_namespace_does_not_persist_registry
     provisional = namespace("dryrun", provisional: true)
 
-    assert_equal 11_451, provisional.local_port_base
+    assert_equal 11_457, provisional.local_port_base
     refute File.exist?(File.join(@state_root, LocalModelEvaluation::RunpodFleetNamespace::REGISTRY_FILE))
     refute File.exist?(File.join(@state_root, LocalModelEvaluation::RunpodFleetNamespace::REGISTRY_LOCK))
   end

@@ -3,13 +3,14 @@
 require "fileutils"
 require "json"
 require "time"
+require_relative "runpod_workers"
 
 module LocalModelEvaluation
   class RunpodFleetNamespace
     DEFAULT_KEY = "default"
     KEY_PATTERN = /\A[a-z0-9][a-z0-9_-]{0,31}\z/
     DEFAULT_LOCAL_PORT_BASE = 11_441
-    PORT_BLOCK_SIZE = 10
+    PORT_BLOCK_SIZE = RunpodWorkers::MAX_WORKERS
     MAX_NAMED_FLEETS = 100
     DEFAULT_MAX_TOTAL_HOURLY_USD = 6.0
     REGISTRY_FILE = "registry.json"

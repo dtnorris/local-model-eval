@@ -3,10 +3,12 @@
 require "fileutils"
 require "set"
 require_relative "runpod_fleet_state"
+require_relative "runpod_workers"
 
 module LocalModelEvaluation
   class RunpodFleet
-    MAX_WORKERS = 8
+    MIN_WORKERS = RunpodWorkers::MIN_WORKERS
+    MAX_WORKERS = RunpodWorkers::MAX_WORKERS
     GPU_ID = ENV.fetch("RUNPOD_GPU_ID", "NVIDIA A40")
     GPU_MEMORY_GB = Integer(ENV.fetch("RUNPOD_GPU_MEMORY_GB", "48"))
     DEFAULT_CLOUD = "COMMUNITY"
@@ -470,16 +472,15 @@ module LocalModelEvaluation
     end
 
     def validate_worker_count(value)
-      count = Integer(value)
-      raise Error, "workers must be between 1 and #{MAX_WORKERS}" unless count.between?(1, MAX_WORKERS)
-
-      count
-    rescue ArgumentError, TypeError
-      raise Error, "workers must be an integer between 1 and #{MAX_WORKERS}"
+      RunpodWorkers.validate_count(value)
+    rescue RunpodWorkers::Error => e
+      raise Error, e.message
     end
 
     def validate_worker_index(index)
-      raise Error, "worker index must be between 1 and #{MAX_WORKERS}" unless index.between?(1, MAX_WORKERS)
+      RunpodWorkers.validate_index(index)
+    rescue RunpodWorkers::Error => e
+      raise Error, e.message
     end
 
     def normalize_cloud(value)

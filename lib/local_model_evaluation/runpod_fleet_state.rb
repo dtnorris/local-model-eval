@@ -3,6 +3,7 @@
 require "fileutils"
 require "json"
 require "time"
+require_relative "runpod_workers"
 
 module LocalModelEvaluation
   class RunpodFleetState
@@ -18,8 +19,9 @@ module LocalModelEvaluation
       @root = File.expand_path(root)
       @clock = clock || -> { Time.now.utc }
       @local_port_base = Integer(local_port_base)
-      unless @local_port_base.between?(1, 65_530)
-        raise Error, "local port base must leave room for five managed workers"
+      max_base = 65_535 - RunpodWorkers::MAX_WORKERS + 1
+      unless @local_port_base.between?(1, max_base)
+        raise Error, "local port base must leave room for #{RunpodWorkers::MAX_WORKERS} managed workers"
       end
     rescue ArgumentError, TypeError
       raise Error, "local port base must be an integer"
@@ -60,6 +62,7 @@ module LocalModelEvaluation
 
       workers = Array(workers).sort_by(&:index)
       raise Error, "cannot activate an empty RunPod fleet" if workers.empty?
+      validate_worker_indices!(workers.map(&:index))
 
       timestamp = utc_now
       fleet_id = build_fleet_id(timestamp, workers.first.pod_id)
@@ -156,6 +159,7 @@ module LocalModelEvaluation
       unless record["fleet_id"] == fleet_id
         raise Error, "fleet state id mismatch in #{path}"
       end
+      validate_record!(record)
 
       record
     rescue JSON::ParserError => e
@@ -224,6 +228,24 @@ module LocalModelEvaluation
       return if fleet_id.to_s.match?(/\A\d{8}T\d{6}Z-[A-Za-z0-9_-]{1,32}\z/)
 
       raise Error, "invalid fleet id: #{fleet_id.inspect}"
+    end
+
+    def validate_record!(record)
+      workers = Array(record.fetch("workers"))
+      validate_worker_indices!(workers.map { |worker| worker.fetch("index") })
+      expected_count = RunpodWorkers.validate_count(record.fetch("worker_count"))
+      return if expected_count == workers.length
+
+      raise Error, "fleet worker_count #{expected_count} does not match #{workers.length} worker records"
+    rescue KeyError, RunpodWorkers::Error => e
+      raise Error, "invalid fleet state: #{e.message}"
+    end
+
+    def validate_worker_indices!(values)
+      indices = values.map { |value| RunpodWorkers.validate_index(value) }
+      raise Error, "fleet worker indices must be unique" unless indices.uniq.length == indices.length
+    rescue RunpodWorkers::Error => e
+      raise Error, e.message
     end
   end
 end

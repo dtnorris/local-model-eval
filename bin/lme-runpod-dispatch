@@ -1,0 +1,95 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "json"
+require "optparse"
+
+ROOT = File.expand_path("..", __dir__)
+$LOAD_PATH.unshift File.join(ROOT, "lib")
+
+require "local_model_evaluation/runpod_dispatcher"
+require "local_model_evaluation/runpod_fleet_namespace"
+require "local_model_evaluation/runpod_fleet_state"
+require "local_model_evaluation/runpod_workers"
+
+opts = {
+  jobs: nil,
+  workers: nil,
+  all: false,
+  output: nil,
+  fleet: ENV.fetch("LME_RUNPOD_FLEET", LocalModelEvaluation::RunpodFleetNamespace::DEFAULT_KEY)
+}
+
+parser = OptionParser.new do |o|
+  o.banner = "Usage: bin/lme runpod-dispatch --jobs FILE (--workers LIST|--all) --output DIR [--fleet KEY]"
+  o.on("--jobs FILE", "JSON job definitions with job_id, argv, and optional env") { |v| opts[:jobs] = v }
+  o.on("--workers LIST", "Burst worker indices, e.g. 1-12 or 1,6,12") do |v|
+    opts[:workers] = LocalModelEvaluation::RunpodWorkers.parse_selector(v)
+  rescue LocalModelEvaluation::RunpodWorkers::Error => e
+    raise OptionParser::InvalidArgument, e.message
+  end
+  o.on("--all", "Select every active worker in the current fleet") { opts[:all] = true }
+  o.on("--output DIR", "New directory for manifest, job logs, and summary") { |v| opts[:output] = v }
+  o.on("--fleet KEY", "Managed RunPod fleet key") { |v| opts[:fleet] = v }
+end
+
+begin
+  parser.parse!(ARGV)
+  raise OptionParser::InvalidArgument, "unexpected arguments: #{ARGV.join(' ')}" unless ARGV.empty?
+  raise OptionParser::MissingArgument, "--jobs" unless opts[:jobs]
+  raise OptionParser::MissingArgument, "--output" unless opts[:output]
+  raise OptionParser::InvalidArgument, "use either --workers or --all, not both" if opts[:workers] && opts[:all]
+  raise OptionParser::InvalidArgument, "use --workers LIST or --all" unless opts[:workers] || opts[:all]
+rescue OptionParser::ParseError => e
+  warn "ERROR: #{e.message}"
+  warn parser
+  exit 2
+end
+
+begin
+  jobs_path = File.expand_path(opts.fetch(:jobs))
+  raise LocalModelEvaluation::RunpodDispatcher::Error, "jobs file not found: #{jobs_path}" unless File.file?(jobs_path)
+
+  document = JSON.parse(File.read(jobs_path))
+  jobs = document.is_a?(Hash) ? document.fetch("jobs") : document
+  namespace = LocalModelEvaluation::RunpodFleetNamespace.new(
+    root: File.join(ROOT, "output", "runpod-fleets"),
+    repo_root: ROOT,
+    fleet_key: opts.fetch(:fleet)
+  )
+  fleet_state = LocalModelEvaluation::RunpodFleetState.new(
+    root: namespace.state_root,
+    local_port_base: namespace.local_port_base
+  )
+  if opts[:all]
+    current = fleet_state.current
+    unless current && current["status"] == "active"
+      raise LocalModelEvaluation::RunpodDispatcher::InfrastructureError, "no current active RunPod fleet state exists"
+    end
+    opts[:workers] = current.fetch("workers").filter_map do |worker|
+      Integer(worker.fetch("index")) if worker["status"] == "active"
+    end
+  end
+
+  dispatcher = LocalModelEvaluation::RunpodDispatcher.new(
+    fleet_state:,
+    output_dir: opts.fetch(:output),
+    repo_root: ROOT
+  )
+  summary = dispatcher.run(jobs:, worker_indices: opts.fetch(:workers))
+  puts "Dispatch #{summary.fetch('status')}: #{summary.fetch('completed_count')} completed, " \
+       "#{summary.fetch('failed_count')} failed, #{summary.fetch('not_started_count')} not started."
+  puts "Evidence: #{dispatcher.output_dir}"
+  exit(summary.fetch("status") == "completed" ? 0 : summary.fetch("status") == "workload_failed" ? 2 : 1)
+rescue JSON::ParserError => e
+  warn "ERROR: jobs file is invalid JSON: #{e.message}"
+  exit 2
+rescue KeyError => e
+  warn "ERROR: jobs file is missing #{e.key.inspect}"
+  exit 2
+rescue LocalModelEvaluation::RunpodDispatcher::Error,
+       LocalModelEvaluation::RunpodFleetNamespace::Error,
+       LocalModelEvaluation::RunpodFleetState::Error => e
+  warn "ERROR: #{e.message}"
+  exit 1
+end

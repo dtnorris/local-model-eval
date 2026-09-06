@@ -9,23 +9,12 @@ $LOAD_PATH.unshift File.join(ROOT, "lib")
 require "local_model_evaluation/runpod_fleet_namespace"
 require "local_model_evaluation/runpod_fleet_state"
 require "local_model_evaluation/runpod_tunnels"
+require "local_model_evaluation/runpod_workers"
 
 def parse_worker_indices(value)
-  tokens = value.to_s.split(",").map(&:strip).reject(&:empty?)
-  raise OptionParser::InvalidArgument, "--workers requires a list such as 1-5 or 1,2,3" if tokens.empty?
-
-  tokens.flat_map do |token|
-    if (match = token.match(/\A(\d+)-(\d+)\z/))
-      first = Integer(match[1])
-      last = Integer(match[2])
-      raise OptionParser::InvalidArgument, "descending worker range: #{token}" if first > last
-      (first..last).to_a
-    elsif token.match?(/\A\d+\z/)
-      Integer(token)
-    else
-      raise OptionParser::InvalidArgument, "worker selector: #{token.inspect}"
-    end
-  end.uniq.sort
+  LocalModelEvaluation::RunpodWorkers.parse_selector(value)
+rescue LocalModelEvaluation::RunpodWorkers::Error => e
+  raise OptionParser::InvalidArgument, e.message
 end
 
 action = %w[start status stop].include?(ARGV.first) ? ARGV.shift : "start"
@@ -40,12 +29,12 @@ opts = {
 parser = OptionParser.new do |o|
   o.banner = <<~USAGE
     Usage:
-      bin/lme runpod-tunnels --workers 1-5
-      bin/lme runpod-tunnels start --workers 1-5
-      bin/lme runpod-tunnels status [--workers 1-5]
-      bin/lme runpod-tunnels stop --workers 1-5
+      bin/lme runpod-tunnels --workers 1-16
+      bin/lme runpod-tunnels start --workers 1-16
+      bin/lme runpod-tunnels status [--workers 1-16]
+      bin/lme runpod-tunnels stop --workers 1-16
   USAGE
-  o.on("--workers LIST", "Burst worker indices, e.g. 1-5 or 1,3,5") { |v| opts[:workers] = parse_worker_indices(v) }
+  o.on("--workers LIST", "Burst worker indices, e.g. 1-12 or 1,6,12") { |v| opts[:workers] = parse_worker_indices(v) }
   o.on("--all", "Select every active worker in the current fleet") { opts[:all] = true }
   o.on("--wait-seconds N", Integer, "Ollama health timeout when starting (default: 30)") { |v| opts[:wait_seconds] = v }
   o.on("--remote-port N", Integer, "Remote Ollama port (default: 11434)") { |v| opts[:remote_port] = v }

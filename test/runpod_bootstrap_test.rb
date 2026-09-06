@@ -196,6 +196,36 @@ class RunpodBootstrapTest < Minitest::Test
     assert_includes log, "STDIN_BYTES=0"
   end
 
+  def test_bootstrap_addresses_worker_twelve
+    @fleet.fetch("workers") << {
+      "index" => 12,
+      "name" => "af-lme-burst-12",
+      "pod_id" => "pod_12",
+      "host" => "198.51.100.12",
+      "ssh_port" => 22_012,
+      "hourly_rate_usd" => 0.44,
+      "status" => "active"
+    }
+    script = fake_remote_script(<<~'RUBY')
+      worker = ARGV[ARGV.index("--worker") + 1]
+      puts "LME_PROVENANCE_GPU\tNVIDIA A40\t46068"
+      puts "LME_PROVENANCE_MODEL\tgemma4:26b\t#{"a" * 64}\t131072\t2566893074\t2566893074"
+      puts "Worker setup PASS."
+      puts "Worker #{worker} remote setup PASS."
+    RUBY
+
+    record = build_runner(script).run(
+      worker_indices: [12],
+      models: ["gemma4:26b"],
+      expected_digests: ["gemma4:26b=#{DIGEST}"],
+      poll_seconds: 0.005
+    )
+
+    assert_equal "passed", record.fetch("status")
+    assert_equal 12, record.fetch("workers").first.fetch("index")
+    assert_includes @out.string, "burst_12"
+  end
+
   def test_refuses_non_active_or_unknown_workers_before_spawning
     @fleet["workers"][1]["status"] = "destroyed"
     script = fake_remote_script("raise 'must not run'\n")

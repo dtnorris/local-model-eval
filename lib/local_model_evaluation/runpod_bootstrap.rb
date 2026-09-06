@@ -4,6 +4,7 @@ require "fileutils"
 require "json"
 require "securerandom"
 require "time"
+require_relative "runpod_workers"
 
 module LocalModelEvaluation
   class RunpodBootstrap
@@ -234,7 +235,7 @@ module LocalModelEvaluation
     end
 
     def selected_workers(fleet, values)
-      indices = Array(values).map { |value| Integer(value) }.uniq.sort
+      indices = Array(values).map { |value| RunpodWorkers.validate_index(value) }.uniq.sort
       raise Error, "no workers selected" if indices.empty?
 
       by_index = fleet.fetch("workers").to_h { |worker| [Integer(worker.fetch("index")), worker] }
@@ -248,6 +249,8 @@ module LocalModelEvaluation
       end
 
       selected
+    rescue RunpodWorkers::Error => e
+      raise Error, e.message
     rescue ArgumentError, TypeError
       raise Error, "worker indices must be integers"
     end
