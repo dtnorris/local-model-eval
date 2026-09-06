@@ -1,0 +1,378 @@
+# frozen_string_literal: true
+
+require "fileutils"
+require "json"
+require "time"
+require "uri"
+require_relative "runpod_fleet_state"
+require_relative "runpod_tunnels"
+require_relative "runpod_workers"
+
+module LocalModelEvaluation
+  class RunpodDispatcher
+    SCHEMA_VERSION = 1
+    JOB_ID_PATTERN = /\A[A-Za-z0-9][A-Za-z0-9._-]{0,127}\z/
+    INJECTED_ENV = %w[LME_JOB_ID LME_WORKER_INDEX LME_OLLAMA_URL].freeze
+
+    class Error < StandardError; end
+    class InfrastructureError < Error; end
+
+    class SystemCommandRunner
+      def run(argv:, env:, stdout_path:, stderr_path:, chdir:)
+        File.open(stdout_path, "w") do |stdout|
+          File.open(stderr_path, "w") do |stderr|
+            pid = Process.spawn(
+              env,
+              *argv,
+              chdir:,
+              in: File::NULL,
+              out: stdout,
+              err: stderr,
+              pgroup: true
+            )
+            _pid, status = Process.wait2(pid)
+            return status.exitstatus
+          end
+        end
+      end
+    end
+
+    def initialize(fleet_state:, output_dir:, repo_root:, out: $stdout,
+                   endpoint_checker: nil, command_runner: nil,
+                   wall_clock: nil, monotonic_clock: nil)
+      @fleet_state = fleet_state
+      @output_dir = File.expand_path(output_dir)
+      @repo_root = File.expand_path(repo_root)
+      @out = out
+      @endpoint_checker = endpoint_checker || RunpodTunnels::HttpHealthChecker.new
+      @command_runner = command_runner || SystemCommandRunner.new
+      @wall_clock = wall_clock || -> { Time.now.utc }
+      @monotonic_clock = monotonic_clock || -> { Process.clock_gettime(Process::CLOCK_MONOTONIC) }
+      @state_mutex = Mutex.new
+      @results = []
+      @infrastructure_failures = []
+      @dispatch_open = true
+    end
+
+    attr_reader :output_dir
+
+    def run(jobs:, worker_indices:)
+      jobs = normalize_jobs(jobs)
+      raise Error, "at least one job is required" if jobs.empty?
+
+      fleet = active_fleet!
+      workers = selected_workers(fleet, worker_indices)
+      prepare_output!
+      started_at = utc_now
+      write_json(
+        File.join(output_dir, "manifest.json"),
+        manifest(fleet:, workers:, jobs:, started_at:)
+      )
+
+      queue = Queue.new
+      jobs.each { |job| queue << job }
+      threads = workers.map do |worker|
+        Thread.new { worker_loop(queue, fleet.fetch("fleet_id"), worker) }
+      end
+      threads.each(&:join)
+
+      summary = build_summary(
+        fleet_id: fleet.fetch("fleet_id"),
+        jobs:,
+        workers:,
+        started_at:
+      )
+      write_json(File.join(output_dir, "summary.json"), summary)
+      summary
+    rescue RunpodFleetState::Error, RunpodWorkers::Error => e
+      raise InfrastructureError, e.message
+    end
+
+    private
+
+    def normalize_jobs(values)
+      jobs = Array(values).map do |value|
+        hash = value.respond_to?(:transform_keys) ? value.transform_keys(&:to_s) : {}
+        job_id = hash["job_id"].to_s
+        raise Error, "invalid job_id: #{job_id.inspect}" unless job_id.match?(JOB_ID_PATTERN)
+
+        argv = Array(hash["argv"])
+        if argv.empty? || argv.any? { |argument| !argument.is_a?(String) || argument.include?("\0") }
+          raise Error, "job #{job_id} argv must be a non-empty array of strings"
+        end
+
+        env = hash.fetch("env", {})
+        unless env.is_a?(Hash) && env.all? { |key, value| key.to_s.match?(/\A[A-Za-z_][A-Za-z0-9_]*\z/) && value.is_a?(String) }
+          raise Error, "job #{job_id} env must map environment-variable names to strings"
+        end
+        env = env.transform_keys(&:to_s)
+        reserved = env.keys & INJECTED_ENV
+        unless reserved.empty?
+          raise Error, "job #{job_id} may not override dispatcher environment: #{reserved.join(', ')}"
+        end
+
+        { "job_id" => job_id, "argv" => argv, "env" => env }
+      end
+
+      duplicates = jobs.group_by { |job| job.fetch("job_id") }.select { |_id, group| group.length > 1 }.keys
+      raise Error, "job_id values must be unique: #{duplicates.sort.join(', ')}" unless duplicates.empty?
+
+      jobs
+    end
+
+    def active_fleet!
+      fleet = @fleet_state.current
+      raise InfrastructureError, "no current RunPod fleet state exists" unless fleet
+      unless fleet["status"] == "active"
+        raise InfrastructureError, "current RunPod fleet #{fleet.fetch('fleet_id')} is not active"
+      end
+
+      fleet
+    end
+
+    def selected_workers(fleet, values)
+      indices = Array(values).map { |value| RunpodWorkers.validate_index(value) }.uniq.sort
+      raise Error, "no workers selected" if indices.empty?
+
+      by_index = fleet.fetch("workers").to_h do |worker|
+        [RunpodWorkers.validate_index(worker.fetch("index")), worker]
+      end
+      unknown = indices.reject { |index| by_index.key?(index) }
+      unless unknown.empty?
+        raise InfrastructureError, "current fleet does not contain worker index(es): #{unknown.join(', ')}"
+      end
+
+      selected = indices.map { |index| by_index.fetch(index) }
+      inactive = selected.reject { |worker| worker["status"] == "active" }
+      unless inactive.empty?
+        labels = inactive.map { |worker| "burst_#{worker.fetch('index')}" }
+        raise InfrastructureError, "selected worker(s) are not active: #{labels.join(', ')}"
+      end
+      selected.each { |worker| validate_endpoint!(worker.fetch("local_ollama_url")) }
+      selected
+    rescue KeyError, ArgumentError, TypeError => e
+      raise InfrastructureError, "invalid fleet worker state: #{e.message}"
+    end
+
+    def worker_loop(queue, fleet_id, planned_worker)
+      loop do
+        job = next_job(queue)
+        break unless job
+
+        begin
+          worker = ready_worker!(fleet_id, planned_worker)
+        rescue InfrastructureError => e
+          record_infrastructure_failure(planned_worker, e)
+          break
+        end
+        break unless dispatch_open?
+
+        execute(job, worker)
+      end
+    end
+
+    def next_job(queue)
+      @state_mutex.synchronize do
+        return nil unless @dispatch_open
+
+        queue.pop(true)
+      rescue ThreadError
+        nil
+      end
+    end
+
+    def dispatch_open?
+      @state_mutex.synchronize { @dispatch_open }
+    end
+
+    def ready_worker!(fleet_id, expected)
+      fleet = active_fleet!
+      unless fleet.fetch("fleet_id") == fleet_id
+        raise InfrastructureError, "active fleet changed during dispatch"
+      end
+
+      index = RunpodWorkers.validate_index(expected.fetch("index"))
+      current = fleet.fetch("workers").find { |worker| Integer(worker.fetch("index")) == index }
+      raise InfrastructureError, "worker burst_#{index} disappeared from fleet state" unless current
+      raise InfrastructureError, "worker burst_#{index} is not active" unless current["status"] == "active"
+      unless current["pod_id"] == expected["pod_id"] && current["local_ollama_url"] == expected["local_ollama_url"]
+        raise InfrastructureError, "worker burst_#{index} routing changed during dispatch"
+      end
+
+      endpoint = current.fetch("local_ollama_url")
+      validate_endpoint!(endpoint)
+      health = @endpoint_checker.check(endpoint)
+      unless health.respond_to?(:healthy) && health.healthy
+        detail = health.respond_to?(:detail) ? health.detail : "unknown health response"
+        raise InfrastructureError, "worker burst_#{index} tunnel is unavailable: #{detail}"
+      end
+      current
+    rescue RunpodFleetState::Error, RunpodWorkers::Error, KeyError, ArgumentError, TypeError => e
+      raise InfrastructureError, e.message
+    end
+
+    def execute(job, worker)
+      job_id = job.fetch("job_id")
+      index = Integer(worker.fetch("index"))
+      endpoint = worker.fetch("local_ollama_url")
+      run_dir = File.join(output_dir, "jobs", job_id)
+      FileUtils.mkdir_p(run_dir)
+      stdout_path = File.join(run_dir, "stdout.log")
+      stderr_path = File.join(run_dir, "stderr.log")
+      metadata_path = File.join(run_dir, "metadata.json")
+      started_wall = utc_now
+      started_mono = @monotonic_clock.call
+      relative_stdout = File.join("jobs", job_id, "stdout.log")
+      relative_stderr = File.join("jobs", job_id, "stderr.log")
+      metadata = {
+        "schema_version" => SCHEMA_VERSION,
+        "job_id" => job_id,
+        "worker_index" => index,
+        "worker_url" => endpoint,
+        "argv" => job.fetch("argv"),
+        "env_keys" => job.fetch("env").keys.sort,
+        "started_at_utc" => started_wall.iso8601,
+        "finished_at_utc" => nil,
+        "elapsed_seconds" => nil,
+        "status" => "running",
+        "exit_status" => nil,
+        "stdout_path" => relative_stdout,
+        "stderr_path" => relative_stderr
+      }
+      write_json(metadata_path, metadata)
+      @out.puts "[burst_#{index}] #{job_id}"
+
+      env = job.fetch("env").merge(
+        "LME_JOB_ID" => job_id,
+        "LME_WORKER_INDEX" => index.to_s,
+        "LME_OLLAMA_URL" => endpoint
+      )
+      exit_status = @command_runner.run(
+        argv: job.fetch("argv"),
+        env:,
+        stdout_path:,
+        stderr_path:,
+        chdir: @repo_root
+      )
+      metadata["exit_status"] = exit_status
+      metadata["status"] = exit_status.zero? ? "completed" : "failed"
+    rescue StandardError => e
+      FileUtils.mkdir_p(run_dir) if run_dir
+      File.open(stderr_path, "a") { |file| file.write("#{e.class}: #{e.message}\n") } if stderr_path
+      metadata ||= {
+        "schema_version" => SCHEMA_VERSION,
+        "job_id" => job_id,
+        "worker_index" => index,
+        "worker_url" => endpoint,
+        "stdout_path" => relative_stdout,
+        "stderr_path" => relative_stderr,
+        "started_at_utc" => started_wall&.iso8601
+      }
+      metadata["status"] = "failed"
+      metadata["error"] = "#{e.class}: #{e.message}"
+    ensure
+      if metadata
+        finished_wall = utc_now
+        metadata["finished_at_utc"] = finished_wall.iso8601
+        metadata["elapsed_seconds"] = (@monotonic_clock.call - started_mono).round(6) if started_mono
+        write_json(metadata_path, metadata) if metadata_path
+        @state_mutex.synchronize { @results << metadata }
+      end
+    end
+
+    def record_infrastructure_failure(worker, error)
+      record = {
+        "worker_index" => Integer(worker.fetch("index")),
+        "worker_url" => worker["local_ollama_url"],
+        "at_utc" => utc_now.iso8601,
+        "error" => "#{error.class}: #{error.message}"
+      }
+      @state_mutex.synchronize do
+        @dispatch_open = false
+        @infrastructure_failures << record
+      end
+      @out.puts "ERROR: #{record.fetch('error')}"
+    end
+
+    def prepare_output!
+      raise Error, "output path already exists: #{output_dir}" if File.exist?(output_dir)
+
+      FileUtils.mkdir_p(File.join(output_dir, "jobs"))
+    end
+
+    def manifest(fleet:, workers:, jobs:, started_at:)
+      {
+        "schema_version" => SCHEMA_VERSION,
+        "fleet_id" => fleet.fetch("fleet_id"),
+        "started_at_utc" => started_at.iso8601,
+        "worker_indices" => workers.map { |worker| Integer(worker.fetch("index")) },
+        "job_count" => jobs.length,
+        "jobs" => jobs.map do |job|
+          {
+            "job_id" => job.fetch("job_id"),
+            "argv" => job.fetch("argv"),
+            "env_keys" => job.fetch("env").keys.sort
+          }
+        end
+      }
+    end
+
+    def build_summary(fleet_id:, jobs:, workers:, started_at:)
+      finished_at = utc_now
+      results = @state_mutex.synchronize { @results.sort_by { |result| result.fetch("job_id") } }
+      infrastructure_failures = @state_mutex.synchronize { @infrastructure_failures.dup }
+      completed_ids = results.map { |result| result.fetch("job_id") }
+      {
+        "schema_version" => SCHEMA_VERSION,
+        "fleet_id" => fleet_id,
+        "started_at_utc" => started_at.iso8601,
+        "finished_at_utc" => finished_at.iso8601,
+        "status" => if infrastructure_failures.any?
+                      "infrastructure_failed"
+                    elsif results.any? { |result| result["status"] == "failed" }
+                      "workload_failed"
+                    else
+                      "completed"
+                    end,
+        "worker_count" => workers.length,
+        "job_count" => jobs.length,
+        "completed_count" => results.count { |result| result["status"] == "completed" },
+        "failed_count" => results.count { |result| result["status"] == "failed" },
+        "not_started_count" => jobs.length - results.length,
+        "not_started_job_ids" => jobs.map { |job| job.fetch("job_id") } - completed_ids,
+        "infrastructure_failures" => infrastructure_failures,
+        "jobs" => results.map do |result|
+          result.slice(
+            "job_id", "worker_index", "worker_url", "started_at_utc", "finished_at_utc",
+            "elapsed_seconds", "status", "exit_status", "stdout_path", "stderr_path", "error"
+          )
+        end
+      }
+    end
+
+    def validate_endpoint!(value)
+      uri = URI.parse(value.to_s)
+      unless uri.scheme == "http" && %w[127.0.0.1 localhost].include?(uri.host) && uri.port.positive?
+        raise InfrastructureError, "worker URL must be a localhost HTTP tunnel, got #{value.inspect}"
+      end
+      value
+    rescue URI::InvalidURIError
+      raise InfrastructureError, "invalid worker URL: #{value.inspect}"
+    end
+
+    def write_json(path, value)
+      FileUtils.mkdir_p(File.dirname(path))
+      tmp = "#{path}.tmp.#{$$}.#{Thread.current.object_id}"
+      File.write(tmp, JSON.pretty_generate(value) + "\n")
+      File.rename(tmp, path)
+    ensure
+      File.delete(tmp) if defined?(tmp) && tmp && File.exist?(tmp)
+    end
+
+    def utc_now
+      value = @wall_clock.call
+      value = Time.parse(value.to_s) unless value.is_a?(Time)
+      value.utc
+    end
+  end
+end

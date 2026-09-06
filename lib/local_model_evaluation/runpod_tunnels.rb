@@ -7,6 +7,7 @@ require "socket"
 require "time"
 require "uri"
 require_relative "runpod_fleet_state"
+require_relative "runpod_workers"
 
 module LocalModelEvaluation
   class RunpodTunnels
@@ -353,7 +354,7 @@ module LocalModelEvaluation
         return active.sort_by { |worker| Integer(worker.fetch("index")) }
       end
 
-      indices = Array(values).map { |value| Integer(value) }.uniq.sort
+      indices = Array(values).map { |value| RunpodWorkers.validate_index(value) }.uniq.sort
       raise Error, "no workers selected" if indices.empty?
       by_index = fleet.fetch("workers").to_h { |worker| [Integer(worker.fetch("index")), worker] }
       unknown = indices.reject { |index| by_index.key?(index) }
@@ -364,6 +365,8 @@ module LocalModelEvaluation
         raise Error, "selected worker(s) are not active: #{inactive.map { |worker| "burst_#{worker.fetch('index')}" }.join(', ')}"
       end
       selected
+    rescue RunpodWorkers::Error => e
+      raise Error, e.message
     rescue ArgumentError, TypeError
       raise Error, "worker indices must be integers"
     end

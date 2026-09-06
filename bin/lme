@@ -146,21 +146,9 @@ def confirm_or_abort(prompt, assume_yes: false)
 end
 
 def parse_worker_indices(value)
-  tokens = value.to_s.split(",").map(&:strip).reject(&:empty?)
-  abort "--workers requires a list such as 1-5 or 1,2,3" if tokens.empty?
-
-  tokens.flat_map do |token|
-    if (match = token.match(/\A(\d+)-(\d+)\z/))
-      first = Integer(match[1])
-      last = Integer(match[2])
-      abort "invalid descending worker range: #{token}" if first > last
-      (first..last).to_a
-    elsif token.match?(/\A\d+\z/)
-      Integer(token)
-    else
-      abort "invalid worker selector: #{token.inspect}"
-    end
-  end.uniq.sort
+  LocalModelEvaluation::RunpodWorkers.parse_selector(value)
+rescue LocalModelEvaluation::RunpodWorkers::Error => e
+  abort e.message
 end
 
 def extract_fleet_option!(argv)
@@ -195,7 +183,7 @@ def runpod_create_options(argv)
     poll_seconds: LocalModelEvaluation::RunpodFleet::DEFAULT_POLL_SECONDS
   }
   OptionParser.new do |o|
-    o.on("--workers N", Integer, "Number of burst workers (1-5)") { |v| opts[:workers] = v }
+    o.on("--workers N", Integer, "Number of burst workers (1-16)") { |v| opts[:workers] = v }
     o.on("--cloud TIER", "RunPod cloud tier: COMMUNITY or SECURE (default: COMMUNITY)") { |v| opts[:cloud] = v }
     o.on("--dry-run", "Read-only availability/cost/prerequisite check") { opts[:dry_run] = true }
     o.on("--yes", "Skip the paid-create confirmation prompt") { opts[:yes] = true }
@@ -210,12 +198,14 @@ def runpod_create_options(argv)
 end
 
 def runpod_destroy_options(argv)
-  opts = { workers: nil, yes: false }
+  opts = { workers: nil, all: false, yes: false }
   OptionParser.new do |o|
-    o.on("--workers LIST", "Burst worker indices, e.g. 1-5 or 1,3,5") { |v| opts[:workers] = parse_worker_indices(v) }
+    o.on("--workers LIST", "Burst worker indices, e.g. 1-12 or 1,6,12") { |v| opts[:workers] = parse_worker_indices(v) }
+    o.on("--all", "Select every active worker in the current fleet") { opts[:all] = true }
     o.on("--yes", "Skip the destructive confirmation prompt") { opts[:yes] = true }
   end.parse!(argv)
-  abort "Usage: bin/lme runpod-destroy --workers 1-5 [--yes]" unless opts[:workers]
+  abort "use either --workers or --all, not both" if opts[:workers] && opts[:all]
+  abort "Usage: bin/lme runpod-destroy (--workers LIST|--all) [--yes]" unless opts[:workers] || opts[:all]
   opts
 end
 
@@ -305,6 +295,9 @@ when "runpod-status"
 
 when "runpod-bootstrap"
   exec RbConfig.ruby, File.join(ROOT, "bin", "lme-runpod-bootstrap"), *ARGV
+
+when "runpod-dispatch"
+  exec RbConfig.ruby, File.join(ROOT, "bin", "lme-runpod-dispatch"), *ARGV
 
 when "runpod-create"
   opts = runpod_create_options(ARGV)
@@ -408,6 +401,24 @@ when "runpod-destroy"
   rescue LocalModelEvaluation::RunpodFleetNamespace::Error => e
     warn "ERROR: #{e.message}"
     exit 1
+  end
+  if opts[:all]
+    begin
+      current = LocalModelEvaluation::RunpodFleetState.new(
+        root: namespace.state_root,
+        local_port_base: namespace.local_port_base
+      ).current
+      raise LocalModelEvaluation::RunpodFleet::Error, "no active workers exist in fleet #{fleet_key}" unless current && current["status"] == "active"
+
+      opts[:workers] = current.fetch("workers").filter_map do |worker|
+        Integer(worker.fetch("index")) if worker["status"] == "active"
+      end
+      raise LocalModelEvaluation::RunpodFleet::Error, "no active workers exist in fleet #{fleet_key}" if opts[:workers].empty?
+    rescue LocalModelEvaluation::RunpodFleetState::Error, KeyError, ArgumentError, TypeError,
+           LocalModelEvaluation::RunpodFleet::Error => e
+      warn "ERROR: #{e.message}"
+      exit 1
+    end
   end
   confirm_or_abort(
     "Permanently delete RunPod fleet #{fleet_key} worker(s): #{opts[:workers].map { |index| "burst_#{index}" }.join(', ')}?",
@@ -528,10 +539,11 @@ else
       bin/lme worker-check [EXPERIMENT.yml]
       bin/lme runpod-ready EXPERIMENT.yml [--fleet KEY]
       bin/lme runpod-status [--fleet KEY]
-      bin/lme runpod-tunnels [start|status|stop] [--workers 1-5|--all] [--fleet KEY]
-      bin/lme runpod-bootstrap --workers 1-5 --model MODEL [options] [--fleet KEY]
+      bin/lme runpod-tunnels [start|status|stop] [--workers 1-16|--all] [--fleet KEY]
+      bin/lme runpod-bootstrap --workers 1-16 --model MODEL [options] [--fleet KEY]
+      bin/lme runpod-dispatch --jobs FILE (--workers LIST|--all) --output DIR [--fleet KEY]
       bin/lme runpod-create --workers N [--fleet KEY] [--cloud COMMUNITY|SECURE] [--dry-run|--yes] [--max-hourly-usd USD] [--max-total-hourly-usd USD]
-      bin/lme runpod-destroy --workers 1-5 [--fleet KEY] [--yes]
+      bin/lme runpod-destroy (--workers 1-16|--all) [--fleet KEY] [--yes]
       bin/lme start EXPERIMENT.yml [--fleet KEY] [--rerun-failed|--force]
       bin/lme status EXPERIMENT.yml [--fleet KEY]
       bin/lme run EXPERIMENT.yml [--fleet KEY] [--rerun-failed|--force]

@@ -103,6 +103,33 @@ class RunpodFleetTest < Minitest::Test
     assert_empty @client.created_bodies
   end
 
+  def test_preflight_supports_canonical_bounds_and_computes_twelve_worker_cost
+    [1, 8, 12, 16].each do |worker_count|
+      result = @fleet.preflight(worker_count:, max_fleet_hourly_usd: 8.0)
+      assert_equal worker_count, result.worker_count
+    end
+    twelve = @fleet.preflight(worker_count: 12, max_fleet_hourly_usd: 8.0)
+    assert_in_delta 0.44 * 12, twelve.fleet_hourly_rate, 0.0001
+    assert_includes @client.catalog_calls, ["COMMUNITY", 12]
+
+    [0, 17].each do |worker_count|
+      error = assert_raises(LocalModelEvaluation::RunpodFleet::Error) do
+        @fleet.preflight(worker_count:, max_fleet_hourly_usd: 8.0)
+      end
+      assert_includes error.message, "between 1 and 16"
+    end
+  end
+
+  def test_destroy_safely_addresses_workers_twelve_and_sixteen
+    @client.pods = [
+      ready_pod(12, "pod_12", "198.51.100.12", 22_012, 0.44),
+      ready_pod(16, "pod_16", "198.51.100.16", 22_016, 0.44)
+    ]
+
+    assert_equal [12, 16], @fleet.destroy(worker_indices: [12, 16])
+    assert_equal ["pod_12", "pod_16"], @client.deleted_ids
+  end
+
   def test_preflight_uses_secure_only_when_explicitly_requested
     result = @fleet.preflight(worker_count: 5, cloud: "secure", max_fleet_hourly_usd: 4.0)
 

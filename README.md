@@ -27,7 +27,8 @@ This makes the repo useful for parallelizing the waiting time around local-model
 
 ## Non-goals for v0.2
 
-No RunPod/Vast API integration, GPU purchasing, Terraform, Docker orchestration, SSH fleet management, queues, databases, dashboards, autoscaling, automatic model downloads, or remote scorer-repository synchronization.
+No Terraform, Docker orchestration, distributed queues, databases, dashboards,
+autoscaling, or remote scorer-repository synchronization.
 
 In particular, v0.2 does **not** copy `af-cli-scoring-utility` to remote machines or execute the whole scorer remotely. The Mac remains the lightweight control plane and the expensive model inference happens on the worker. Whole-job remote execution should only be added if this simpler architecture proves insufficient.
 
@@ -104,6 +105,40 @@ bin/lme worker-check experiments/granite-platform-equivalence-v1.yml
 ```
 
 The check calls Ollama's `/api/version` and `/api/tags` endpoints.
+
+## Managed RunPod fleets and generic dispatch
+
+Shared RunPod fleet commands support 1–16 workers. Explicit subsets remain available
+with selectors such as `1-12`, `9-12`, or `1,6,12`; `--all` selects the active
+workers recorded in the current fleet state.
+
+The generic dispatcher accepts independent jobs as structured JSON:
+
+```json
+{
+  "jobs": [
+    {
+      "job_id": "attempt-001",
+      "argv": ["/path/to/workload", "--attempt", "1"],
+      "env": { "WORKLOAD_SETTING": "value" }
+    }
+  ]
+}
+```
+
+```bash
+bin/lme runpod-dispatch \
+  --jobs /path/to/jobs.json \
+  --workers 1-4 \
+  --output output/runpod-dispatch/example
+```
+
+Each worker runs at most one job at a time. The dispatcher injects `LME_JOB_ID`,
+`LME_WORKER_INDEX`, and `LME_OLLAMA_URL`, uses argv execution without a shell,
+and writes a manifest, per-job stdout/stderr/metadata, and `summary.json`. A
+workload failure does not stop other independent jobs. A fleet or tunnel failure
+stops new assignments and leaves already-completed evidence intact.
+Environment values are not persisted; pass secrets through `env`, never `argv`.
 
 ## Define an experiment
 

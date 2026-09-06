@@ -9,23 +9,12 @@ $LOAD_PATH.unshift File.join(ROOT, "lib")
 require "local_model_evaluation/runpod_fleet_namespace"
 require "local_model_evaluation/runpod_fleet_state"
 require "local_model_evaluation/runpod_bootstrap"
+require "local_model_evaluation/runpod_workers"
 
 def parse_worker_indices(value)
-  tokens = value.to_s.split(",").map(&:strip).reject(&:empty?)
-  raise OptionParser::InvalidArgument, "--workers requires a list such as 1-5 or 1,2,3" if tokens.empty?
-
-  tokens.flat_map do |token|
-    if (match = token.match(/\A(\d+)-(\d+)\z/))
-      first = Integer(match[1])
-      last = Integer(match[2])
-      raise OptionParser::InvalidArgument, "descending worker range: #{token}" if first > last
-      (first..last).to_a
-    elsif token.match?(/\A\d+\z/)
-      Integer(token)
-    else
-      raise OptionParser::InvalidArgument, "worker selector: #{token.inspect}"
-    end
-  end.uniq.sort
+  LocalModelEvaluation::RunpodWorkers.parse_selector(value)
+rescue LocalModelEvaluation::RunpodWorkers::Error => e
+  raise OptionParser::InvalidArgument, e.message
 end
 
 opts = {
@@ -41,8 +30,8 @@ opts = {
 }
 
 parser = OptionParser.new do |o|
-  o.banner = "Usage: bin/lme runpod-bootstrap --workers 1-5 --model MODEL [options]"
-  o.on("--workers LIST", "Burst worker indices, e.g. 1-5 or 1,3,5") { |v| opts[:workers] = parse_worker_indices(v) }
+  o.banner = "Usage: bin/lme runpod-bootstrap --workers 1-16 --model MODEL [options]"
+  o.on("--workers LIST", "Burst worker indices, e.g. 1-12 or 1,6,12") { |v| opts[:workers] = parse_worker_indices(v) }
   o.on("--model MODEL", "Ollama model to bootstrap; repeatable") { |v| opts[:models] << v }
   o.on("--expect-digest MODEL=DIGEST", "Required exact 64-hex digest for each --model; repeatable") { |v| opts[:expected_digests] << v }
   o.on("--clean", "Delete staging/shared Ollama stores before bootstrap") { opts[:clean] = true }

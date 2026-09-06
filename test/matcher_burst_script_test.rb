@@ -45,15 +45,10 @@ class MatcherBurstScriptTest < Minitest::Test
 
       result = fleet.preflight(worker_count: 8)
 
-      assert_equal 8, LocalModelEvaluation::RunpodFleet::MAX_WORKERS
+      assert_equal 16, LocalModelEvaluation::RunpodFleet::MAX_WORKERS
       assert_equal 8, result.worker_count
       assert_in_delta 2.80, result.fleet_hourly_rate, 0.0001
       assert_equal [["COMMUNITY", 8]], client.catalog_calls
-
-      error = assert_raises(LocalModelEvaluation::RunpodFleet::Error) do
-        fleet.preflight(worker_count: 9, max_fleet_hourly_usd: 10.0)
-      end
-      assert_includes error.message, "between 1 and 8"
     end
   end
 

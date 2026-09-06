@@ -100,6 +100,46 @@ class RunpodCliTest < Minitest::Test
     thread&.join(2)
   end
 
+  def test_create_dry_run_represents_twelve_workers_and_reports_scaled_cost
+    requests = Queue.new
+    server, thread = start_fake_runpod(requests)
+    port = server.addr[1]
+    env = {
+      "RUNPOD_API_KEY" => "rpa_test_only",
+      "RUNPOD_API_BASE_URL" => "http://127.0.0.1:#{port}/v2",
+      "RUNPOD_MAX_FLEET_HOURLY_USD" => "6.00",
+      "RUNPOD_MAX_TOTAL_HOURLY_USD" => "6.00"
+    }
+
+    stdout, stderr, status = Open3.capture3(
+      env,
+      RbConfig.ruby,
+      File.join(REPO_ROOT, "bin", "lme"),
+      "runpod-create",
+      "--workers", "12",
+      "--dry-run",
+      "--ssh-public-key", @public_key,
+      chdir: REPO_ROOT
+    )
+
+    assert status.success?, stderr
+    assert_includes stdout, "Workers: 12"
+    assert_includes stdout, "Projected fleet rate: $4.2000/hr"
+    assert_includes stdout, "Projected 10-minute cost: $0.7000"
+    assert_includes stdout, "Projected 30-minute cost: $2.1000"
+    assert_includes stdout, "Per-fleet safety cap: $6.0000/hr"
+    assert_includes stdout, "Aggregate safety cap: $6.0000/hr"
+    assert_includes stdout, "No pods have been created."
+
+    received = 2.times.map { Timeout.timeout(2) { requests.pop } }
+    assert_equal ["GET", "GET"], received.map { |request| request.fetch(:method) }
+    catalog_query = URI.decode_www_form(received.last.fetch(:query).to_s).to_h
+    assert_equal "12", catalog_query.fetch("count")
+  ensure
+    server&.close
+    thread&.join(2)
+  end
+
   private
 
   def start_fake_runpod(requests)

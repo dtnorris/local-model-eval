@@ -142,6 +142,27 @@ class RunpodTunnelsTest < Minitest::Test
     assert_equal 3, persisted.fetch("workers").length
   end
 
+  def test_start_status_and_stop_address_worker_twelve
+    @fleet.fetch("workers") << {
+      "index" => 12,
+      "pod_id" => "pod_12",
+      "host" => "198.51.100.12",
+      "ssh_port" => 22_012,
+      "local_ollama_url" => "http://127.0.0.1:11452",
+      "status" => "active"
+    }
+    manager = build_manager
+
+    manager.start(worker_indices: [12], wait_seconds: 1, poll_seconds: 0.01)
+    command = @process.spawns.fetch(0).fetch(:command)
+    assert_includes command, "127.0.0.1:11452:127.0.0.1:11434"
+    assert_includes command, "root@198.51.100.12"
+    assert_equal "healthy", manager.status(worker_indices: [12]).first.fetch("health_status")
+
+    manager.stop(worker_indices: [12])
+    assert_includes @out.string, "Stopped: burst_12 tunnel"
+  end
+
   def test_start_refuses_unmanaged_occupied_local_port_without_spawning_that_worker
     manager = build_manager(ports: FakePorts.new([11_442]))
     error = assert_raises(LocalModelEvaluation::RunpodTunnels::Error) do

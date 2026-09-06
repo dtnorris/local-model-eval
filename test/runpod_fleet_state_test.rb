@@ -135,6 +135,36 @@ class RunpodFleetStateTest < Minitest::Test
     assert File.file?(store.state_path(fleet_id))
   end
 
+  def test_state_represents_and_routes_workers_twelve_and_sixteen
+    store = LocalModelEvaluation::RunpodFleetState.new(root: @state_root, clock: @clock)
+    record = store.activate(
+      workers: (1..16).map { |index| worker("pod_#{index}", index) },
+      cloud: "SECURE",
+      gpu_id: "NVIDIA A40",
+      image: "example/image"
+    )
+
+    by_index = record.fetch("workers").to_h { |entry| [entry.fetch("index"), entry] }
+    assert_equal 16, record.fetch("worker_count")
+    assert_equal "http://127.0.0.1:11452", by_index.fetch(12).fetch("local_ollama_url")
+    assert_equal "http://127.0.0.1:11456", by_index.fetch(16).fetch("local_ollama_url")
+    assert_equal 16, store.current.fetch("workers").length
+  end
+
+  def test_state_rejects_worker_index_above_canonical_bound
+    store = LocalModelEvaluation::RunpodFleetState.new(root: @state_root, clock: @clock)
+
+    error = assert_raises(LocalModelEvaluation::RunpodFleetState::Error) do
+      store.activate(
+        workers: [worker("pod_17", 17)],
+        cloud: "SECURE",
+        gpu_id: "NVIDIA A40",
+        image: "example/image"
+      )
+    end
+    assert_includes error.message, "between 1 and 16"
+  end
+
   def test_runpod_fleet_create_persists_current_state_and_destroy_archives_it
     env_path = File.join(@tmp, ".env")
     File.write(env_path, "RUNPOD_API_KEY=keep\n")
