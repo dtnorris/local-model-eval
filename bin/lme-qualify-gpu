@@ -348,7 +348,7 @@ info "Capturing post-request Ollama residency evidence ..."
 curl -fsS "${OLLAMA_URL%/}/api/ps" >"$RUN_ROOT/api-ps-after-case.json"
 
 ruby -rjson -e '
-  model, context, ps_path, manifest_path, summary_path = ARGV
+  model, context, ps_path, manifest_path, summary_path, gpu_id, gpu_memory_gb = ARGV
   context = Integer(context)
 
   ps = JSON.parse(File.read(ps_path))
@@ -375,8 +375,8 @@ ruby -rjson -e '
 
   File.open(summary_path, "w") do |f|
     f.puts "qualification=PASS"
-    f.puts "gpu_id=#{ENV.fetch("RUNPOD_GPU_ID")}"
-    f.puts "gpu_memory_min_gb=#{ENV.fetch("RUNPOD_GPU_MEMORY_GB")}"
+    f.puts "gpu_id=#{gpu_id}"
+    f.puts "gpu_memory_min_gb=#{gpu_memory_gb}"
     f.puts "model=#{model}"
     f.puts "context_length=#{actual_context}"
     f.puts "size_bytes=#{size}"
@@ -387,7 +387,7 @@ ruby -rjson -e '
     f.puts "generation_seconds=#{format("%.3f", generation_seconds)}" if generation_seconds
     f.puts "generation_tokens_per_second=#{format("%.2f", tokens_per_second)}" if tokens_per_second
   end
-' "$MODEL" "$CONTEXT" "$RUN_ROOT/api-ps-after-case.json" "$MANIFEST" "$RUN_ROOT/qualification-summary.txt"
+' "$MODEL" "$CONTEXT" "$RUN_ROOT/api-ps-after-case.json" "$MANIFEST" "$RUN_ROOT/qualification-summary.txt" "$GPU_ID" "$GPU_MEMORY_GB"
 
 cat "$RUN_ROOT/qualification-summary.txt"
 

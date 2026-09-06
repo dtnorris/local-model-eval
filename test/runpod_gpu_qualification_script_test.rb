@@ -50,6 +50,11 @@ class RunpodGpuQualificationScriptTest < Minitest::Test
     assert_includes text, 'runpod-bootstrap'
     assert_includes text, 'bin/af-matcher run-case'
     assert_includes text, 'size == size_vram'
+    assert_includes text, 'summary_path, gpu_id, gpu_memory_gb = ARGV'
+    assert_includes text, 'f.puts "gpu_id=#{gpu_id}"'
+    assert_includes text, 'f.puts "gpu_memory_min_gb=#{gpu_memory_gb}"'
+    refute_includes text, 'ENV.fetch("RUNPOD_GPU_ID")'
+    refute_includes text, 'ENV.fetch("RUNPOD_GPU_MEMORY_GB")'
     assert_includes text, 'runpod-destroy --workers 1 --yes'
     assert_includes text, 'WATCHDOG_MINUTES="${LME_GPU_QUAL_WATCHDOG_MINUTES:-15}"'
   end
