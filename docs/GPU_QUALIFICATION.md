@@ -8,13 +8,13 @@ workflow overrides those values only for the selected qualification process.
 
 ## Read-only gate
 
-Example: RTX 3090 Community.
+Example: RTX 3090 Secure.
 
 ```bash
 bin/lme-qualify-gpu \
   --gpu "NVIDIA GeForce RTX 3090" \
   --vram 24 \
-  --cloud COMMUNITY \
+  --cloud SECURE \
   --dry-run
 ```
 
@@ -23,6 +23,9 @@ Ollama digest, and asks RunPod whether one exact requested GPU is currently
 available at the live catalog price. It creates no pod.
 
 There is no automatic cloud-tier fallback. Test another tier explicitly.
+`COMMUNITY` is opt-in experimental capacity and may be tested explicitly with
+`--cloud COMMUNITY`, but Community qualification is not a prerequisite for
+Secure qualification. See `docs/RUNPOD_CLOUD_TIER_POLICY.md`.
 
 ## Paid qualification
 
@@ -32,7 +35,7 @@ After a passing dry-run and acceptable live rate:
 caffeinate -dimsu bin/lme-qualify-gpu \
   --gpu "NVIDIA GeForce RTX 3090" \
   --vram 24 \
-  --cloud COMMUNITY
+  --cloud SECURE
 ```
 
 The underlying `runpod-create` still asks for confirmation before the paid

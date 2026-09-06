@@ -5,7 +5,7 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 WORKERS=8
 MODEL="gpt-oss:20b"
 CONTEXT=32768
-CLOUD="COMMUNITY"
+CLOUD="SECURE"
 FLEET="${LME_RUNPOD_FLEET:-matcher-gptoss}"
 MATCHER_REPO="${AF_MATCHER_REPO_PATH:-"$ROOT/../af-matcher-cli"}"
 MAX_HOURLY_USD="${RUNPOD_MAX_FLEET_HOURLY_USD:-3.00}"
@@ -38,7 +38,7 @@ requests on eight RunPod workers, then tears the fleet down.
 Options:
   --dry-run                 Local validation + read-only RunPod price/availability check.
   --yes                     Skip RunPod's paid-create confirmation.
-  --cloud TIER              COMMUNITY or SECURE (default: COMMUNITY).
+  --cloud TIER              COMMUNITY or SECURE (default: SECURE).
   --fleet KEY               Named LME RunPod fleet (default: matcher-gptoss).
   --matcher-repo PATH       Local af-matcher-cli checkout.
   --digest SHA256           Exact Ollama model digest; otherwise read from local Ollama.

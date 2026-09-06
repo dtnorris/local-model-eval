@@ -19,16 +19,22 @@ The default SSH public key is `~/.ssh/id_ed25519.pub`. Override it with `RUNPOD_
 Always start with:
 
 ```bash
-bin/lme runpod-create --workers 5 --dry-run
+bin/lme runpod-create --workers 1 --dry-run
 ```
 
 The dry run performs only read-only RunPod API calls plus local prerequisite validation. It refuses duplicate managed pod names, verifies the pinned A40 has at least 48 GB VRAM on the explicitly selected cloud tier, and prints the current catalog price, fleet hourly rate, projected 10-minute/30-minute cost, and hourly safety cap. No pod is created.
 
-`COMMUNITY` remains the default because it is the cheaper tier. LME never silently falls back from COMMUNITY to SECURE. If the read-only COMMUNITY preflight proves unavailable, explicitly test SECURE with:
+`SECURE` is the default paid RunPod tier for AdventureFinder workloads.
+`COMMUNITY` is opt-in experimental capacity, not a prerequisite for Secure
+qualification. A single read-only Community availability/cost probe is reasonable
+when useful, but do not iterate through Community GPU classes merely to avoid
+Secure pricing. To probe Community explicitly:
 
 ```bash
-bin/lme runpod-create --workers 5 --cloud SECURE --dry-run
+bin/lme runpod-create --workers 1 --cloud COMMUNITY --dry-run
 ```
+
+LME never silently switches cloud tiers. See `docs/RUNPOD_CLOUD_TIER_POLICY.md`.
 
 The default fleet safety cap is `$3.00/hr`; override it downward or upward explicitly with `--max-hourly-usd` or `RUNPOD_MAX_FLEET_HOURLY_USD`. LME never silently switches cloud tiers or substitutes another GPU.
 
@@ -37,10 +43,12 @@ The default fleet safety cap is `$3.00/hr`; override it downward or upward expli
 After reviewing a clean dry run:
 
 ```bash
-bin/lme runpod-create --workers 5 --cloud SECURE
+bin/lme runpod-create --workers 1 --cloud SECURE
 ```
 
-Use the same explicit cloud tier that passed the immediately preceding dry run. Omitting `--cloud` always returns to the cheaper `COMMUNITY` default. The command asks for confirmation before the first paid mutation. `--yes` exists for deliberate non-interactive use.
+Use the same cloud tier that passed the immediately preceding dry run. Omitting
+`--cloud` uses the `SECURE` default. The command asks for confirmation before
+the first paid mutation. `--yes` exists for deliberate non-interactive use.
 
 The provisioner pins:
 

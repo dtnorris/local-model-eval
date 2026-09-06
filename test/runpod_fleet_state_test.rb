@@ -36,9 +36,9 @@ class RunpodFleetStateTest < Minitest::Test
       ]
     end
 
-    def create_pod(_body)
+    def create_pod(body)
       id = @next_id
-      @pod_details[id] = ready_pod(id)
+      @pod_details[id] = ready_pod(id, cloud: body.fetch("cloud"))
       { "id" => id }
     end
 
@@ -53,12 +53,12 @@ class RunpodFleetStateTest < Minitest::Test
 
     private
 
-    def ready_pod(pod_id)
+    def ready_pod(pod_id, cloud:)
       {
         "id" => pod_id,
         "name" => "af-lme-burst-1",
         "status" => "RUNNING",
-        "cloud" => "COMMUNITY",
+        "cloud" => cloud,
         "gpu" => { "id" => "NVIDIA A40", "count" => 1 },
         "cost" => 0.44,
         "runtime" => {
@@ -194,6 +194,7 @@ class RunpodFleetStateTest < Minitest::Test
     assert_includes env, "LME_RUNPOD_FLEET_ID=#{fleet_id}"
     assert_includes env, "LME_RUNPOD_FLEET_DIR=#{fleet.fleet_state.fleet_dir(fleet_id)}"
     assert_equal "pod_a", state.fetch("workers").first.fetch("pod_id")
+    assert_equal "SECURE", state.fetch("cloud")
     assert_equal "active", state.fetch("status")
     assert_includes out.string, "Current fleet: #{fleet_id}"
     assert File.directory?(fleet.fleet_state.artifact_dir(fleet_id, :bootstrap))

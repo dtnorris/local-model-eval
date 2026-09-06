@@ -46,11 +46,11 @@ class RunpodCliTest < Minitest::Test
 
     assert status.success?, stderr
     assert_includes stdout, "RunPod fleet preflight"
-    assert_includes stdout, "Cloud: COMMUNITY"
+    assert_includes stdout, "Cloud: SECURE"
     assert_includes stdout, "Workers: 5"
-    assert_includes stdout, "Projected fleet rate: $1.7500/hr"
-    assert_includes stdout, "Projected 10-minute cost: $0.2917"
-    assert_includes stdout, "Projected 30-minute cost: $0.8750"
+    assert_includes stdout, "Projected fleet rate: $2.2000/hr"
+    assert_includes stdout, "Projected 10-minute cost: $0.3667"
+    assert_includes stdout, "Projected 30-minute cost: $1.1000"
     assert_includes stdout, "No pods have been created."
     assert_includes stdout, "Dry run PASS."
 
@@ -59,7 +59,7 @@ class RunpodCliTest < Minitest::Test
     assert_equal ["/v2/pods", "/v2/catalog/gpus"], received.map { |r| r.fetch(:path) }
     assert received.all? { |r| r.fetch(:authorization) == "Bearer rpa_test_only" }
     catalog_query = URI.decode_www_form(received.last.fetch(:query).to_s).to_h
-    assert_equal "COMMUNITY", catalog_query.fetch("cloud")
+    assert_equal "SECURE", catalog_query.fetch("cloud")
   ensure
     server&.close
     thread&.join(2)
@@ -124,9 +124,9 @@ class RunpodCliTest < Minitest::Test
 
     assert status.success?, stderr
     assert_includes stdout, "Workers: 12"
-    assert_includes stdout, "Projected fleet rate: $4.2000/hr"
-    assert_includes stdout, "Projected 10-minute cost: $0.7000"
-    assert_includes stdout, "Projected 30-minute cost: $2.1000"
+    assert_includes stdout, "Projected fleet rate: $5.2800/hr"
+    assert_includes stdout, "Projected 10-minute cost: $0.8800"
+    assert_includes stdout, "Projected 30-minute cost: $2.6400"
     assert_includes stdout, "Per-fleet safety cap: $6.0000/hr"
     assert_includes stdout, "Aggregate safety cap: $6.0000/hr"
     assert_includes stdout, "No pods have been created."

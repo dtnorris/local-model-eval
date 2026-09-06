@@ -90,25 +90,25 @@ class RunpodFleetTest < Minitest::Test
     FileUtils.remove_entry(@tmp) if @tmp && File.exist?(@tmp)
   end
 
-  def test_preflight_for_five_a40s_computes_two_dollars_twenty_per_hour
-    result = @fleet.preflight(worker_count: 5)
+  def test_preflight_defaults_to_secure
+    result = @fleet.preflight(worker_count: 5, max_fleet_hourly_usd: 4.0)
 
     assert_equal 5, result.worker_count
     assert_equal "NVIDIA A40", result.gpu.fetch("id")
-    assert_equal "COMMUNITY", result.cloud
+    assert_equal "SECURE", result.cloud
     assert_equal "HIGH", result.availability
-    assert_in_delta 0.44, result.hourly_rate, 0.0001
-    assert_in_delta 2.20, result.fleet_hourly_rate, 0.0001
-    assert_equal [["COMMUNITY", 5]], @client.catalog_calls
+    assert_in_delta 0.69, result.hourly_rate, 0.0001
+    assert_in_delta 3.45, result.fleet_hourly_rate, 0.0001
+    assert_equal [["SECURE", 5]], @client.catalog_calls
     assert_empty @client.created_bodies
   end
 
   def test_preflight_supports_canonical_bounds_and_computes_twelve_worker_cost
     [1, 8, 12, 16].each do |worker_count|
-      result = @fleet.preflight(worker_count:, max_fleet_hourly_usd: 8.0)
+      result = @fleet.preflight(worker_count:, cloud: "COMMUNITY", max_fleet_hourly_usd: 8.0)
       assert_equal worker_count, result.worker_count
     end
-    twelve = @fleet.preflight(worker_count: 12, max_fleet_hourly_usd: 8.0)
+    twelve = @fleet.preflight(worker_count: 12, cloud: "COMMUNITY", max_fleet_hourly_usd: 8.0)
     assert_in_delta 0.44 * 12, twelve.fleet_hourly_rate, 0.0001
     assert_includes @client.catalog_calls, ["COMMUNITY", 12]
 
@@ -130,13 +130,13 @@ class RunpodFleetTest < Minitest::Test
     assert_equal ["pod_12", "pod_16"], @client.deleted_ids
   end
 
-  def test_preflight_uses_secure_only_when_explicitly_requested
-    result = @fleet.preflight(worker_count: 5, cloud: "secure", max_fleet_hourly_usd: 4.0)
+  def test_preflight_allows_community_when_explicitly_requested
+    result = @fleet.preflight(worker_count: 5, cloud: "community", max_fleet_hourly_usd: 3.0)
 
-    assert_equal "SECURE", result.cloud
-    assert_in_delta 0.69, result.hourly_rate, 0.0001
-    assert_in_delta 3.45, result.fleet_hourly_rate, 0.0001
-    assert_equal [["SECURE", 5]], @client.catalog_calls
+    assert_equal "COMMUNITY", result.cloud
+    assert_in_delta 0.44, result.hourly_rate, 0.0001
+    assert_in_delta 2.20, result.fleet_hourly_rate, 0.0001
+    assert_equal [["COMMUNITY", 5]], @client.catalog_calls
     assert_empty @client.created_bodies
   end
 
@@ -145,7 +145,7 @@ class RunpodFleetTest < Minitest::Test
     @client.gpu_types.first["secure"] = true
 
     error = assert_raises(LocalModelEvaluation::RunpodFleet::Error) do
-      @fleet.preflight(worker_count: 1)
+      @fleet.preflight(worker_count: 1, cloud: "COMMUNITY")
     end
 
     assert_includes error.message, "not available on COMMUNITY cloud"
@@ -186,8 +186,8 @@ class RunpodFleetTest < Minitest::Test
   def test_successful_create_uses_pinned_v2_shape_and_atomically_hydrates_env
     @client.create_responses = [{ "id" => "pod_a" }, { "id" => "pod_b" }]
     @client.pod_details = {
-      "pod_a" => ready_pod(1, "pod_a", "198.51.100.11", 22011, 0.44),
-      "pod_b" => ready_pod(2, "pod_b", "198.51.100.12", 22012, 0.45)
+      "pod_a" => ready_pod(1, "pod_a", "198.51.100.11", 22011, 0.44, cloud: "SECURE"),
+      "pod_b" => ready_pod(2, "pod_b", "198.51.100.12", 22012, 0.45, cloud: "SECURE")
     }
     before_key = File.read(@env_path).lines.first
     preflight = @fleet.preflight(worker_count: 2)
@@ -205,7 +205,7 @@ class RunpodFleetTest < Minitest::Test
     assert_equal LocalModelEvaluation::RunpodFleet::IMAGE, first_body.fetch("image")
     assert_equal 30, first_body.fetch("disk")
     assert_equal ["22/tcp"], first_body.fetch("ports")
-    assert_equal "COMMUNITY", first_body.fetch("cloud")
+    assert_equal "SECURE", first_body.fetch("cloud")
     assert_equal({ "id" => "NVIDIA A40", "count" => 1 }, first_body.fetch("gpu"))
     assert_equal({ "persistent" => { "size" => 60, "path" => "/workspace" } }, first_body.fetch("mounts"))
     assert first_body.dig("env", "PUBLIC_KEY").start_with?("ssh-ed25519 ")
@@ -298,7 +298,7 @@ class RunpodFleetTest < Minitest::Test
     original = File.read(@env_path)
     @client.create_responses = [{ "id" => "pod_a" }]
     @client.pod_details = {
-      "pod_a" => ready_pod(1, "pod_a", "198.51.100.11", 22011, 0.44, cloud: "SECURE")
+      "pod_a" => ready_pod(1, "pod_a", "198.51.100.11", 22011, 0.44, cloud: "COMMUNITY")
     }
     preflight = @fleet.preflight(worker_count: 1)
 
@@ -318,7 +318,7 @@ class RunpodFleetTest < Minitest::Test
   def test_wrong_gpu_during_readiness_rolls_back_every_created_pod
     original = File.read(@env_path)
     @client.create_responses = [{ "id" => "pod_a" }]
-    bad = ready_pod(1, "pod_a", "198.51.100.11", 22011, 0.44)
+    bad = ready_pod(1, "pod_a", "198.51.100.11", 22011, 0.44, cloud: "SECURE")
     bad["gpu"] = { "id" => "NVIDIA A100", "count" => 1 }
     @client.pod_details = { "pod_a" => bad }
     preflight = @fleet.preflight(worker_count: 1)

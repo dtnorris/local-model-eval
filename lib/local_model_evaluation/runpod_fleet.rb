@@ -11,7 +11,7 @@ module LocalModelEvaluation
     MAX_WORKERS = RunpodWorkers::MAX_WORKERS
     GPU_ID = ENV.fetch("RUNPOD_GPU_ID", "NVIDIA A40")
     GPU_MEMORY_GB = Integer(ENV.fetch("RUNPOD_GPU_MEMORY_GB", "48"))
-    DEFAULT_CLOUD = "COMMUNITY"
+    DEFAULT_CLOUD = "SECURE"
     SUPPORTED_CLOUDS = %w[COMMUNITY SECURE].freeze
     CLOUD = DEFAULT_CLOUD # Backward-compatible alias; new code should use preflight.cloud.
     IMAGE = "runpod/pytorch:1.0.2-cu1281-torch280-ubuntu2404"

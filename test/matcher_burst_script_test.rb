@@ -43,12 +43,12 @@ class MatcherBurstScriptTest < Minitest::Test
         out: StringIO.new
       )
 
-      result = fleet.preflight(worker_count: 8)
+      result = fleet.preflight(worker_count: 8, max_fleet_hourly_usd: 4.0)
 
       assert_equal 16, LocalModelEvaluation::RunpodFleet::MAX_WORKERS
       assert_equal 8, result.worker_count
-      assert_in_delta 2.80, result.fleet_hourly_rate, 0.0001
-      assert_equal [["COMMUNITY", 8]], client.catalog_calls
+      assert_in_delta 3.52, result.fleet_hourly_rate, 0.0001
+      assert_equal [["SECURE", 8]], client.catalog_calls
     end
   end
 
@@ -61,6 +61,7 @@ class MatcherBurstScriptTest < Minitest::Test
     text = File.read(SCRIPT)
 
     assert_includes text, 'WORKERS=8'
+    assert_includes text, 'CLOUD="SECURE"'
     assert_includes text, 'MODEL="gpt-oss:20b"'
     assert_includes text, 'CONTEXT=32768'
     assert_includes text, '"Q1:1"'

@@ -43,6 +43,7 @@ class RunpodGpuQualificationScriptTest < Minitest::Test
     assert_includes text, 'CONTEXT=32768'
     assert_includes text, 'QUERY_ID="Q3"'
     assert_includes text, 'REPEAT=1'
+    assert_includes text, 'CLOUD="SECURE"'
     assert_includes text, '--gpu'
     assert_includes text, '--vram'
     assert_includes text, 'runpod-create'

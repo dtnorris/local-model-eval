@@ -108,6 +108,12 @@ The check calls Ollama's `/api/version` and `/api/tags` endpoints.
 
 ## Managed RunPod fleets and generic dispatch
 
+Local execution remains the zero-cost default. When measured wall-clock needs
+justify paid RunPod burst execution, `SECURE` is the default RunPod cloud tier
+for AdventureFinder workloads. `COMMUNITY` remains available only as opt-in
+experimental capacity; it is not a prerequisite for Secure qualification.
+See `docs/RUNPOD_CLOUD_TIER_POLICY.md`.
+
 Shared RunPod fleet commands support 1–16 workers. Explicit subsets remain available
 with selectors such as `1-12`, `9-12`, or `1,6,12`; `--all` selects the active
 workers recorded in the current fleet state.
