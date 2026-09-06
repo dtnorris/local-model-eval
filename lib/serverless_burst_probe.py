@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Bounded RunPod Serverless scale-zero-to-eight latency probe."""
+"""Bounded RunPod Serverless scale-zero burst latency probe."""
 
 from __future__ import annotations
 
@@ -19,7 +19,8 @@ from typing import Any, Iterable
 
 REST_API_BASE = "https://rest.runpod.io/v1"
 JOB_API_BASE = "https://api.runpod.ai/v2"
-WORKER_COUNT = 8
+DEFAULT_WORKER_COUNT = 8
+MAX_WORKER_COUNT = 8
 MODEL_NAME = "openai/gpt-oss-20b"
 IMAGE_NAME = "runpod/worker-v1-vllm:v2.26.0"
 GPU_TYPE = "NVIDIA GeForce RTX 4090"
@@ -179,10 +180,12 @@ class ServerlessBurstProbe:
         api_key: str,
         artifacts: ArtifactLog,
         deadline_seconds: int = DEFAULT_DEADLINE_SECONDS,
+        worker_count: int = DEFAULT_WORKER_COUNT,
     ):
         self.api_key = api_key
         self.artifacts = artifacts
         self.deadline_seconds = deadline_seconds
+        self.worker_count = worker_count
         self.template_id: str | None = None
         self.endpoint_id: str | None = None
         self.submit_origin_ns: int | None = None
@@ -223,7 +226,7 @@ class ServerlessBurstProbe:
         self._write_resource_ids()
         self.log(f"Template created in {time.monotonic() - started:.1f}s (id={self.template_id})")
 
-        endpoint_name = f"lme-scale-zero-eight-{name_suffix}"
+        endpoint_name = f"lme-scale-zero-{self.worker_count}-{name_suffix}"
         started = time.monotonic()
         self.log(f"Creating scale-zero endpoint {endpoint_name}")
         endpoint = api_request(
@@ -236,7 +239,7 @@ class ServerlessBurstProbe:
                 "gpuTypeIds": [GPU_TYPE],
                 "gpuCount": 1,
                 "workersMin": 0,
-                "workersMax": WORKER_COUNT,
+                "workersMax": self.worker_count,
                 "idleTimeout": 5,
                 "scalerType": "REQUEST_COUNT",
                 "scalerValue": 1,
@@ -336,11 +339,14 @@ class ServerlessBurstProbe:
         self.artifacts.jsonl(
             "timeline.jsonl", {"event": "burst_submission_started", "elapsed_ms": 0.0}
         )
-        self.log(f"Submitting {WORKER_COUNT} requests concurrently")
-        barrier = threading.Barrier(WORKER_COUNT)
-        executor = concurrent.futures.ThreadPoolExecutor(max_workers=WORKER_COUNT)
+        self.log(f"Submitting {self.worker_count} requests concurrently")
+        barrier = threading.Barrier(self.worker_count)
+        executor = concurrent.futures.ThreadPoolExecutor(max_workers=self.worker_count)
         try:
-            futures = [executor.submit(self._submit_one, slot, barrier) for slot in range(1, 9)]
+            futures = [
+                executor.submit(self._submit_one, slot, barrier)
+                for slot in range(1, self.worker_count + 1)
+            ]
             observations = [future.result(timeout=30) for future in futures]
         finally:
             executor.shutdown(wait=False, cancel_futures=True)
@@ -351,7 +357,7 @@ class ServerlessBurstProbe:
             {"event": "all_jobs_submitted", "elapsed_ms": self._elapsed_ms(latest)},
         )
         self.log(
-            f"All {WORKER_COUNT} requests accepted by burst "
+            f"All {self.worker_count} requests accepted by burst "
             f"+{self._elapsed_seconds(latest):.3f}s"
         )
         return observations
@@ -395,7 +401,7 @@ class ServerlessBurstProbe:
     def measure(self, observations: list[JobObservation]) -> tuple[int | None, int | None]:
         assert self.endpoint_id and self.submit_origin_ns
         deadline_ns = self.submit_origin_ns + int(self.deadline_seconds * 1e9)
-        stream_executor = concurrent.futures.ThreadPoolExecutor(max_workers=WORKER_COUNT)
+        stream_executor = concurrent.futures.ThreadPoolExecutor(max_workers=self.worker_count)
         stream_futures = [
             stream_executor.submit(self._observe_stream, observation, deadline_ns)
             for observation in observations
@@ -452,11 +458,11 @@ class ServerlessBurstProbe:
                     last_health_signature = health_signature
                     last_progress_log = progress_now
 
-                if worker_count >= WORKER_COUNT and all_workers_ns is None:
+                if worker_count >= self.worker_count and all_workers_ns is None:
                     all_workers_ns = sampled_ns
                     self.artifacts.jsonl(
                         "timeline.jsonl",
-                        {"event": "eight_workers_ready", "elapsed_ms": self._elapsed_ms(sampled_ns)},
+                        {"event": "workers_ready", "elapsed_ms": self._elapsed_ms(sampled_ns)},
                     )
 
                 token_times = [row.first_token_ns for row in observations]
@@ -465,7 +471,7 @@ class ServerlessBurstProbe:
                     self.artifacts.jsonl(
                         "timeline.jsonl",
                         {
-                            "event": "eight_first_tokens",
+                            "event": "all_first_tokens",
                             "elapsed_ms": self._elapsed_ms(all_first_tokens_ns),
                         },
                     )
@@ -581,7 +587,12 @@ class ServerlessBurstProbe:
         if all_workers_ns is not None and all_first_tokens_ns is not None:
             ready_to_tokens_seconds = round((all_first_tokens_ns - all_workers_ns) / 1e9, 3)
         gate = "FAIL"
-        if ready_seconds is not None and ready_seconds <= 60 and first_tokens == 8 and completed == 8:
+        if (
+            ready_seconds is not None
+            and ready_seconds <= 60
+            and first_tokens == self.worker_count
+            and completed == self.worker_count
+        ):
             gate = "STRONG PASS" if ready_seconds <= 30 else "PASS"
         elapsed_seconds = (finished_ns - self.submit_origin_ns) / 1e9
         summary = {
@@ -593,12 +604,12 @@ class ServerlessBurstProbe:
                 "bit-identical to the project's Ollama digest."
             ),
             "gpu_type": GPU_TYPE,
-            "requested_workers": WORKER_COUNT,
+            "requested_workers": self.worker_count,
             "deadline_seconds": self.deadline_seconds,
-            "measurement_origin": "immediately before the eight concurrent POST /run calls",
-            "request_submitted_to_eight_workers_ready_seconds": ready_seconds,
-            "request_submitted_to_eight_first_tokens_seconds": token_seconds,
-            "eight_workers_ready_to_eight_first_tokens_seconds": ready_to_tokens_seconds,
+            "measurement_origin": "immediately before the concurrent POST /run calls",
+            "request_submitted_to_workers_ready_seconds": ready_seconds,
+            "request_submitted_to_all_first_tokens_seconds": token_seconds,
+            "workers_ready_to_all_first_tokens_seconds": ready_to_tokens_seconds,
             "jobs_with_first_token": first_tokens,
             "jobs_completed": completed,
             "distinct_reported_worker_ids": sorted(
@@ -626,11 +637,11 @@ class ServerlessBurstProbe:
             ),
             "catalog_rate_usd_per_gpu_second": GPU_PRICE_PER_SECOND_USD,
             "conservative_compute_upper_bound_usd": round(
-                elapsed_seconds * WORKER_COUNT * GPU_PRICE_PER_SECOND_USD,
+                elapsed_seconds * self.worker_count * GPU_PRICE_PER_SECOND_USD,
                 4,
             ),
             "cost_note": (
-                "Catalog-rate upper bound assuming all eight GPUs were billed for the full "
+                "Catalog-rate upper bound assuming all requested GPUs were billed for the full "
                 "submission-to-cleanup interval; not provider billing telemetry."
             ),
             "cleanup": cleanup,
@@ -648,14 +659,18 @@ class ServerlessBurstProbe:
         return round(self._elapsed_ms(value_ns) / 1000, 3)
 
 
-def frozen_plan(deadline_seconds: int = DEFAULT_DEADLINE_SECONDS) -> dict[str, Any]:
+def frozen_plan(
+    deadline_seconds: int = DEFAULT_DEADLINE_SECONDS,
+    worker_count: int = DEFAULT_WORKER_COUNT,
+) -> dict[str, Any]:
     return {
         "provider": "RunPod Serverless",
         "model": MODEL_NAME,
         "runtime_image": IMAGE_NAME,
         "gpu_type": GPU_TYPE,
+        "requested_workers": worker_count,
         "workers_min": 0,
-        "workers_max": WORKER_COUNT,
+        "workers_max": worker_count,
         "scaler": {"type": "REQUEST_COUNT", "value": 1},
         "prompt": "Reply with exactly: OK",
         "max_tokens": 8,
@@ -664,7 +679,7 @@ def frozen_plan(deadline_seconds: int = DEFAULT_DEADLINE_SECONDS) -> dict[str, A
         "strong_pass_gate_seconds": 30,
         "catalog_rate_usd_per_gpu_second": GPU_PRICE_PER_SECOND_USD,
         "full_fleet_90_second_estimate_usd": round(
-            deadline_seconds * WORKER_COUNT * GPU_PRICE_PER_SECOND_USD, 4
+            deadline_seconds * worker_count * GPU_PRICE_PER_SECOND_USD, 4
         ),
         "teardown": ["delete endpoint (terminates its jobs/workers)", "delete template"],
     }

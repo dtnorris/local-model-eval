@@ -13,10 +13,11 @@ sys.path.insert(0, str(REPO_ROOT / "lib"))
 from serverless_burst_probe import (  # noqa: E402
     ArtifactLog,
     DEFAULT_DEADLINE_SECONDS,
+    DEFAULT_WORKER_COUNT,
     IMAGE_NAME,
+    MAX_WORKER_COUNT,
     MODEL_NAME,
     ServerlessBurstProbe,
-    WORKER_COUNT,
     extract_text,
     frozen_plan,
     iter_stream_json,
@@ -25,13 +26,26 @@ from serverless_burst_probe import (  # noqa: E402
 
 
 class ServerlessBurstProbeTest(unittest.TestCase):
-    def test_frozen_plan_is_scale_zero_to_eight_and_bounded(self):
+    def test_default_worker_count_remains_eight(self):
+        self.assertEqual(8, DEFAULT_WORKER_COUNT)
+        self.assertEqual(8, MAX_WORKER_COUNT)
+
+    def test_frozen_plan_defaults_to_scale_zero_to_eight_and_is_bounded(self):
         plan = frozen_plan()
+        self.assertEqual(8, plan["requested_workers"])
         self.assertEqual(0, plan["workers_min"])
         self.assertEqual(8, plan["workers_max"])
         self.assertEqual({"type": "REQUEST_COUNT", "value": 1}, plan["scaler"])
         self.assertEqual(DEFAULT_DEADLINE_SECONDS, plan["deadline_seconds"])
-        expected = DEFAULT_DEADLINE_SECONDS * WORKER_COUNT * 0.00031
+        expected = DEFAULT_DEADLINE_SECONDS * DEFAULT_WORKER_COUNT * 0.00031
+        self.assertAlmostEqual(expected, plan["full_fleet_90_second_estimate_usd"])
+
+    def test_frozen_plan_scales_cost_to_one_worker(self):
+        plan = frozen_plan(worker_count=1)
+        self.assertEqual(1, plan["requested_workers"])
+        self.assertEqual(0, plan["workers_min"])
+        self.assertEqual(1, plan["workers_max"])
+        expected = DEFAULT_DEADLINE_SECONDS * 1 * 0.00031
         self.assertAlmostEqual(expected, plan["full_fleet_90_second_estimate_usd"])
 
     def test_extracts_first_text_from_openai_and_runpod_shapes(self):
@@ -70,7 +84,7 @@ class ServerlessBurstProbeTest(unittest.TestCase):
             with mock.patch.dict(os.environ, {"RUNPOD_API_KEY": "from-env"}, clear=True):
                 self.assertEqual("from-env", load_api_key(root))
 
-    def test_resource_configuration_is_exactly_scale_zero_to_eight(self):
+    def test_resource_configuration_defaults_to_scale_zero_to_eight(self):
         with tempfile.TemporaryDirectory() as directory:
             artifacts = ArtifactLog(pathlib.Path(directory) / "run")
             probe = ServerlessBurstProbe("secret", artifacts)
@@ -87,6 +101,18 @@ class ServerlessBurstProbeTest(unittest.TestCase):
             self.assertEqual("REQUEST_COUNT", endpoint_body["scalerType"])
             self.assertEqual(1, endpoint_body["scalerValue"])
             self.assertEqual(5, endpoint_body["idleTimeout"])
+
+    def test_resource_configuration_can_use_one_worker(self):
+        with tempfile.TemporaryDirectory() as directory:
+            artifacts = ArtifactLog(pathlib.Path(directory) / "run")
+            probe = ServerlessBurstProbe("secret", artifacts, worker_count=1)
+            responses = [{"id": "template-1"}, {"id": "endpoint-1"}]
+            with mock.patch("serverless_burst_probe.api_request", side_effect=responses) as request:
+                probe.create_resources("unit")
+
+            endpoint_body = request.call_args_list[1].args[3]
+            self.assertEqual(0, endpoint_body["workersMin"])
+            self.assertEqual(1, endpoint_body["workersMax"])
 
 
 if __name__ == "__main__":

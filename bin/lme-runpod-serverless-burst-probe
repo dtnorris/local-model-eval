@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run the disposable RunPod Serverless scale-zero-to-eight probe."""
+"""Run the disposable RunPod Serverless scale-zero burst probe."""
 
 from __future__ import annotations
 
@@ -16,7 +16,9 @@ sys.path.insert(0, str(REPO_ROOT / "lib"))
 
 from serverless_burst_probe import (  # noqa: E402
     ArtifactLog,
+    DEFAULT_WORKER_COUNT,
     JOB_API_BASE,
+    MAX_WORKER_COUNT,
     REST_API_BASE,
     ServerlessBurstProbe,
     api_request,
@@ -29,8 +31,8 @@ from serverless_burst_probe import (  # noqa: E402
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description=(
-            "Submit eight trivial requests to a scale-zero RunPod Serverless endpoint, "
-            "measure eight workers/eight first tokens, then delete every created resource."
+            "Submit N trivial requests to a scale-zero RunPod Serverless endpoint, "
+            "measure N workers/N first tokens, then delete every created resource."
         )
     )
     parser.add_argument(
@@ -40,14 +42,22 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--yes", action="store_true", help="Skip the paid-run confirmation.")
     parser.add_argument(
+        "--workers",
+        type=int,
+        default=DEFAULT_WORKER_COUNT,
+        help=f"Concurrent worker/request count, 1-{MAX_WORKER_COUNT} (default: {DEFAULT_WORKER_COUNT}).",
+    )
+    parser.add_argument(
         "--deadline-seconds", type=int, default=90, help="Hard burst deadline (default: 90)."
     )
     return parser.parse_args()
 
 
-def confirm() -> bool:
+def confirm(worker_count: int) -> bool:
     try:
-        answer = input("Type RUN to submit the paid eight-request burst: ").strip()
+        answer = input(
+            f"Type RUN to submit the paid {worker_count}-request burst: "
+        ).strip()
     except EOFError:
         return False
     return answer == "RUN"
@@ -58,12 +68,18 @@ def main() -> int:
     if args.deadline_seconds < 10 or args.deadline_seconds > 300:
         print("ERROR: --deadline-seconds must be between 10 and 300", file=sys.stderr)
         return 2
+    if args.workers < 1 or args.workers > MAX_WORKER_COUNT:
+        print(
+            f"ERROR: --workers must be between 1 and {MAX_WORKER_COUNT}",
+            file=sys.stderr,
+        )
+        return 2
     key = load_api_key(REPO_ROOT)
     if not key:
         print("ERROR: RUNPOD_API_KEY is not set and was not found in repo .env", file=sys.stderr)
         return 2
 
-    plan = frozen_plan(args.deadline_seconds)
+    plan = frozen_plan(args.deadline_seconds, args.workers)
     print(json.dumps(plan, indent=2, sort_keys=True))
 
     if args.dry_run:
@@ -76,7 +92,7 @@ def main() -> int:
         print("No resources created; no jobs submitted; no charge initiated.")
         return 0
 
-    if not args.yes and not confirm():
+    if not args.yes and not confirm(args.workers):
         print("Aborted before any resource was created.")
         return 2
 
@@ -84,7 +100,12 @@ def main() -> int:
     run_root = REPO_ROOT / "output" / "serverless-burst-probe" / f"{stamp}__{uuid.uuid4().hex[:8]}"
     artifacts = ArtifactLog(run_root)
     artifacts.json("plan.json", {"created_at_utc": utc_now(), **plan})
-    probe = ServerlessBurstProbe(key, artifacts, args.deadline_seconds)
+    probe = ServerlessBurstProbe(
+        key,
+        artifacts,
+        args.deadline_seconds,
+        worker_count=args.workers,
+    )
     observations = []
     all_workers_ns = None
     all_first_tokens_ns = None
