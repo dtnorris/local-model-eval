@@ -1,0 +1,11 @@
+---
+files:
+  catalog: 5e_Adventure_Master_Catalog_4.4.1.xlsx
+source:
+  allow_inward_boundary_clamp_adventure_ids:
+  - ADV-0355
+  - ADV-0364
+  - ADV-0366
+  - ADV-0377
+  - ADV-0378
+  - ADV-0379

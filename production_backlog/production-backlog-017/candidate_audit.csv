@@ -1,0 +1,24 @@
+adventure_id,adventure_title,source_book,publisher,page_count,level_start,level_end,decision,reason
+ADV-0381,A Tale of Two Cities,Baldur's Gate: Descent into Avernus,Wizards of the Coast,42,1,5,SELECT,exact_batch_017_target_levels_present_11_scores_blank_source_preflight_pass
+ADV-0382,Elturel Has Fallen,Baldur's Gate: Descent into Avernus,Wizards of the Coast,22,5,7,SELECT,exact_batch_017_target_levels_present_11_scores_blank_source_preflight_pass
+ADV-0383,Avernus,Baldur's Gate: Descent into Avernus,Wizards of the Coast,60,7,11,SELECT,exact_batch_017_target_levels_present_11_scores_blank_source_preflight_pass
+ADV-0384,Sword of Zariel,Baldur's Gate: Descent into Avernus,Wizards of the Coast,12,11,13,SELECT,exact_batch_017_target_levels_present_11_scores_blank_source_preflight_pass
+ADV-0385,Escape from Avernus,Baldur's Gate: Descent into Avernus,Wizards of the Coast,10,13,13,SELECT,exact_batch_017_target_levels_present_11_scores_blank_source_preflight_pass
+ADV-0386,Elfsong Tavern,Baldur's Gate: Descent into Avernus,Wizards of the Coast,4,1,2,SELECT,exact_batch_017_target_levels_present_11_scores_blank_source_preflight_pass
+ADV-0387,Dungeon of the Dead Three,Baldur's Gate: Descent into Avernus,Wizards of the Coast,9,2,3,SELECT,exact_batch_017_target_levels_present_11_scores_blank_source_preflight_pass
+ADV-0388,Low Lantern,Baldur's Gate: Descent into Avernus,Wizards of the Coast,5,3,3,SELECT,exact_batch_017_target_levels_present_11_scores_blank_source_preflight_pass
+ADV-0389,Vanthampur Villa,Baldur's Gate: Descent into Avernus,Wizards of the Coast,11,3,4,SELECT,exact_batch_017_target_levels_present_11_scores_blank_source_preflight_pass
+ADV-0390,High Hall,Baldur's Gate: Descent into Avernus,Wizards of the Coast,7,5,5,SELECT,exact_batch_017_target_levels_present_11_scores_blank_source_preflight_pass
+ADV-0391,Grand Cemetery,Baldur's Gate: Descent into Avernus,Wizards of the Coast,8,6,6,SELECT,exact_batch_017_target_levels_present_11_scores_blank_source_preflight_pass
+ADV-0392,Escaping the Siege,Baldur's Gate: Descent into Avernus,Wizards of the Coast,3,6,7,SELECT,exact_batch_017_target_levels_present_11_scores_blank_source_preflight_pass
+ADV-0393,Fort Knucklebone,Baldur's Gate: Descent into Avernus,Wizards of the Coast,8,7,7,SELECT,exact_batch_017_target_levels_present_11_scores_blank_source_preflight_pass
+ADV-0394,Lulu's Dream Quest,Baldur's Gate: Descent into Avernus,Wizards of the Coast,2,7,7,SELECT,exact_batch_017_target_levels_present_11_scores_blank_source_preflight_pass
+ADV-0395,Haruman's Hill,Baldur's Gate: Descent into Avernus,Wizards of the Coast,2,7,7,SELECT,exact_batch_017_target_levels_present_11_scores_blank_source_preflight_pass
+ADV-0396,Hellwasp Nest,Baldur's Gate: Descent into Avernus,Wizards of the Coast,2,7,7,SELECT,exact_batch_017_target_levels_present_11_scores_blank_source_preflight_pass
+ADV-0397,Path of Demons,Baldur's Gate: Descent into Avernus,Wizards of the Coast,10,8,11,SELECT,exact_batch_017_target_levels_present_11_scores_blank_source_preflight_pass
+ADV-0398,Obelisk,Baldur's Gate: Descent into Avernus,Wizards of the Coast,3,8,8,SELECT,exact_batch_017_target_levels_present_11_scores_blank_source_preflight_pass
+ADV-0399,Damming the Styx,Baldur's Gate: Descent into Avernus,Wizards of the Coast,1,8,8,SELECT,exact_batch_017_target_levels_present_11_scores_blank_source_preflight_pass
+ADV-0400,Crypt of the Hellriders,Baldur's Gate: Descent into Avernus,Wizards of the Coast,5,9,11,SELECT,exact_batch_017_target_levels_present_11_scores_blank_source_preflight_pass
+ADV-0401,Kostchtchie's Maw,Baldur's Gate: Descent into Avernus,Wizards of the Coast,2,10,10,SELECT,exact_batch_017_target_levels_present_11_scores_blank_source_preflight_pass
+ADV-0402,Path of Devils,Baldur's Gate: Descent into Avernus,Wizards of the Coast,17,8,11,SELECT,exact_batch_017_target_levels_present_11_scores_blank_source_preflight_pass
+ADV-0403,Demon Zapper,Baldur's Gate: Descent into Avernus,Wizards of the Coast,8,8,9,SELECT,exact_batch_017_target_levels_present_11_scores_blank_source_preflight_pass

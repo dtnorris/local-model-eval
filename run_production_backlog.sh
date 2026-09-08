@@ -50,7 +50,18 @@ case "$CONTRACT_TYPE" in
     VERIFY="$REPO/verify_production_backlog_seriousness.sh"
     ;;
   adventure_ingest_v1)
-    VERIFY="$REPO/verify_production_backlog_016.sh"
+    case "$(basename "$QUEUE_DIR")" in
+      production-backlog-016)
+        VERIFY="$REPO/verify_production_backlog_016.sh"
+        ;;
+      production-backlog-017)
+        VERIFY="$REPO/verify_production_backlog_017.sh"
+        ;;
+      *)
+        echo "ERROR: no verifier registered for adventure-ingest queue $(basename "$QUEUE_DIR")"
+        exit 1
+        ;;
+    esac
     ;;
   *)
     VERIFY="$REPO/verify_production_backlog.sh"

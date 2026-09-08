@@ -1,0 +1,524 @@
+---
+version: 1
+contract_type: adventure_ingest_v1
+queue: production-backlog-016
+generated_at: '2026-09-08T07:39:04-04:00'
+local_model_eval_commit: 76bd87967ffc546cfe798c6904c39f9dfdab570f
+scorer_commit: 5f50e2f4e6b3c4785dc0d239a0331c767523664a
+scorer_repo_path: "../af-cli-scoring-utility"
+catalog_filename: 5e_Adventure_Master_Catalog_4.4.1.xlsx
+catalog_path: "/Users/davidnorris/code/af-xlsx-data-sources/5e_Adventure_Master_Catalog_4.4.1.xlsx"
+catalog_sha256: 3b5226b34955332a7803ea902f4c7d0f447b33392d982c6b42636c7901af25ae
+expected_adventure_count: 33
+expected_calls: 363
+adventures_per_pack: 5
+adventure_order:
+- ADV-0346
+- ADV-0347
+- ADV-0348
+- ADV-0349
+- ADV-0350
+- ADV-0351
+- ADV-0352
+- ADV-0353
+- ADV-0354
+- ADV-0355
+- ADV-0356
+- ADV-0357
+- ADV-0358
+- ADV-0359
+- ADV-0360
+- ADV-0361
+- ADV-0362
+- ADV-0364
+- ADV-0365
+- ADV-0366
+- ADV-0367
+- ADV-0368
+- ADV-0369
+- ADV-0370
+- ADV-0371
+- ADV-0372
+- ADV-0373
+- ADV-0374
+- ADV-0375
+- ADV-0376
+- ADV-0377
+- ADV-0378
+- ADV-0379
+source_boundary_clamp_adventure_ids:
+- ADV-0355
+- ADV-0364
+- ADV-0366
+- ADV-0377
+- ADV-0378
+- ADV-0379
+dimension_order:
+- "# of Sessions"
+- Exploration Emphasis
+- GM Preparation Burden
+- Combat Emphasis
+- Social Interaction Emphasis
+- Investigation Emphasis
+- Structural Openness
+- Darkness / Horror Intensity
+- Player Beginner Suitability
+- GM Beginner Suitability
+- Seriousness
+dimension_contracts:
+- name: "# of Sessions"
+  slug: nos
+  catalog_column: Number of Sessions
+  model_alias: qwen27
+  ollama_model: qwen3.6:27b
+  profile: nos-clean-blind-v1
+  qualification_path: production_backlog/qualified_number_of_sessions.yml
+  qualification_sha256: 91e26dc3d22d2f8c3f16f986edc3d183c388996599000c7072caf2a56d56a02f
+  runtime_key: base
+  qualified_scorer_baseline: 4fcd7fe84d56354a2bc22d9b815b9f170d7223ad
+- name: Exploration Emphasis
+  slug: ee
+  catalog_column: Exploration Emphasis
+  model_alias: gptoss
+  ollama_model: gpt-oss:20b
+  profile: ee-clean-reset-v0.5
+  qualification_path: production_backlog/qualified_exploration_emphasis.yml
+  qualification_sha256: 40c629b5f16d1753895b5cdf313d7ed1717152bb40ee0e2c046e844f40f24640
+  runtime_key: ee
+  qualified_scorer_baseline: 4f11e25c99b4f408f88bf7205395d31f8ab325e8
+- name: GM Preparation Burden
+  slug: gmpb
+  catalog_column: GM Preparation Burden
+  model_alias: gemma
+  ollama_model: gemma4:26b
+  profile: gmpb-v0.6-dependency-fan-out
+  qualification_path: production_backlog/qualified_gm_preparation_burden.yml
+  qualification_sha256: a0c58718e62099cfc2ca34956d0c90a068b62e00450cba0e331a6287cd3a765e
+  runtime_key: gmpb
+  qualified_scorer_baseline: 878514b6a29d132945e39559ccd714c102c190a1
+- name: Combat Emphasis
+  slug: combat
+  catalog_column: Combat Emphasis
+  model_alias: qwen
+  ollama_model: qwen3.6:35b-a3b
+  profile: production-base
+  qualification_path: production_backlog/qualified_dimensions.yml
+  qualification_sha256: 903992c8c42c0fc0e2ee54365d25e600e7be81c0ca1abb29d7fc9087f3e8510a
+  runtime_key: base
+  env_name:
+  env_value:
+  qualified_scorer_baseline:
+- name: Social Interaction Emphasis
+  slug: social
+  catalog_column: Social Interaction Emphasis
+  model_alias: qwen
+  ollama_model: qwen3.6:35b-a3b
+  profile: phase6-v0.3
+  qualification_path: production_backlog/qualified_dimensions.yml
+  qualification_sha256: 903992c8c42c0fc0e2ee54365d25e600e7be81c0ca1abb29d7fc9087f3e8510a
+  runtime_key: base
+  env_name: AF_SOCIAL_INTERACTION_GUARDRAIL_PROFILE
+  env_value: phase6-v0.3
+  qualified_scorer_baseline: e49a198b36774d47ef136699573b6db6632032bc
+- name: Investigation Emphasis
+  slug: investigation
+  catalog_column: Investigation Emphasis
+  model_alias: qwen
+  ollama_model: qwen3.6:35b-a3b
+  profile: phase6-v0.4
+  qualification_path: production_backlog/qualified_dimensions.yml
+  qualification_sha256: 903992c8c42c0fc0e2ee54365d25e600e7be81c0ca1abb29d7fc9087f3e8510a
+  runtime_key: base
+  env_name: AF_INVESTIGATION_GUARDRAIL_PROFILE
+  env_value: phase6-v0.4
+  qualified_scorer_baseline: e49a198b36774d47ef136699573b6db6632032bc
+- name: Structural Openness
+  slug: structural-openness
+  catalog_column: Structural Openness
+  model_alias: qwen
+  ollama_model: qwen3.6:35b-a3b
+  profile: production-base
+  qualification_path: production_backlog/qualified_dimensions.yml
+  qualification_sha256: 903992c8c42c0fc0e2ee54365d25e600e7be81c0ca1abb29d7fc9087f3e8510a
+  runtime_key: base
+  env_name:
+  env_value:
+  qualified_scorer_baseline:
+- name: Darkness / Horror Intensity
+  slug: darkness
+  catalog_column: Darkness / Horror Intensity
+  model_alias: qwen
+  ollama_model: qwen3.6:35b-a3b
+  profile: production-base
+  qualification_path: production_backlog/qualified_dimensions.yml
+  qualification_sha256: 903992c8c42c0fc0e2ee54365d25e600e7be81c0ca1abb29d7fc9087f3e8510a
+  runtime_key: base
+  env_name:
+  env_value:
+  qualified_scorer_baseline:
+- name: Player Beginner Suitability
+  slug: player-beginner
+  catalog_column: Player Beginner Suitability
+  model_alias: qwen
+  ollama_model: qwen3.6:35b-a3b
+  profile: production-base
+  qualification_path: production_backlog/qualified_dimensions.yml
+  qualification_sha256: 903992c8c42c0fc0e2ee54365d25e600e7be81c0ca1abb29d7fc9087f3e8510a
+  runtime_key: base
+  env_name:
+  env_value:
+  qualified_scorer_baseline:
+- name: GM Beginner Suitability
+  slug: gmbs
+  catalog_column: GM Beginner Suitability
+  model_alias: qwen
+  ollama_model: qwen3.6:35b-a3b
+  profile: gmbs-clean-blind-v0.3
+  qualification_path: production_backlog/qualified_gm_beginner_suitability.yml
+  qualification_sha256: 10ba07021b9712ce52a22738069bdcecd2dc772947cab5683fb822811f7dc18f
+  runtime_key: base
+  qualified_scorer_baseline: bcdc94496ace154ab0f65131711ca36166bdd430
+- name: Seriousness
+  slug: seriousness
+  catalog_column: Seriousness
+  model_alias: qwen
+  ollama_model: qwen3.6:35b-a3b
+  profile: seriousness-reset-only
+  qualification_path: production_backlog/qualified_seriousness.yml
+  qualification_sha256: 5b4d23f7112b4745e36cbc90053b48daa5d004b23282d77f35792af4020e1ac5
+  runtime_key: seriousness
+  qualified_scorer_baseline: c5f27d1060623938fa4d338340647396fb9fdc16
+deferred_columns:
+- Rules / System-Master Demand
+- Tactical Complexity
+- Lethality / Failure Severity
+- Puzzle / Problem-Solving Emphasis
+- Consequential Player Agency
+- Fantastic Weirdness
+- GM Improvisation Demand
+qualification_files:
+  production_backlog/qualified_dimensions.yml: 903992c8c42c0fc0e2ee54365d25e600e7be81c0ca1abb29d7fc9087f3e8510a
+  production_backlog/qualified_number_of_sessions.yml: 91e26dc3d22d2f8c3f16f986edc3d183c388996599000c7072caf2a56d56a02f
+  production_backlog/qualified_exploration_emphasis.yml: 40c629b5f16d1753895b5cdf313d7ed1717152bb40ee0e2c046e844f40f24640
+  production_backlog/qualified_gm_beginner_suitability.yml: 10ba07021b9712ce52a22738069bdcecd2dc772947cab5683fb822811f7dc18f
+  production_backlog/qualified_gm_preparation_burden.yml: a0c58718e62099cfc2ca34956d0c90a068b62e00450cba0e331a6287cd3a765e
+  production_backlog/qualified_seriousness.yml: 5b4d23f7112b4745e36cbc90053b48daa5d004b23282d77f35792af4020e1ac5
+runtime_files:
+  base:
+    path: production_backlog/production-backlog-016/runtime-base.yml
+    sha256: dad2bb5763935325da71cd919fd53306c60c523e37c6bc6fa566b7c1ea23eb5a
+    source_path:
+    source_sha256:
+  ee:
+    path: production_backlog/production-backlog-016/runtime-ee.yml
+    sha256: 847b1238f93785e6d1c47a2ccbd59b9ce5a64aa18f89b2ac2bc3fd36ab2defb4
+    source_path: production_backlog/ee-v0.5-runtime.yml
+    source_sha256: 5bb44d4c2346404ae8756e90cc76e8082ec11fe4c10d0ed7688d0648ce5cf0b6
+  gmpb:
+    path: production_backlog/production-backlog-016/runtime-gmpb.yml
+    sha256: 00c6f0b517b0e12220e203db456193d781ffa5fc3f54563f93333a6e25b1a353
+    source_path: production_backlog/gmpb-v0.6-runtime.yml
+    source_sha256: a8f5d25af1ba2ebfc9901a92eaec072df039007f05fada1e92c9525bab5efc3a
+  seriousness:
+    path: production_backlog/production-backlog-016/runtime-seriousness.yml
+    sha256: 7df8ce351344f0721b0d82829221017d402a9d92aa49e8237f48f48d12c4ea46
+    source_path: production_backlog/seriousness-reset-runtime.yml
+    source_sha256: 7f8bd9f3b21280fe9904bbb30e421c5fd0ea9b6997ba8492c5f3af910b7db014
+selected_adventures:
+- id: ADV-0346
+  title: The Joy of Extradimensional Spaces
+  source_book: Candlekeep Mysteries
+  publisher: Wizards of the Coast
+  page_count: 9
+  start_page: 17
+  end_page: 25
+  level_start: 1
+  level_end: 1
+- id: ADV-0347
+  title: Mazfroth's Mighty Digressions
+  source_book: Candlekeep Mysteries
+  publisher: Wizards of the Coast
+  page_count: 9
+  start_page: 26
+  end_page: 34
+  level_start: 2
+  level_end: 2
+- id: ADV-0348
+  title: Book of the Raven
+  source_book: Candlekeep Mysteries
+  publisher: Wizards of the Coast
+  page_count: 13
+  start_page: 35
+  end_page: 47
+  level_start: 3
+  level_end: 3
+- id: ADV-0349
+  title: A Deep and Creeping Darkness
+  source_book: Candlekeep Mysteries
+  publisher: Wizards of the Coast
+  page_count: 13
+  start_page: 48
+  end_page: 60
+  level_start: 4
+  level_end: 4
+- id: ADV-0350
+  title: Shemshime's Bedtime Rhyme
+  source_book: Candlekeep Mysteries
+  publisher: Wizards of the Coast
+  page_count: 14
+  start_page: 61
+  end_page: 74
+  level_start: 4
+  level_end: 4
+- id: ADV-0351
+  title: The Price of Beauty
+  source_book: Candlekeep Mysteries
+  publisher: Wizards of the Coast
+  page_count: 16
+  start_page: 75
+  end_page: 90
+  level_start: 5
+  level_end: 5
+- id: ADV-0352
+  title: Book of Cylinders
+  source_book: Candlekeep Mysteries
+  publisher: Wizards of the Coast
+  page_count: 9
+  start_page: 91
+  end_page: 99
+  level_start: 6
+  level_end: 6
+- id: ADV-0353
+  title: Sarah of Yellowcrest Manor
+  source_book: Candlekeep Mysteries
+  publisher: Wizards of the Coast
+  page_count: 14
+  start_page: 100
+  end_page: 113
+  level_start: 7
+  level_end: 7
+- id: ADV-0354
+  title: Lore of Lurue
+  source_book: Candlekeep Mysteries
+  publisher: Wizards of the Coast
+  page_count: 10
+  start_page: 114
+  end_page: 123
+  level_start: 8
+  level_end: 8
+- id: ADV-0355
+  title: Kandlekeep Dekonstruktion
+  source_book: Candlekeep Mysteries
+  publisher: Wizards of the Coast
+  page_count: 13
+  start_page: 124
+  end_page: 136
+  level_start: 9
+  level_end: 9
+- id: ADV-0356
+  title: Zikran's Zephyrean Tome
+  source_book: Candlekeep Mysteries
+  publisher: Wizards of the Coast
+  page_count: 10
+  start_page: 137
+  end_page: 146
+  level_start: 10
+  level_end: 10
+- id: ADV-0357
+  title: The Curious Tale of Wisteria Vale
+  source_book: Candlekeep Mysteries
+  publisher: Wizards of the Coast
+  page_count: 12
+  start_page: 147
+  end_page: 158
+  level_start: 11
+  level_end: 11
+- id: ADV-0358
+  title: The Book of Inner Alchemy
+  source_book: Candlekeep Mysteries
+  publisher: Wizards of the Coast
+  page_count: 11
+  start_page: 159
+  end_page: 169
+  level_start: 12
+  level_end: 12
+- id: ADV-0359
+  title: The Canopic Being
+  source_book: Candlekeep Mysteries
+  publisher: Wizards of the Coast
+  page_count: 14
+  start_page: 170
+  end_page: 183
+  level_start: 13
+  level_end: 13
+- id: ADV-0360
+  title: The Scrivener's Tale
+  source_book: Candlekeep Mysteries
+  publisher: Wizards of the Coast
+  page_count: 14
+  start_page: 184
+  end_page: 197
+  level_start: 14
+  level_end: 14
+- id: ADV-0361
+  title: Alkazaar's Appendix
+  source_book: Candlekeep Mysteries
+  publisher: Wizards of the Coast
+  page_count: 15
+  start_page: 198
+  end_page: 212
+  level_start: 15
+  level_end: 15
+- id: ADV-0362
+  title: Xanthoria
+  source_book: Candlekeep Mysteries
+  publisher: Wizards of the Coast
+  page_count: 11
+  start_page: 213
+  end_page: 223
+  level_start: 16
+  level_end: 16
+- id: ADV-0364
+  title: A Fateful Competition
+  source_book: 'Critical Role: Call of the Netherdeep'
+  publisher: Wizards of the Coast
+  page_count: 18
+  start_page: 18
+  end_page: 35
+  level_start: 3
+  level_end: 4
+- id: ADV-0365
+  title: The Emerald Grotto
+  source_book: 'Critical Role: Call of the Netherdeep'
+  publisher: Wizards of the Coast
+  page_count: 7
+  start_page: 29
+  end_page: 35
+  level_start: 3
+  level_end: 4
+- id: ADV-0366
+  title: Bazzoxan
+  source_book: 'Critical Role: Call of the Netherdeep'
+  publisher: Wizards of the Coast
+  page_count: 28
+  start_page: 48
+  end_page: 75
+  level_start: 5
+  level_end: 7
+- id: ADV-0367
+  title: Betrayers' Rise
+  source_book: 'Critical Role: Call of the Netherdeep'
+  publisher: Wizards of the Coast
+  page_count: 14
+  start_page: 62
+  end_page: 75
+  level_start: 5
+  level_end: 7
+- id: ADV-0368
+  title: Deliver the Figurine
+  source_book: 'Critical Role: Call of the Netherdeep'
+  publisher: Wizards of the Coast
+  page_count: 2
+  start_page: 96
+  end_page: 97
+  level_start: 7
+  level_end: 7
+- id: ADV-0369
+  title: Search the Life Dome
+  source_book: 'Critical Role: Call of the Netherdeep'
+  publisher: Wizards of the Coast
+  page_count: 3
+  start_page: 97
+  end_page: 99
+  level_start: 7
+  level_end: 7
+- id: ADV-0370
+  title: The Proxies of Prolix
+  source_book: 'Critical Role: Call of the Netherdeep'
+  publisher: Wizards of the Coast
+  page_count: 3
+  start_page: 99
+  end_page: 101
+  level_start: 7
+  level_end: 8
+- id: ADV-0371
+  title: A Ghost in Our Midst
+  source_book: 'Critical Role: Call of the Netherdeep'
+  publisher: Wizards of the Coast
+  page_count: 2
+  start_page: 104
+  end_page: 105
+  level_start: 7
+  level_end: 7
+- id: ADV-0372
+  title: When Luck Runs Out
+  source_book: 'Critical Role: Call of the Netherdeep'
+  publisher: Wizards of the Coast
+  page_count: 3
+  start_page: 105
+  end_page: 107
+  level_start: 7
+  level_end: 7
+- id: ADV-0373
+  title: Elephant in the Room
+  source_book: 'Critical Role: Call of the Netherdeep'
+  publisher: Wizards of the Coast
+  page_count: 3
+  start_page: 108
+  end_page: 110
+  level_start: 7
+  level_end: 8
+- id: ADV-0374
+  title: The Cultist of Zehir
+  source_book: 'Critical Role: Call of the Netherdeep'
+  publisher: Wizards of the Coast
+  page_count: 2
+  start_page: 112
+  end_page: 113
+  level_start: 7
+  level_end: 7
+- id: ADV-0375
+  title: Half-Baked Scheme
+  source_book: 'Critical Role: Call of the Netherdeep'
+  publisher: Wizards of the Coast
+  page_count: 4
+  start_page: 113
+  end_page: 116
+  level_start: 7
+  level_end: 7
+- id: ADV-0376
+  title: Elephant Uproar
+  source_book: 'Critical Role: Call of the Netherdeep'
+  publisher: Wizards of the Coast
+  page_count: 2
+  start_page: 116
+  end_page: 117
+  level_start: 7
+  level_end: 8
+- id: ADV-0377
+  title: The Drowned City
+  source_book: 'Critical Role: Call of the Netherdeep'
+  publisher: Wizards of the Coast
+  page_count: 18
+  start_page: 120
+  end_page: 137
+  level_start: 8
+  level_end: 10
+- id: ADV-0378
+  title: The Netherdeep
+  source_book: 'Critical Role: Call of the Netherdeep'
+  publisher: Wizards of the Coast
+  page_count: 34
+  start_page: 138
+  end_page: 171
+  level_start: 10
+  level_end: 12
+- id: ADV-0379
+  title: The Heart of Despair
+  source_book: 'Critical Role: Call of the Netherdeep'
+  publisher: Wizards of the Coast
+  page_count: 15
+  start_page: 172
+  end_page: 186
+  level_start: 12
+  level_end: 13

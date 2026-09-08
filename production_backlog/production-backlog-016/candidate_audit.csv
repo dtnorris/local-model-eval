@@ -1,0 +1,34 @@
+adventure_id,adventure_title,source_book,publisher,page_count,level_start,level_end,decision,reason
+ADV-0346,The Joy of Extradimensional Spaces,Candlekeep Mysteries,Wizards of the Coast,9,1,1,SELECT,exact_batch_016_target_levels_present_11_scores_blank_source_preflight_pass
+ADV-0347,Mazfroth's Mighty Digressions,Candlekeep Mysteries,Wizards of the Coast,9,2,2,SELECT,exact_batch_016_target_levels_present_11_scores_blank_source_preflight_pass
+ADV-0348,Book of the Raven,Candlekeep Mysteries,Wizards of the Coast,13,3,3,SELECT,exact_batch_016_target_levels_present_11_scores_blank_source_preflight_pass
+ADV-0349,A Deep and Creeping Darkness,Candlekeep Mysteries,Wizards of the Coast,13,4,4,SELECT,exact_batch_016_target_levels_present_11_scores_blank_source_preflight_pass
+ADV-0350,Shemshime's Bedtime Rhyme,Candlekeep Mysteries,Wizards of the Coast,14,4,4,SELECT,exact_batch_016_target_levels_present_11_scores_blank_source_preflight_pass
+ADV-0351,The Price of Beauty,Candlekeep Mysteries,Wizards of the Coast,16,5,5,SELECT,exact_batch_016_target_levels_present_11_scores_blank_source_preflight_pass
+ADV-0352,Book of Cylinders,Candlekeep Mysteries,Wizards of the Coast,9,6,6,SELECT,exact_batch_016_target_levels_present_11_scores_blank_source_preflight_pass
+ADV-0353,Sarah of Yellowcrest Manor,Candlekeep Mysteries,Wizards of the Coast,14,7,7,SELECT,exact_batch_016_target_levels_present_11_scores_blank_source_preflight_pass
+ADV-0354,Lore of Lurue,Candlekeep Mysteries,Wizards of the Coast,10,8,8,SELECT,exact_batch_016_target_levels_present_11_scores_blank_source_preflight_pass
+ADV-0355,Kandlekeep Dekonstruktion,Candlekeep Mysteries,Wizards of the Coast,13,9,9,SELECT,exact_batch_016_target_levels_present_11_scores_blank_source_preflight_pass
+ADV-0356,Zikran's Zephyrean Tome,Candlekeep Mysteries,Wizards of the Coast,10,10,10,SELECT,exact_batch_016_target_levels_present_11_scores_blank_source_preflight_pass
+ADV-0357,The Curious Tale of Wisteria Vale,Candlekeep Mysteries,Wizards of the Coast,12,11,11,SELECT,exact_batch_016_target_levels_present_11_scores_blank_source_preflight_pass
+ADV-0358,The Book of Inner Alchemy,Candlekeep Mysteries,Wizards of the Coast,11,12,12,SELECT,exact_batch_016_target_levels_present_11_scores_blank_source_preflight_pass
+ADV-0359,The Canopic Being,Candlekeep Mysteries,Wizards of the Coast,14,13,13,SELECT,exact_batch_016_target_levels_present_11_scores_blank_source_preflight_pass
+ADV-0360,The Scrivener's Tale,Candlekeep Mysteries,Wizards of the Coast,14,14,14,SELECT,exact_batch_016_target_levels_present_11_scores_blank_source_preflight_pass
+ADV-0361,Alkazaar's Appendix,Candlekeep Mysteries,Wizards of the Coast,15,15,15,SELECT,exact_batch_016_target_levels_present_11_scores_blank_source_preflight_pass
+ADV-0362,Xanthoria,Candlekeep Mysteries,Wizards of the Coast,11,16,16,SELECT,exact_batch_016_target_levels_present_11_scores_blank_source_preflight_pass
+ADV-0364,A Fateful Competition,Critical Role: Call of the Netherdeep,Wizards of the Coast,18,3,4,SELECT,exact_batch_016_target_levels_present_11_scores_blank_source_preflight_pass
+ADV-0365,The Emerald Grotto,Critical Role: Call of the Netherdeep,Wizards of the Coast,7,3,4,SELECT,exact_batch_016_target_levels_present_11_scores_blank_source_preflight_pass
+ADV-0366,Bazzoxan,Critical Role: Call of the Netherdeep,Wizards of the Coast,28,5,7,SELECT,exact_batch_016_target_levels_present_11_scores_blank_source_preflight_pass
+ADV-0367,Betrayers' Rise,Critical Role: Call of the Netherdeep,Wizards of the Coast,14,5,7,SELECT,exact_batch_016_target_levels_present_11_scores_blank_source_preflight_pass
+ADV-0368,Deliver the Figurine,Critical Role: Call of the Netherdeep,Wizards of the Coast,2,7,7,SELECT,exact_batch_016_target_levels_present_11_scores_blank_source_preflight_pass
+ADV-0369,Search the Life Dome,Critical Role: Call of the Netherdeep,Wizards of the Coast,3,7,7,SELECT,exact_batch_016_target_levels_present_11_scores_blank_source_preflight_pass
+ADV-0370,The Proxies of Prolix,Critical Role: Call of the Netherdeep,Wizards of the Coast,3,7,8,SELECT,exact_batch_016_target_levels_present_11_scores_blank_source_preflight_pass
+ADV-0371,A Ghost in Our Midst,Critical Role: Call of the Netherdeep,Wizards of the Coast,2,7,7,SELECT,exact_batch_016_target_levels_present_11_scores_blank_source_preflight_pass
+ADV-0372,When Luck Runs Out,Critical Role: Call of the Netherdeep,Wizards of the Coast,3,7,7,SELECT,exact_batch_016_target_levels_present_11_scores_blank_source_preflight_pass
+ADV-0373,Elephant in the Room,Critical Role: Call of the Netherdeep,Wizards of the Coast,3,7,8,SELECT,exact_batch_016_target_levels_present_11_scores_blank_source_preflight_pass
+ADV-0374,The Cultist of Zehir,Critical Role: Call of the Netherdeep,Wizards of the Coast,2,7,7,SELECT,exact_batch_016_target_levels_present_11_scores_blank_source_preflight_pass
+ADV-0375,Half-Baked Scheme,Critical Role: Call of the Netherdeep,Wizards of the Coast,4,7,7,SELECT,exact_batch_016_target_levels_present_11_scores_blank_source_preflight_pass
+ADV-0376,Elephant Uproar,Critical Role: Call of the Netherdeep,Wizards of the Coast,2,7,8,SELECT,exact_batch_016_target_levels_present_11_scores_blank_source_preflight_pass
+ADV-0377,The Drowned City,Critical Role: Call of the Netherdeep,Wizards of the Coast,18,8,10,SELECT,exact_batch_016_target_levels_present_11_scores_blank_source_preflight_pass
+ADV-0378,The Netherdeep,Critical Role: Call of the Netherdeep,Wizards of the Coast,34,10,12,SELECT,exact_batch_016_target_levels_present_11_scores_blank_source_preflight_pass
+ADV-0379,The Heart of Despair,Critical Role: Call of the Netherdeep,Wizards of the Coast,15,12,13,SELECT,exact_batch_016_target_levels_present_11_scores_blank_source_preflight_pass
