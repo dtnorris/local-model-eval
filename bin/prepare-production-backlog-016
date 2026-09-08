@@ -19,6 +19,9 @@ CATALOG_SHA256 = "3b5226b34955332a7803ea902f4c7d0f447b33392d982c6b42636c7901af25
 EXPECTED_IDS = ((346..362).to_a + (364..379).to_a).map { |n| format("ADV-%04d", n) }.freeze
 EXPECTED_CALLS = EXPECTED_IDS.length * 11
 ADVENTURES_PER_PACK = 5
+SOURCE_BOUNDARY_CLAMP_IDS = %w[
+  ADV-0355 ADV-0364 ADV-0366 ADV-0377 ADV-0378 ADV-0379
+].freeze
 
 DEFERRED_COLUMNS = [
   "Rules / System-Master Demand",
@@ -209,7 +212,13 @@ end
 def source_preflight(scorer_repo, catalog_path, adventure_id)
   Dir.mktmpdir("af-b016-preflight") do |dir|
     runtime = File.join(dir, "catalog.yml")
-    File.write(runtime, YAML.dump("files" => { "catalog" => File.basename(catalog_path) }))
+    File.write(
+      runtime,
+      YAML.dump(
+        "files" => { "catalog" => File.basename(catalog_path) },
+        "source" => { "allow_inward_boundary_clamp_adventure_ids" => SOURCE_BOUNDARY_CLAMP_IDS }
+      )
+    )
     command = [
       File.join(scorer_repo, "bin", "af-score"),
       "--config", runtime,
@@ -229,7 +238,13 @@ def runtime_payloads
     payloads[key] = load_yaml(File.join(ROOT, relative))
   end
   payloads.transform_values do |payload|
-    deep_merge(payload, "files" => { "catalog" => CATALOG_FILENAME })
+    deep_merge(
+      payload,
+      {
+        "files" => { "catalog" => CATALOG_FILENAME },
+        "source" => { "allow_inward_boundary_clamp_adventure_ids" => SOURCE_BOUNDARY_CLAMP_IDS }
+      }
+    )
   end
 end
 
@@ -428,6 +443,7 @@ snapshot = {
   "expected_calls" => EXPECTED_CALLS,
   "adventures_per_pack" => ADVENTURES_PER_PACK,
   "adventure_order" => EXPECTED_IDS,
+  "source_boundary_clamp_adventure_ids" => SOURCE_BOUNDARY_CLAMP_IDS,
   "dimension_order" => dimensions.map { |d| d.fetch("name") },
   "dimension_contracts" => dimensions,
   "deferred_columns" => DEFERRED_COLUMNS,

@@ -55,6 +55,9 @@ order = File.readlines(order_path, chomp: true).reject(&:empty?)
 CATALOG_FILENAME = "5e_Adventure_Master_Catalog_4.4.1.xlsx"
 CATALOG_SHA256 = "3b5226b34955332a7803ea902f4c7d0f447b33392d982c6b42636c7901af25ae"
 EXPECTED_IDS = ((346..362).to_a + (364..379).to_a).map { |n| format("ADV-%04d", n) }.freeze
+SOURCE_BOUNDARY_CLAMP_IDS = %w[
+  ADV-0355 ADV-0364 ADV-0366 ADV-0377 ADV-0378 ADV-0379
+].freeze
 EXPECTED_DIMENSIONS = [
   ["# of Sessions", "nos-clean-blind-v1", "qwen27", "qwen3.6:27b", "base", "Number of Sessions"],
   ["Exploration Emphasis", "ee-clean-reset-v0.5", "gptoss", "gpt-oss:20b", "ee", "Exploration Emphasis"],
@@ -106,6 +109,8 @@ abort "wrong catalog SHA" unless snapshot.fetch("catalog_sha256") == CATALOG_SHA
 abort "wrong expected adventure count" unless Integer(snapshot.fetch("expected_adventure_count")) == 33
 abort "wrong expected call count" unless Integer(snapshot.fetch("expected_calls")) == EXPECTED_CALLS
 abort "adventure order changed" unless snapshot.fetch("adventure_order") == EXPECTED_IDS
+abort "source-boundary clamp approvals changed" unless
+  snapshot.fetch("source_boundary_clamp_adventure_ids") == SOURCE_BOUNDARY_CLAMP_IDS
 abort "dimension order changed" unless snapshot.fetch("dimension_order") == EXPECTED_DIMENSIONS.map(&:first)
 abort "deferred columns changed" unless snapshot.fetch("deferred_columns") == DEFERRED_COLUMNS
 
@@ -123,6 +128,9 @@ runtime_files.each do |key, info|
   abort "runtime config changed after queue freeze: #{key}" unless sha256(path) == info.fetch("sha256")
   data = YAML.safe_load_file(path, aliases: true) || {}
   abort "runtime #{key} no longer points to AMC 4.4.1" unless data.dig("files", "catalog") == CATALOG_FILENAME
+  abort "runtime #{key} source-boundary clamp approvals changed" unless
+    data.dig("source", "allow_inward_boundary_clamp_adventure_ids") == SOURCE_BOUNDARY_CLAMP_IDS
+
   if info["source_path"]
     source = File.join(repo_root, info.fetch("source_path"))
     abort "missing qualified runtime source #{info.fetch('source_path')}" unless File.file?(source)
@@ -290,7 +298,14 @@ git -C "$SCORER_REPO" diff --cached --quiet -- lib/af_scoring config/default.yml
 }
 echo "Scorer checkout: PASS ($ACTIVE_SCORER)"
 
-mapfile -t REPRESENTATIVE_MANIFESTS < <(ruby - "$INDEX" <<'RUBY'
+REPRESENTATIVE_LIST="$(mktemp "${TMPDIR:-/tmp}/af-b016-representative.XXXXXX")" || exit 1
+MODEL_LIST="$(mktemp "${TMPDIR:-/tmp}/af-b016-models.XXXXXX")" || {
+  rm -f "$REPRESENTATIVE_LIST"
+  exit 1
+}
+trap 'rm -f "$REPRESENTATIVE_LIST" "$MODEL_LIST"' EXIT
+
+ruby - "$INDEX" >"$REPRESENTATIVE_LIST" <<'RUBY'
 require "csv"
 rows = CSV.read(ARGV.fetch(0), headers: true, encoding: "UTF-8")
 seen = {}
@@ -301,24 +316,25 @@ rows.each do |row|
   puts row["manifest_path"]
 end
 RUBY
-)
 
-[[ "${#REPRESENTATIVE_MANIFESTS[@]}" -eq 11 ]] || {
-  echo "ERROR: expected 11 representative manifests; found ${#REPRESENTATIVE_MANIFESTS[@]}"
+REPRESENTATIVE_COUNT="$(wc -l < "$REPRESENTATIVE_LIST" | tr -d '[:space:]')"
+[[ "$REPRESENTATIVE_COUNT" -eq 11 ]] || {
+  echo "ERROR: expected 11 representative manifests; found $REPRESENTATIVE_COUNT"
   exit 1
 }
 
 echo
 echo "Planning one frozen manifest per dimension..."
-for manifest in "${REPRESENTATIVE_MANIFESTS[@]}"; do
+while IFS= read -r manifest; do
+  [[ -n "$manifest" ]] || continue
   bin/lme plan "$manifest" >/dev/null || {
     echo "ERROR: LME plan failed: $manifest"
     exit 1
   }
-done
+done < "$REPRESENTATIVE_LIST"
 echo "LME manifest planning: PASS (11/11)"
 
-mapfile -t MODEL_MANIFESTS < <(ruby - "$INDEX" <<'RUBY'
+ruby - "$INDEX" >"$MODEL_LIST" <<'RUBY'
 require "csv"
 rows = CSV.read(ARGV.fetch(0), headers: true, encoding: "UTF-8")
 seen = {}
@@ -329,21 +345,22 @@ rows.each do |row|
   puts row["manifest_path"]
 end
 RUBY
-)
 
-[[ "${#MODEL_MANIFESTS[@]}" -eq 4 ]] || {
-  echo "ERROR: expected 4 distinct local model aliases; found ${#MODEL_MANIFESTS[@]}"
+MODEL_COUNT="$(wc -l < "$MODEL_LIST" | tr -d '[:space:]')"
+[[ "$MODEL_COUNT" -eq 4 ]] || {
+  echo "ERROR: expected 4 distinct local model aliases; found $MODEL_COUNT"
   exit 1
 }
 
 echo
 echo "Checking all four required local Ollama models on worker mac..."
-for manifest in "${MODEL_MANIFESTS[@]}"; do
+while IFS= read -r manifest; do
+  [[ -n "$manifest" ]] || continue
   bin/lme worker-check "$manifest" || {
     echo "ERROR: local worker/model preflight failed: $manifest"
     exit 1
   }
-done
+done < "$MODEL_LIST"
 
 echo
 echo "BATCH 16 PREFLIGHT: PASS"
