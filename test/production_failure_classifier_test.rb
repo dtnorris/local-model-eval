@@ -11,7 +11,7 @@ class ProductionFailureClassifierTest < Minitest::Test
   EXPECTED = LME::ProductionFailureClassifier::EXPECTED_MODEL_VALIDATION
   UNKNOWN = LME::ProductionFailureClassifier::OPERATIONAL_OR_UNKNOWN
 
-  def classify(finish_reason: "stop", dimension: base_dimension, stderr:, prompt_tokens: 2_000, prompt_chars: 10_000)
+  def classify(finish_reason: "stop", dimension: base_dimension, stderr:, prompt_tokens: 2_000, prompt_chars: 10_000, response_shape: :openai)
     Dir.mktmpdir do |dir|
       manifest = File.join(dir, "experiment.yml")
       output_root = File.join(dir, "output")
@@ -33,13 +33,26 @@ class ProductionFailureClassifierTest < Minitest::Test
       }
       File.write(File.join(raw_dir, "dimension_gm_beginner_suitability_request.json"), JSON.generate(request))
 
-      response = {
-        "usage" => {"prompt_tokens" => prompt_tokens},
-        "choices" => [{
-          "finish_reason" => finish_reason,
-          "message" => {"content" => JSON.generate("dimensions" => [dimension])}
-        }]
-      }
+      content = JSON.generate("dimensions" => [dimension])
+      response = case response_shape
+      when :openai
+        {
+          "usage" => {"prompt_tokens" => prompt_tokens},
+          "choices" => [{
+            "finish_reason" => finish_reason,
+            "message" => {"content" => content}
+          }]
+        }
+      when :ollama
+        {
+          "done" => true,
+          "done_reason" => finish_reason,
+          "prompt_eval_count" => prompt_tokens,
+          "message" => {"role" => "assistant", "content" => content}
+        }
+      else
+        raise ArgumentError, "unknown response shape: #{response_shape.inspect}"
+      end
       File.write(File.join(raw_dir, "dimension_gm_beginner_suitability.json"), JSON.generate(response))
 
       return LME::ProductionFailureClassifier.new(manifest: manifest, output_root: output_root).classify
@@ -72,6 +85,26 @@ class ProductionFailureClassifierTest < Minitest::Test
     stderr = "ERROR: GM Beginner Suitability: path_sensitive must be boolean\n  - GM Beginner Suitability: path_sensitive must be boolean\n"
     dimension = base_dimension.merge("path_sensitive" => "false")
     assert_equal EXPECTED, classify(dimension: dimension, stderr: stderr)
+  end
+
+
+  def test_ollama_native_response_shape_preserves_expected_adjacent_falsification_failure
+    stderr = "ERROR: GM Beginner Suitability: adjacent-higher falsification is required for scores below 5\n"
+    dimension = base_dimension.merge("adjacent_higher_reason" => nil)
+
+    assert_equal EXPECTED, classify(dimension: dimension, stderr: stderr, response_shape: :ollama)
+  end
+
+  def test_ollama_native_length_finish_remains_operational_or_unknown
+    stderr = "ERROR: GM Beginner Suitability: adjacent-higher falsification is required for scores below 5\n"
+    dimension = base_dimension.merge("adjacent_higher_reason" => nil)
+
+    assert_equal UNKNOWN, classify(
+      dimension: dimension,
+      stderr: stderr,
+      finish_reason: "length",
+      response_shape: :ollama
+    )
   end
 
   def test_finish_reason_length_remains_operational_or_unknown

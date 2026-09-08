@@ -30,12 +30,12 @@ module LME
       return OPERATIONAL_OR_UNKNOWN unless response_path
 
       response = JSON.parse(File.read(response_path))
-      choice = Array(response["choices"]).first
-      return OPERATIONAL_OR_UNKNOWN unless choice.is_a?(Hash)
-      return OPERATIONAL_OR_UNKNOWN unless choice["finish_reason"] == "stop"
-      return OPERATIONAL_OR_UNKNOWN unless prompt_usage_plausible?(run_dir, response)
+      completion = provider_completion(response)
+      return OPERATIONAL_OR_UNKNOWN unless completion
+      return OPERATIONAL_OR_UNKNOWN unless completion.fetch(:finish_reason) == "stop"
+      return OPERATIONAL_OR_UNKNOWN unless prompt_usage_plausible?(run_dir, completion.fetch(:prompt_tokens))
 
-      content = choice.dig("message", "content")
+      content = completion.fetch(:content)
       return OPERATIONAL_OR_UNKNOWN unless content.is_a?(String) && !content.empty?
 
       parsed = JSON.parse(content)
@@ -74,8 +74,27 @@ module LME
       candidates.max_by { |path| File.mtime(path) }
     end
 
-    def prompt_usage_plausible?(run_dir, response)
-      prompt_tokens = response.dig("usage", "prompt_tokens")
+    def provider_completion(response)
+      choice = Array(response["choices"]).first
+      if choice.is_a?(Hash)
+        return {
+          finish_reason: choice["finish_reason"],
+          content: choice.dig("message", "content"),
+          prompt_tokens: response.dig("usage", "prompt_tokens")
+        }
+      end
+
+      message = response["message"]
+      return unless message.is_a?(Hash)
+
+      {
+        finish_reason: response["done_reason"],
+        content: message["content"],
+        prompt_tokens: response["prompt_eval_count"]
+      }
+    end
+
+    def prompt_usage_plausible?(run_dir, prompt_tokens)
       return false unless prompt_tokens.is_a?(Integer) && prompt_tokens.positive?
 
       request_path = provider_request_path(run_dir)
