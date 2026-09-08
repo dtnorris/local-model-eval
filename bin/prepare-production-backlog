@@ -12,6 +12,7 @@ require "tmpdir"
 require "time"
 require "yaml"
 require_relative "../lib/production_backlog_selector"
+require_relative "../lib/production_backlog_runtime_contract"
 
 ROOT = File.expand_path("..", __dir__)
 SCORER_REPO = File.expand_path(
@@ -125,7 +126,7 @@ def source_preflight(scorer_repo, adventure_id, ollama_model)
   [status.success?, [stdout, stderr].join("\n").strip]
 end
 
-def yaml_manifest(queue:, adv:, dimension:, scorer_rel:)
+def yaml_manifest(queue:, adv:, dimension:, scorer_rel:, extra_args:)
   profile_block =
     if dimension["env_name"]
       <<~YAML
@@ -169,7 +170,7 @@ def yaml_manifest(queue:, adv:, dimension:, scorer_rel:)
     scorer:
       repo: #{scorer_rel}
       mode: positional
-      extra_args: []
+      extra_args: #{extra_args.inspect}
 
     #{profile_block}production_contract:
       disposition: local-qualified-background
@@ -224,6 +225,12 @@ abort_with("--adventures-per-pack must be >= 1") if options[:per_pack] < 1
 abort_with("--max-pages must be >= 1") if options[:max_pages] < 1
 abort_with("--max-source-share must be > 0 and <= 1") unless options[:max_source_share].positive? && options[:max_source_share] <= 1.0
 abort_with("adjacent scorer checkout not found: #{SCORER_REPO}") unless File.directory?(File.join(SCORER_REPO, ".git"))
+
+begin
+  ProductionBacklogRuntimeContract.validate_source!(ROOT)
+rescue ArgumentError => e
+  abort_with(e.message)
+end
 
 dimensions = qualified.fetch("dimensions")
 dimension_names = dimensions.map { |d| d.fetch("name") }
@@ -360,6 +367,8 @@ end
 FileUtils.mkdir_p(queue_dir)
 FileUtils.mkdir_p(experiment_dir)
 
+production_runtime_contract = ProductionBacklogRuntimeContract.freeze!(root: ROOT, queue: queue)
+
 snapshot = {
   "version" => 1,
   "queue" => queue,
@@ -380,6 +389,7 @@ snapshot = {
   "page_strata" => selection.fetch(:strata),
   "qualified_dimensions" => dimensions,
   "qualification_contract" => qualified,
+  "production_runtime_contract" => production_runtime_contract,
   "selected_adventures" => selected
 }
 File.write(File.join(queue_dir, "snapshot.yml"), YAML.dump(snapshot))
@@ -418,9 +428,16 @@ selected.each_slice(options[:per_pack]).with_index(1) do |pack_adventures, pack_
       case_index += 1
       filename = "#{queue}-qwen-#{dimension.fetch('slug')}-adv#{adv.fetch('id').split('-').last.downcase}-v1.yml"
       relative_path = File.join("experiments", queue, filename)
+      extra_args = ProductionBacklogRuntimeContract.extra_args_for(
+        dimension_name: dimension.fetch("name"),
+        contract: production_runtime_contract
+      )
       File.write(
         File.join(experiment_dir, filename),
-        yaml_manifest(queue: queue, adv: adv, dimension: dimension, scorer_rel: scorer_rel)
+        yaml_manifest(
+          queue: queue, adv: adv, dimension: dimension,
+          scorer_rel: scorer_rel, extra_args: extra_args
+        )
       )
       puts format(
         "WRITE %3d/%d  %s",
