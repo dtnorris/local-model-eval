@@ -199,7 +199,50 @@ while IFS= read -r f; do
   echo "================================================================"
 
   command_ok=true
-  bin/lme run "$f" || command_ok=false
+
+  # Operational runtime amendment:
+  # qwen3.6:35b-a3b high-reasoning production calls can exhaust the
+  # scorer's inherited 4096-token generation ceiling before emitting
+  # assistant content. Batch 16 ADV-0367 Structural Openness and Darkness
+  # reproduced this at exactly 4096 tokens; both completed normally at
+  # the cheapest tested higher ceiling, 8192.
+  #
+  # Scope this narrowly to the six qwen35 core dimensions in the prepared
+  # adventure-ingest batches. Other qualified runtimes retain their frozen
+  # limits. Also remove any caller-supplied AF_LLM_MAX_TOKENS from unrelated
+  # calls so it cannot override EE/GMPB/Seriousness/etc.
+  runtime_max_tokens=""
+  case "$(basename "$QUEUE_DIR")" in
+    production-backlog-016|production-backlog-017|production-backlog-018)
+      runtime_max_tokens="$(
+        ruby - "$f" <<'RUBY'
+require "yaml"
+data = YAML.safe_load_file(ARGV.fetch(0), aliases: true) || {}
+qwen_core_dimensions = [
+  "Combat Emphasis",
+  "Social Interaction Emphasis",
+  "Investigation Emphasis",
+  "Structural Openness",
+  "Darkness / Horror Intensity",
+  "Player Beginner Suitability"
+].freeze
+
+if data.fetch("models", []).first == "qwen" &&
+   qwen_core_dimensions.include?(data["dimension"])
+  print "8192"
+end
+RUBY
+      )"
+      ;;
+  esac
+
+  if [[ "$runtime_max_tokens" == "8192" ]]; then
+    echo "Operational runtime amendment: AF_LLM_MAX_TOKENS=8192 for qwen35 core dimension."
+    AF_LLM_MAX_TOKENS=8192 bin/lme run "$f" || command_ok=false
+  else
+    env -u AF_LLM_MAX_TOKENS bin/lme run "$f" || command_ok=false
+  fi
+
   status=$(manifest_status "$f")
 
   if [[ "$command_ok" == true && "$status" == "complete" ]]; then
