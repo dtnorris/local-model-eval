@@ -55,13 +55,24 @@ cd "$REPO" || exit 1
 
 ruby - "$QUALIFIED" "$SNAPSHOT" "$INDEX" "$ORDER" "$SCORER_REPO" "$REPO" <<'RUBY' || exit 1
 require "csv"
+require "digest"
 require "yaml"
 
 qualified_path, snapshot_path, index_path, order_path, scorer_repo, repo_root = ARGV
+require File.join(repo_root, "lib", "production_backlog_runtime_contract")
 live_qualified = YAML.safe_load_file(qualified_path)
 snapshot = YAML.safe_load_file(snapshot_path, aliases: true)
 rows = CSV.read(index_path, headers: true, encoding: "UTF-8")
 order = File.readlines(order_path, chomp: true).reject(&:empty?)
+
+runtime_contract = snapshot["production_runtime_contract"]
+if runtime_contract
+  begin
+    ProductionBacklogRuntimeContract.validate_snapshot!(root: repo_root, contract: runtime_contract)
+  rescue ArgumentError => e
+    abort e.message
+  end
+end
 
 qualification_contract = snapshot.fetch("qualification_contract", live_qualified)
 dims = snapshot.fetch("qualified_dimensions", qualification_contract.fetch("dimensions"))
@@ -155,7 +166,15 @@ rows.each do |row|
   manifest_scorer = File.expand_path(data.dig("scorer", "repo").to_s, File.dirname(path))
   abort "wrong scorer repo in #{path}: #{manifest_scorer}" unless manifest_scorer == File.expand_path(scorer_repo)
   abort "wrong scorer mode in #{path}" unless data.dig("scorer", "mode") == "positional"
-  abort "unexpected scorer args in #{path}" unless data.dig("scorer", "extra_args") == []
+  expected_extra_args = if runtime_contract
+                          ProductionBacklogRuntimeContract.extra_args_for(
+                            dimension_name: dim,
+                            contract: runtime_contract
+                          )
+                        else
+                          []
+                        end
+  abort "wrong scorer args in #{path}" unless data.dig("scorer", "extra_args") == expected_extra_args
   abort "wrong production queue in #{path}" unless data.dig("production_contract", "queue") == snapshot.fetch("queue")
   abort "favorable reruns allowed in #{path}" unless data.dig("production_contract", "no_favorable_rerun") == true
   abort "external API cost is not zero in #{path}" unless data.dig("production_contract", "external_api_cost_usd").to_f == 0.0
