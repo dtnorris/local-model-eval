@@ -49,6 +49,9 @@ case "$CONTRACT_TYPE" in
   seriousness_local_qualified_v1)
     VERIFY="$REPO/verify_production_backlog_seriousness.sh"
     ;;
+  adventure_ingest_v1)
+    VERIFY="$REPO/verify_production_backlog_016.sh"
+    ;;
   *)
     VERIFY="$REPO/verify_production_backlog.sh"
     ;;
