@@ -57,6 +57,9 @@ case "$CONTRACT_TYPE" in
       production-backlog-017)
         VERIFY="$REPO/verify_production_backlog_017.sh"
         ;;
+      production-backlog-018)
+        VERIFY="$REPO/verify_production_backlog_018.sh"
+        ;;
       *)
         echo "ERROR: no verifier registered for adventure-ingest queue $(basename "$QUEUE_DIR")"
         exit 1

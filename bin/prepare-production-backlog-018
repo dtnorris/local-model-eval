@@ -1,0 +1,534 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "csv"
+require "digest"
+require "fileutils"
+require "open3"
+require "optparse"
+require "pathname"
+require "tmpdir"
+require "time"
+require "yaml"
+
+ROOT = File.expand_path("..", __dir__)
+SCORER_REPO = File.expand_path(ENV.fetch("AF_SCORER_REPO", "../af-cli-scoring-utility"), ROOT)
+QUEUE = "production-backlog-018"
+CATALOG_FILENAME = "5e_Adventure_Master_Catalog_4.6.xlsx"
+CATALOG_SHA256 = "7451c6680eb59e76e686ac01951beb3d8ff0816dad385833cc9fcce3b3cf93cb"
+EXPECTED_IDS = ((404..412).to_a + (414..427).to_a).map { |n| format("ADV-%04d", n) }.freeze
+EXPECTED_CALLS = EXPECTED_IDS.length * 11
+ADVENTURES_PER_PACK = 5
+SOURCE_BOUNDARY_CLAMP_IDS = [].freeze
+
+DEFERRED_COLUMNS = [
+  "Rules / System-Master Demand",
+  "Tactical Complexity",
+  "Lethality / Failure Severity",
+  "Puzzle / Problem-Solving Emphasis",
+  "Consequential Player Agency",
+  "Fantastic Weirdness",
+  "GM Improvisation Demand"
+].freeze
+
+QUALIFICATION_PATHS = {
+  "core" => "production_backlog/qualified_dimensions.yml",
+  "nos" => "production_backlog/qualified_number_of_sessions.yml",
+  "ee" => "production_backlog/qualified_exploration_emphasis.yml",
+  "gmbs" => "production_backlog/qualified_gm_beginner_suitability.yml",
+  "gmpb" => "production_backlog/qualified_gm_preparation_burden.yml",
+  "seriousness" => "production_backlog/qualified_seriousness.yml"
+}.freeze
+
+RUNTIME_SOURCE_PATHS = {
+  "ee" => "production_backlog/ee-v0.5-runtime.yml",
+  "gmpb" => "production_backlog/gmpb-v0.6-runtime.yml",
+  "seriousness" => "production_backlog/seriousness-reset-runtime.yml"
+}.freeze
+
+def abort_with(message)
+  warn "ERROR: #{message}"
+  exit 1
+end
+
+def blank?(value)
+  value.nil? || value.to_s.strip.empty?
+end
+
+def canonical_header(value)
+  header = value.to_s.strip
+  header == "ADV - ID" ? "Adventure ID" : header
+end
+
+def integer_or_nil(value)
+  return nil if blank?(value)
+  Integer(Float(value))
+rescue ArgumentError, TypeError
+  nil
+end
+
+def git_head(repo)
+  out, _err, status = Open3.capture3("git", "-C", repo, "rev-parse", "HEAD")
+  status.success? ? out.strip : nil
+end
+
+def load_yaml(path)
+  YAML.safe_load_file(path, aliases: true) || {}
+end
+
+def sha256(path)
+  Digest::SHA256.file(path).hexdigest
+end
+
+def deep_merge(base, other)
+  merged = Marshal.load(Marshal.dump(base))
+  other.each do |key, value|
+    if merged[key].is_a?(Hash) && value.is_a?(Hash)
+      merged[key] = deep_merge(merged[key], value)
+    else
+      merged[key] = value
+    end
+  end
+  merged
+end
+
+def qualification_path(key)
+  File.join(ROOT, QUALIFICATION_PATHS.fetch(key))
+end
+
+def load_qualifications
+  QUALIFICATION_PATHS.each_value do |relative|
+    path = File.join(ROOT, relative)
+    abort_with("missing qualification contract #{path}") unless File.file?(path)
+  end
+  RUNTIME_SOURCE_PATHS.each_value do |relative|
+    path = File.join(ROOT, relative)
+    abort_with("missing qualified runtime config #{path}") unless File.file?(path)
+  end
+
+  core = load_yaml(qualification_path("core"))
+  abort_with("qualified core model alias changed") unless core.fetch("model_alias") == "qwen"
+  abort_with("qualified core Ollama model changed") unless core.fetch("ollama_model") == "qwen3.6:35b-a3b"
+  core_by_name = core.fetch("dimensions").to_h { |d| [d.fetch("name"), d] }
+
+  nos = load_yaml(qualification_path("nos"))
+  ee = load_yaml(qualification_path("ee"))
+  gmbs = load_yaml(qualification_path("gmbs"))
+  gmpb = load_yaml(qualification_path("gmpb"))
+  seriousness = load_yaml(qualification_path("seriousness"))
+
+  expected_individual = {
+    nos => ["nos_local_qualified_v1", "# of Sessions", "qwen27", "qwen3.6:27b", "nos-clean-blind-v1"],
+    ee => ["ee_local_qualified_v1", "Exploration Emphasis", "gptoss", "gpt-oss:20b", "ee-clean-reset-v0.5"],
+    gmbs => ["gmbs_local_qualified_v1", "GM Beginner Suitability", "qwen", "qwen3.6:35b-a3b", "gmbs-clean-blind-v0.3"],
+    gmpb => ["gmpb_local_qualified_v1", "GM Preparation Burden", "gemma", "gemma4:26b", "gmpb-v0.6-dependency-fan-out"],
+    seriousness => ["seriousness_local_qualified_v1", "Seriousness", "qwen", "qwen3.6:35b-a3b", "seriousness-reset-only"]
+  }
+  expected_individual.each do |contract, expected|
+    actual = [contract["contract_type"], contract["dimension"], contract["model_alias"], contract["ollama_model"], contract["profile"]]
+    abort_with("qualified contract changed: expected #{expected.inspect}, got #{actual.inspect}") unless actual == expected
+    abort_with("qualified contract no longer uses one replicate") unless Integer(contract.fetch("replicates")) == 1
+  end
+
+  core_expected = {
+    "Combat Emphasis" => ["combat", "production-base"],
+    "Social Interaction Emphasis" => ["social", "phase6-v0.3"],
+    "Investigation Emphasis" => ["investigation", "phase6-v0.4"],
+    "Structural Openness" => ["structural-openness", "production-base"],
+    "Darkness / Horror Intensity" => ["darkness", "production-base"],
+    "Player Beginner Suitability" => ["player-beginner", "production-base"]
+  }
+  core_expected.each do |name, (slug, profile)|
+    d = core_by_name.fetch(name)
+    abort_with("qualified #{name} slug/profile changed") unless d.fetch("slug") == slug && d.fetch("profile") == profile
+  end
+
+  [core, core_by_name, nos, ee, gmbs, gmpb, seriousness]
+end
+
+def dimension_contracts
+  core, core_by_name, nos, ee, gmbs, gmpb, seriousness = load_qualifications
+  core_sha = sha256(qualification_path("core"))
+
+  build_core = lambda do |name|
+    d = core_by_name.fetch(name)
+    {
+      "name" => name,
+      "slug" => d.fetch("slug"),
+      "catalog_column" => name,
+      "model_alias" => core.fetch("model_alias"),
+      "ollama_model" => core.fetch("ollama_model"),
+      "profile" => d.fetch("profile"),
+      "qualification_path" => QUALIFICATION_PATHS.fetch("core"),
+      "qualification_sha256" => core_sha,
+      "runtime_key" => "base",
+      "env_name" => d["env_name"],
+      "env_value" => d["env_value"],
+      "qualified_scorer_baseline" => %w[Social\ Interaction\ Emphasis Investigation\ Emphasis].include?(name) ? core.fetch("social_investigation_qualified_scorer_baseline") : nil
+    }
+  end
+
+  individual = lambda do |key, contract, runtime_key, catalog_column = nil|
+    {
+      "name" => contract.fetch("dimension"),
+      "slug" => contract.fetch("slug"),
+      "catalog_column" => catalog_column || contract.fetch("catalog_column"),
+      "model_alias" => contract.fetch("model_alias"),
+      "ollama_model" => contract.fetch("ollama_model"),
+      "profile" => contract.fetch("profile"),
+      "qualification_path" => QUALIFICATION_PATHS.fetch(key),
+      "qualification_sha256" => sha256(qualification_path(key)),
+      "runtime_key" => runtime_key,
+      "qualified_scorer_baseline" => contract["qualified_scorer_baseline"]
+    }
+  end
+
+  [
+    individual.call("nos", nos, "base", "Number of Sessions"),
+    individual.call("ee", ee, "ee"),
+    individual.call("gmpb", gmpb, "gmpb"),
+    build_core.call("Combat Emphasis"),
+    build_core.call("Social Interaction Emphasis"),
+    build_core.call("Investigation Emphasis"),
+    build_core.call("Structural Openness"),
+    build_core.call("Darkness / Horror Intensity"),
+    build_core.call("Player Beginner Suitability"),
+    individual.call("gmbs", gmbs, "base"),
+    individual.call("seriousness", seriousness, "seriousness")
+  ]
+end
+
+def catalog_path_for(scorer_repo)
+  require File.join(scorer_repo, "lib", "af_scoring", "errors")
+  require File.join(scorer_repo, "lib", "af_scoring", "config")
+  AFScoring::Config.new(
+    project_root: scorer_repo,
+    overrides: { "files" => { "catalog" => CATALOG_FILENAME } }
+  ).catalog_path
+end
+
+def source_preflight(scorer_repo, catalog_path, adventure_id)
+  Dir.mktmpdir("af-b018-preflight") do |dir|
+    runtime = File.join(dir, "catalog.yml")
+    File.write(
+      runtime,
+      YAML.dump(
+        "files" => { "catalog" => File.basename(catalog_path) },
+        "source" => { "allow_inward_boundary_clamp_adventure_ids" => SOURCE_BOUNDARY_CLAMP_IDS }
+      )
+    )
+    command = [
+      File.join(scorer_repo, "bin", "af-score"),
+      "--config", runtime,
+      "--model", "qwen3.6:35b-a3b",
+      "--dimension", "Combat Emphasis",
+      "--preflight",
+      adventure_id
+    ]
+    stdout, stderr, status = Open3.capture3(*command, chdir: scorer_repo)
+    [status.success?, [stdout, stderr].join("\n").strip]
+  end
+end
+
+def runtime_payloads
+  payloads = { "base" => {} }
+  RUNTIME_SOURCE_PATHS.each do |key, relative|
+    payloads[key] = load_yaml(File.join(ROOT, relative))
+  end
+  payloads.transform_values do |payload|
+    deep_merge(
+      payload,
+      {
+        "files" => { "catalog" => CATALOG_FILENAME },
+        "source" => { "allow_inward_boundary_clamp_adventure_ids" => SOURCE_BOUNDARY_CLAMP_IDS }
+      }
+    )
+  end
+end
+
+def manifest_hash(queue:, adv:, dimension:, scorer_rel:, runtime_portable:)
+  contract = {
+    "contract_type" => "adventure_ingest_v1",
+    "disposition" => "local-qualified-adventure-ingest",
+    "queue" => queue,
+    "candidate_model" => dimension.fetch("model_alias"),
+    "qualified_profile" => dimension.fetch("profile"),
+    "source_qualification_path" => dimension.fetch("qualification_path"),
+    "source_qualification_sha256" => dimension.fetch("qualification_sha256"),
+    "replicate_count" => 1,
+    "no_favorable_rerun" => true,
+    "external_api_cost_usd" => 0.0,
+    "catalog_filename" => CATALOG_FILENAME,
+    "catalog_sha256" => CATALOG_SHA256
+  }
+  if dimension["qualified_scorer_baseline"]
+    contract["qualified_scorer_baseline"] = dimension["qualified_scorer_baseline"]
+  end
+
+  data = {
+    "name" => "#{queue}-#{dimension.fetch('model_alias')}-#{dimension.fetch('slug')}-adv#{adv.fetch('id').split('-').last.downcase}-v1",
+    "purpose" => "AdventureFinder Batch 18 row-major local production scoring for #{adv.fetch('id')} on #{dimension.fetch('name')}. Preserve the frozen qualified profile; produce one proposed assessment pending QC/ingestion.",
+    "dispatch" => "pool",
+    "models" => [dimension.fetch("model_alias")],
+    "dimension" => dimension.fetch("name"),
+    "adventures" => [adv.fetch("id")],
+    "replicates" => 1,
+    "workers" => ["mac"],
+    "required_worker_labels" => ["local"],
+    "scorer" => {
+      "repo" => scorer_rel,
+      "mode" => "positional",
+      "extra_args" => ["--config", runtime_portable]
+    },
+    "production_contract" => contract,
+    "success_criteria" => [
+      "Structured scorer output validates and remains grounded to the canonical adventure source unit.",
+      "Use the frozen locally qualified profile for #{dimension.fetch('name')}.",
+      "Preserve the single completed sample as a proposed production assessment pending QC/ingestion.",
+      "Do not use an existing accepted score or calibration target as expected-answer context."
+    ],
+    "stop_conditions" => [
+      "Do not rerun a completed case to seek a more favorable sample.",
+      "Queue-level repeated operational failures trigger the background runner circuit breaker."
+    ],
+    "cost_cap_usd" => 0.01
+  }
+
+  if dimension["env_name"]
+    data["phase6_contract"] = {
+      "prompt_profile" => {
+        "version" => dimension.fetch("profile"),
+        "env_name" => dimension.fetch("env_name"),
+        "env_value" => dimension.fetch("env_value")
+      }
+    }
+  end
+  data
+end
+
+options = { force: false }
+OptionParser.new do |opts|
+  opts.banner = "Usage: bin/prepare-production-backlog-018 [--force]"
+  opts.on("--force", "Replace an existing unstarted Batch 18 queue") { options[:force] = true }
+end.parse!
+abort_with("unexpected arguments: #{ARGV.join(' ')}") unless ARGV.empty?
+
+abort_with("scorer checkout not found: #{SCORER_REPO}") unless File.directory?(File.join(SCORER_REPO, ".git"))
+abort_with("scorer executable missing") unless File.executable?(File.join(SCORER_REPO, "bin", "af-score"))
+
+catalog_path = catalog_path_for(SCORER_REPO)
+abort_with("AMC 4.6 not found: #{catalog_path}") unless File.file?(catalog_path)
+actual_catalog_sha = sha256(catalog_path)
+abort_with("AMC 4.6 SHA mismatch: #{actual_catalog_sha}; expected #{CATALOG_SHA256}") unless actual_catalog_sha == CATALOG_SHA256
+
+dimensions = dimension_contracts
+abort_with("Batch 18 dimension count changed: #{dimensions.length}") unless dimensions.length == 11
+score_columns = dimensions.map { |d| d.fetch("catalog_column") }
+
+require File.join(SCORER_REPO, "lib", "af_scoring", "errors")
+require File.join(SCORER_REPO, "lib", "af_scoring", "xlsx_reader")
+rows = AFScoring::XlsxReader.new(catalog_path).rows(sheet_name: "Adventure Catalog")
+abort_with("AMC Adventure Catalog sheet is empty") if rows.empty?
+headers = rows.shift.map { |v| canonical_header(v) }
+required_headers = [
+  "Adventure ID", "Adventure Title", "Source Book", "Book Publisher",
+  "Page Count", "Start Page", "End Page", "Level Start", "Level End",
+  *score_columns, *DEFERRED_COLUMNS
+].uniq
+missing_headers = required_headers - headers
+abort_with("AMC missing required columns: #{missing_headers.join(', ')}") unless missing_headers.empty?
+
+catalog_ids = []
+targets = []
+rows.each do |row|
+  values = headers.zip(row).to_h
+  id = values["Adventure ID"].to_s.strip
+  next if id.empty?
+  catalog_ids << id
+  next unless EXPECTED_IDS.include?(id)
+
+  page_count = integer_or_nil(values["Page Count"])
+  start_page = integer_or_nil(values["Start Page"])
+  end_page = integer_or_nil(values["End Page"])
+  page_count ||= (end_page - start_page + 1) if start_page && end_page && end_page >= start_page
+
+  abort_with("#{id} missing/invalid page count") unless page_count&.positive?
+  abort_with("#{id} falls outside the proven <100 page production envelope") unless page_count < 100
+  abort_with("#{id} Level Start is blank") if blank?(values["Level Start"])
+  abort_with("#{id} Level End is blank") if blank?(values["Level End"])
+
+  populated_scores = score_columns.reject { |column| blank?(values[column]) }
+  abort_with("#{id} already has Batch 18 target values: #{populated_scores.join(', ')}") unless populated_scores.empty?
+
+  populated_deferred = DEFERRED_COLUMNS.reject { |column| blank?(values[column]) }
+  abort_with("#{id} has deferred-dimension values; review asymmetric catalog state: #{populated_deferred.join(', ')}") unless populated_deferred.empty?
+
+  targets << {
+    "id" => id,
+    "title" => values["Adventure Title"].to_s,
+    "source_book" => values["Source Book"].to_s,
+    "publisher" => values["Book Publisher"].to_s,
+    "page_count" => page_count,
+    "start_page" => start_page,
+    "end_page" => end_page,
+    "level_start" => integer_or_nil(values["Level Start"]),
+    "level_end" => integer_or_nil(values["Level End"])
+  }
+end
+
+duplicates = catalog_ids.tally.select { |_id, count| count > 1 }
+abort_with("AMC duplicate Adventure IDs: #{duplicates.keys.join(', ')}") unless duplicates.empty?
+actual_ids = targets.map { |t| t.fetch("id") }
+abort_with("Batch 18 IDs/order changed: #{actual_ids.inspect}; expected #{EXPECTED_IDS.inspect}") unless actual_ids == EXPECTED_IDS
+abort_with("Batch 18 target count #{targets.length}; expected 33") unless targets.length == 23
+
+queue_dir = File.join(ROOT, "production_backlog", QUEUE)
+experiment_dir = File.join(ROOT, "experiments", QUEUE)
+if File.exist?(queue_dir) || File.exist?(experiment_dir)
+  abort_with("Batch 18 queue already exists; use --force only before inference") unless options[:force]
+  prior_output = Dir.glob(File.join(ROOT, "output", "#{QUEUE}-*", "runs", "*", "metadata.json"))
+  abort_with("refusing --force because Batch 18 inference output already exists") unless prior_output.empty?
+end
+
+$stdout.sync = true
+puts "AMC 4.6: PASS (SHA #{CATALOG_SHA256})"
+puts "Batch 18 targets: #{targets.length}; calls: #{EXPECTED_CALLS}"
+puts "Zero-inference source preflight across all 23 canonical units..."
+source_failures = []
+targets.each_with_index do |target, index|
+  ok, detail = source_preflight(SCORER_REPO, catalog_path, target.fetch("id"))
+  puts format("%s %2d/23  %-9s  %s", ok ? "PASS" : "FAIL", index + 1, target.fetch("id"), target.fetch("title"))
+  source_failures << [target, detail] unless ok
+end
+unless source_failures.empty?
+  source_failures.each { |target, detail| warn "  #{target.fetch('id')} — #{target.fetch('title')}: #{detail}" }
+  abort_with("source preflight failed; no Batch 18 queue was written")
+end
+
+FileUtils.rm_rf(queue_dir) if options[:force]
+FileUtils.rm_rf(experiment_dir) if options[:force]
+FileUtils.mkdir_p(queue_dir)
+FileUtils.mkdir_p(experiment_dir)
+
+runtime_payloads.each do |key, payload|
+  File.write(File.join(queue_dir, "runtime-#{key}.yml"), YAML.dump(payload))
+end
+runtime_paths = runtime_payloads.keys.to_h do |key|
+  relative = File.join("production_backlog", QUEUE, "runtime-#{key}.yml")
+  [key, {
+    "path" => relative,
+    "sha256" => sha256(File.join(ROOT, relative)),
+    "source_path" => RUNTIME_SOURCE_PATHS[key],
+    "source_sha256" => RUNTIME_SOURCE_PATHS[key] && sha256(File.join(ROOT, RUNTIME_SOURCE_PATHS.fetch(key)))
+  }]
+end
+qualification_files = QUALIFICATION_PATHS.values.uniq.to_h do |relative|
+  [relative, sha256(File.join(ROOT, relative))]
+end
+
+snapshot = {
+  "version" => 1,
+  "contract_type" => "adventure_ingest_v1",
+  "queue" => QUEUE,
+  "generated_at" => Time.now.iso8601,
+  "local_model_eval_commit" => git_head(ROOT),
+  "scorer_commit" => git_head(SCORER_REPO),
+  "scorer_repo_path" => Pathname.new(SCORER_REPO).relative_path_from(Pathname.new(ROOT)).to_s,
+  "catalog_filename" => CATALOG_FILENAME,
+  "catalog_path" => catalog_path,
+  "catalog_sha256" => CATALOG_SHA256,
+  "expected_adventure_count" => 23,
+  "expected_calls" => EXPECTED_CALLS,
+  "adventures_per_pack" => ADVENTURES_PER_PACK,
+  "adventure_order" => EXPECTED_IDS,
+  "source_boundary_clamp_adventure_ids" => SOURCE_BOUNDARY_CLAMP_IDS,
+  "dimension_order" => dimensions.map { |d| d.fetch("name") },
+  "dimension_contracts" => dimensions,
+  "deferred_columns" => DEFERRED_COLUMNS,
+  "qualification_files" => qualification_files,
+  "runtime_files" => runtime_paths,
+  "selected_adventures" => targets
+}
+File.write(File.join(queue_dir, "snapshot.yml"), YAML.dump(snapshot))
+
+CSV.open(File.join(queue_dir, "candidate_audit.csv"), "w") do |csv|
+  csv << %w[adventure_id adventure_title source_book publisher page_count level_start level_end decision reason]
+  targets.each do |target|
+    csv << [
+      target.fetch("id"), target.fetch("title"), target.fetch("source_book"), target.fetch("publisher"),
+      target.fetch("page_count"), target.fetch("level_start"), target.fetch("level_end"),
+      "SELECT", "exact_batch_018_target_levels_present_11_scores_blank_source_preflight_pass"
+    ]
+  end
+end
+
+case_headers = %w[
+  case_index pack_index pack_case_index adventure_index adventure_id adventure_title
+  source_book publisher page_count dimension profile model_alias runtime_key manifest_path
+]
+case_rows = []
+run_paths = []
+pack_rows = Hash.new { |h, k| h[k] = [] }
+pack_paths = Hash.new { |h, k| h[k] = [] }
+scorer_rel = Pathname.new(SCORER_REPO).relative_path_from(Pathname.new(experiment_dir)).to_s
+
+targets.each_with_index do |adv, adv_offset|
+  pack_index = (adv_offset / ADVENTURES_PER_PACK) + 1
+  dimensions.each do |dimension|
+    case_index = case_rows.length + 1
+    runtime_key = dimension.fetch("runtime_key")
+    runtime_relative = runtime_paths.fetch(runtime_key).fetch("path")
+    runtime_portable = "${LME_REPO}/#{runtime_relative}"
+    filename = "#{QUEUE}-#{dimension.fetch('model_alias')}-#{dimension.fetch('slug')}-adv#{adv.fetch('id').split('-').last.downcase}-v1.yml"
+    relative_manifest = File.join("experiments", QUEUE, filename)
+    manifest_path = File.join(ROOT, relative_manifest)
+    File.write(
+      manifest_path,
+      YAML.dump(manifest_hash(
+        queue: QUEUE,
+        adv: adv,
+        dimension: dimension,
+        scorer_rel: scorer_rel,
+        runtime_portable: runtime_portable
+      ))
+    )
+
+    row = [
+      case_index, pack_index, pack_rows[pack_index].length + 1, adv_offset + 1,
+      adv.fetch("id"), adv.fetch("title"), adv.fetch("source_book"), adv.fetch("publisher"),
+      adv.fetch("page_count"), dimension.fetch("name"), dimension.fetch("profile"),
+      dimension.fetch("model_alias"), runtime_key, relative_manifest
+    ]
+    case_rows << row
+    run_paths << relative_manifest
+    pack_rows[pack_index] << row
+    pack_paths[pack_index] << relative_manifest
+    puts format("WRITE %3d/%d  %s", case_index, EXPECTED_CALLS, relative_manifest)
+  end
+end
+
+abort_with("internal call-count mismatch #{case_rows.length}; expected #{EXPECTED_CALLS}") unless case_rows.length == EXPECTED_CALLS
+CSV.open(File.join(queue_dir, "case_index.csv"), "w") do |csv|
+  csv << case_headers
+  case_rows.each { |row| csv << row }
+end
+File.write(File.join(queue_dir, "run_order.txt"), run_paths.join("\n") + "\n")
+pack_rows.keys.sort.each do |pack_index|
+  pack_name = format("pack-%03d", pack_index)
+  CSV.open(File.join(queue_dir, "#{pack_name}_case_index.csv"), "w") do |csv|
+    csv << case_headers
+    pack_rows.fetch(pack_index).each { |row| csv << row }
+  end
+  File.write(File.join(queue_dir, "#{pack_name}_run_order.txt"), pack_paths.fetch(pack_index).join("\n") + "\n")
+end
+
+puts
+puts "PRODUCTION BACKLOG 018 PREPARED — NO INFERENCE WAS RUN"
+puts "Queue: production_backlog/#{QUEUE}"
+puts "Adventures: 23"
+puts "Dimensions per adventure: 11 (Levels excluded; seven deferred AFAO fields untouched)"
+puts "Calls: #{EXPECTED_CALLS}"
+puts "Order: adventure-major / row-major"
+puts 'External/API inference cost: $0'
+puts "Next: ./verify_production_backlog_018.sh production_backlog/#{QUEUE}"
+puts "Then: ./run_production_backlog.sh production_backlog/#{QUEUE}"
