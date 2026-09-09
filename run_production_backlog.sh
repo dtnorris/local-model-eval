@@ -60,6 +60,9 @@ case "$CONTRACT_TYPE" in
       production-backlog-018)
         VERIFY="$REPO/verify_production_backlog_018.sh"
         ;;
+      production-backlog-019)
+        VERIFY="$REPO/verify_production_backlog_019.sh"
+        ;;
       *)
         echo "ERROR: no verifier registered for adventure-ingest queue $(basename "$QUEUE_DIR")"
         exit 1
@@ -213,7 +216,7 @@ while IFS= read -r f; do
   # calls so it cannot override EE/GMPB/Seriousness/etc.
   runtime_max_tokens=""
   case "$(basename "$QUEUE_DIR")" in
-    production-backlog-016|production-backlog-017|production-backlog-018)
+    production-backlog-016|production-backlog-017|production-backlog-018|production-backlog-019)
       runtime_max_tokens="$(
         ruby - "$f" <<'RUBY'
 require "yaml"

@@ -1,0 +1,12 @@
+experiments/production-backlog-019/production-backlog-019-qwen27-nos-adv0464-v1.yml
+experiments/production-backlog-019/production-backlog-019-gptoss-ee-adv0464-v1.yml
+experiments/production-backlog-019/production-backlog-019-gemma-gmpb-adv0464-v1.yml
+experiments/production-backlog-019/production-backlog-019-qwen-combat-adv0464-v1.yml
+experiments/production-backlog-019/production-backlog-019-qwen-social-adv0464-v1.yml
+experiments/production-backlog-019/production-backlog-019-qwen-investigation-adv0464-v1.yml
+experiments/production-backlog-019/production-backlog-019-qwen-structural-openness-adv0464-v1.yml
+experiments/production-backlog-019/production-backlog-019-qwen-darkness-adv0464-v1.yml
+experiments/production-backlog-019/production-backlog-019-qwen-player-beginner-adv0464-v1.yml
+experiments/production-backlog-019/production-backlog-019-qwen-gmbs-adv0464-v1.yml
+experiments/production-backlog-019/production-backlog-019-qwen-seriousness-adv0464-v1.yml
+experiments/production-backlog-019/production-backlog-019-qwen-levels-adv0464-v1.yml

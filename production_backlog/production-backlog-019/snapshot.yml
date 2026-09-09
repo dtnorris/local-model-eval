@@ -1,0 +1,603 @@
+---
+version: 1
+contract_type: adventure_ingest_v1
+queue: production-backlog-019
+generated_at: '2026-09-09T18:09:48-04:00'
+local_model_eval_commit: 7a22f458d442a72c04264ab5e1b22cc6b78525c0
+scorer_commit: 1d96919b14dba180951b3dbe17ec8410ba26d73e
+scorer_repo_path: "../af-cli-scoring-utility"
+catalog_filename: 5e_Adventure_Master_Catalog_4.9.xlsx
+catalog_path: "/Users/davidnorris/code/af-xlsx-data-sources/5e_Adventure_Master_Catalog_4.9.xlsx"
+catalog_sha256: 57fdcbc021af25e72a482e1b0183e5345df29cbfda7d91119c19ace371a1388e
+expected_adventure_count: 36
+expected_calls: 432
+adventures_per_pack: 5
+adventure_order: &1
+- ADV-0429
+- ADV-0430
+- ADV-0431
+- ADV-0432
+- ADV-0433
+- ADV-0434
+- ADV-0435
+- ADV-0436
+- ADV-0437
+- ADV-0438
+- ADV-0439
+- ADV-0440
+- ADV-0441
+- ADV-0442
+- ADV-0443
+- ADV-0444
+- ADV-0445
+- ADV-0446
+- ADV-0447
+- ADV-0448
+- ADV-0449
+- ADV-0450
+- ADV-0451
+- ADV-0452
+- ADV-0453
+- ADV-0454
+- ADV-0455
+- ADV-0456
+- ADV-0457
+- ADV-0458
+- ADV-0459
+- ADV-0460
+- ADV-0461
+- ADV-0462
+- ADV-0463
+- ADV-0464
+source_boundary_clamp_adventure_ids:
+- ADV-0447
+- ADV-0460
+source_boundary_clamp_max_gaps:
+  ADV-0447: 2
+dimension_order:
+- "# of Sessions"
+- Exploration Emphasis
+- GM Preparation Burden
+- Combat Emphasis
+- Social Interaction Emphasis
+- Investigation Emphasis
+- Structural Openness
+- Darkness / Horror Intensity
+- Player Beginner Suitability
+- GM Beginner Suitability
+- Seriousness
+dimension_contracts:
+- name: "# of Sessions"
+  slug: nos
+  catalog_column: Number of Sessions
+  model_alias: qwen27
+  ollama_model: qwen3.6:27b
+  profile: nos-clean-blind-v1
+  qualification_path: production_backlog/qualified_number_of_sessions.yml
+  qualification_sha256: 91e26dc3d22d2f8c3f16f986edc3d183c388996599000c7072caf2a56d56a02f
+  runtime_key: base
+  qualified_scorer_baseline: 4fcd7fe84d56354a2bc22d9b815b9f170d7223ad
+- name: Exploration Emphasis
+  slug: ee
+  catalog_column: Exploration Emphasis
+  model_alias: gptoss
+  ollama_model: gpt-oss:20b
+  profile: ee-clean-reset-v0.5
+  qualification_path: production_backlog/qualified_exploration_emphasis.yml
+  qualification_sha256: 40c629b5f16d1753895b5cdf313d7ed1717152bb40ee0e2c046e844f40f24640
+  runtime_key: ee
+  qualified_scorer_baseline: 4f11e25c99b4f408f88bf7205395d31f8ab325e8
+- name: GM Preparation Burden
+  slug: gmpb
+  catalog_column: GM Preparation Burden
+  model_alias: gemma
+  ollama_model: gemma4:26b
+  profile: gmpb-v0.6-dependency-fan-out
+  qualification_path: production_backlog/qualified_gm_preparation_burden.yml
+  qualification_sha256: a0c58718e62099cfc2ca34956d0c90a068b62e00450cba0e331a6287cd3a765e
+  runtime_key: gmpb
+  qualified_scorer_baseline: 878514b6a29d132945e39559ccd714c102c190a1
+- name: Combat Emphasis
+  slug: combat
+  catalog_column: Combat Emphasis
+  model_alias: qwen
+  ollama_model: qwen3.6:35b-a3b
+  profile: production-base
+  qualification_path: production_backlog/qualified_dimensions.yml
+  qualification_sha256: 903992c8c42c0fc0e2ee54365d25e600e7be81c0ca1abb29d7fc9087f3e8510a
+  runtime_key: base
+  env_name:
+  env_value:
+  qualified_scorer_baseline:
+- name: Social Interaction Emphasis
+  slug: social
+  catalog_column: Social Interaction Emphasis
+  model_alias: qwen
+  ollama_model: qwen3.6:35b-a3b
+  profile: phase6-v0.3
+  qualification_path: production_backlog/qualified_dimensions.yml
+  qualification_sha256: 903992c8c42c0fc0e2ee54365d25e600e7be81c0ca1abb29d7fc9087f3e8510a
+  runtime_key: base
+  env_name: AF_SOCIAL_INTERACTION_GUARDRAIL_PROFILE
+  env_value: phase6-v0.3
+  qualified_scorer_baseline: e49a198b36774d47ef136699573b6db6632032bc
+- name: Investigation Emphasis
+  slug: investigation
+  catalog_column: Investigation Emphasis
+  model_alias: qwen
+  ollama_model: qwen3.6:35b-a3b
+  profile: phase6-v0.4
+  qualification_path: production_backlog/qualified_dimensions.yml
+  qualification_sha256: 903992c8c42c0fc0e2ee54365d25e600e7be81c0ca1abb29d7fc9087f3e8510a
+  runtime_key: base
+  env_name: AF_INVESTIGATION_GUARDRAIL_PROFILE
+  env_value: phase6-v0.4
+  qualified_scorer_baseline: e49a198b36774d47ef136699573b6db6632032bc
+- name: Structural Openness
+  slug: structural-openness
+  catalog_column: Structural Openness
+  model_alias: qwen
+  ollama_model: qwen3.6:35b-a3b
+  profile: production-base
+  qualification_path: production_backlog/qualified_dimensions.yml
+  qualification_sha256: 903992c8c42c0fc0e2ee54365d25e600e7be81c0ca1abb29d7fc9087f3e8510a
+  runtime_key: base
+  env_name:
+  env_value:
+  qualified_scorer_baseline:
+- name: Darkness / Horror Intensity
+  slug: darkness
+  catalog_column: Darkness / Horror Intensity
+  model_alias: qwen
+  ollama_model: qwen3.6:35b-a3b
+  profile: production-base
+  qualification_path: production_backlog/qualified_dimensions.yml
+  qualification_sha256: 903992c8c42c0fc0e2ee54365d25e600e7be81c0ca1abb29d7fc9087f3e8510a
+  runtime_key: base
+  env_name:
+  env_value:
+  qualified_scorer_baseline:
+- name: Player Beginner Suitability
+  slug: player-beginner
+  catalog_column: Player Beginner Suitability
+  model_alias: qwen
+  ollama_model: qwen3.6:35b-a3b
+  profile: production-base
+  qualification_path: production_backlog/qualified_dimensions.yml
+  qualification_sha256: 903992c8c42c0fc0e2ee54365d25e600e7be81c0ca1abb29d7fc9087f3e8510a
+  runtime_key: base
+  env_name:
+  env_value:
+  qualified_scorer_baseline:
+- name: GM Beginner Suitability
+  slug: gmbs
+  catalog_column: GM Beginner Suitability
+  model_alias: qwen
+  ollama_model: qwen3.6:35b-a3b
+  profile: gmbs-clean-blind-v0.3
+  qualification_path: production_backlog/qualified_gm_beginner_suitability.yml
+  qualification_sha256: 10ba07021b9712ce52a22738069bdcecd2dc772947cab5683fb822811f7dc18f
+  runtime_key: base
+  qualified_scorer_baseline: bcdc94496ace154ab0f65131711ca36166bdd430
+- name: Seriousness
+  slug: seriousness
+  catalog_column: Seriousness
+  model_alias: qwen
+  ollama_model: qwen3.6:35b-a3b
+  profile: seriousness-reset-only
+  qualification_path: production_backlog/qualified_seriousness.yml
+  qualification_sha256: 5b4d23f7112b4745e36cbc90053b48daa5d004b23282d77f35792af4020e1ac5
+  runtime_key: seriousness
+  qualified_scorer_baseline: c5f27d1060623938fa4d338340647396fb9fdc16
+conditional_dimension_order:
+- Levels
+levels_contract:
+  name: Levels
+  slug: levels
+  catalog_columns:
+  - Level Start
+  - Level End
+  model_alias: qwen
+  ollama_model: qwen3.6:35b-a3b
+  profile: levels-v2.1
+  qualification_path: production_backlog/qualified_dimensions.yml
+  qualification_sha256: 903992c8c42c0fc0e2ee54365d25e600e7be81c0ca1abb29d7fc9087f3e8510a
+  runtime_key: base
+levels_inference_adventure_ids: *1
+deferred_columns:
+- Rules / System-Master Demand
+- Tactical Complexity
+- Lethality / Failure Severity
+- Puzzle / Problem-Solving Emphasis
+- Consequential Player Agency
+- Fantastic Weirdness
+- GM Improvisation Demand
+qualification_files:
+  production_backlog/qualified_dimensions.yml: 903992c8c42c0fc0e2ee54365d25e600e7be81c0ca1abb29d7fc9087f3e8510a
+  production_backlog/qualified_number_of_sessions.yml: 91e26dc3d22d2f8c3f16f986edc3d183c388996599000c7072caf2a56d56a02f
+  production_backlog/qualified_exploration_emphasis.yml: 40c629b5f16d1753895b5cdf313d7ed1717152bb40ee0e2c046e844f40f24640
+  production_backlog/qualified_gm_beginner_suitability.yml: 10ba07021b9712ce52a22738069bdcecd2dc772947cab5683fb822811f7dc18f
+  production_backlog/qualified_gm_preparation_burden.yml: a0c58718e62099cfc2ca34956d0c90a068b62e00450cba0e331a6287cd3a765e
+  production_backlog/qualified_seriousness.yml: 5b4d23f7112b4745e36cbc90053b48daa5d004b23282d77f35792af4020e1ac5
+runtime_files:
+  base:
+    path: production_backlog/production-backlog-019/runtime-base.yml
+    sha256: 3feab180608b2ea904f9e16da5d59a5f2a1de25bc2b51f4b3244c5b4997e1078
+    source_path:
+    source_sha256:
+  ee:
+    path: production_backlog/production-backlog-019/runtime-ee.yml
+    sha256: 2dbee24e7cedadaf2708b705e0b6db99808654e9339b0b3b78595d9d4cf535dc
+    source_path: production_backlog/ee-v0.5-runtime.yml
+    source_sha256: 5bb44d4c2346404ae8756e90cc76e8082ec11fe4c10d0ed7688d0648ce5cf0b6
+  gmpb:
+    path: production_backlog/production-backlog-019/runtime-gmpb.yml
+    sha256: 4eb235a581a074158e0c3f6fba0689a46a827e679f1be5ffb0cb581202933867
+    source_path: production_backlog/gmpb-v0.6-runtime.yml
+    source_sha256: a8f5d25af1ba2ebfc9901a92eaec072df039007f05fada1e92c9525bab5efc3a
+  seriousness:
+    path: production_backlog/production-backlog-019/runtime-seriousness.yml
+    sha256: 8223fc3386397a5194630763011245cfa7c2d0eff7e495d4a1fa80b25c97cf2f
+    source_path: production_backlog/seriousness-reset-runtime.yml
+    source_sha256: 7f8bd9f3b21280fe9904bbb30e421c5fd0ea9b6997ba8492c5f3af910b7db014
+selected_adventures:
+- id: ADV-0429
+  title: Prisoners of the Drow
+  source_book: Out of the Abyss
+  publisher: Wizards of the Coast
+  page_count: 13
+  start_page: 4
+  end_page: 16
+  level_start:
+  level_end:
+  needs_levels: true
+- id: ADV-0430
+  title: The Silken Paths
+  source_book: Out of the Abyss
+  publisher: Wizards of the Coast
+  page_count: 2
+  start_page: 31
+  end_page: 32
+  level_start:
+  level_end:
+  needs_levels: true
+- id: ADV-0431
+  title: Hook Horror Hunt
+  source_book: Out of the Abyss
+  publisher: Wizards of the Coast
+  page_count: 3
+  start_page: 32
+  end_page: 34
+  level_start:
+  level_end:
+  needs_levels: true
+- id: ADV-0432
+  title: The Oozing Temple
+  source_book: Out of the Abyss
+  publisher: Wizards of the Coast
+  page_count: 4
+  start_page: 34
+  end_page: 37
+  level_start:
+  level_end:
+  needs_levels: true
+- id: ADV-0433
+  title: Lost Tomb of Khaem
+  source_book: Out of the Abyss
+  publisher: Wizards of the Coast
+  page_count: 2
+  start_page: 37
+  end_page: 38
+  level_start:
+  level_end:
+  needs_levels: true
+- id: ADV-0434
+  title: Sloobludop
+  source_book: Out of the Abyss
+  publisher: Wizards of the Coast
+  page_count: 7
+  start_page: 43
+  end_page: 49
+  level_start:
+  level_end:
+  needs_levels: true
+- id: ADV-0435
+  title: Gracklstugh
+  source_book: Out of the Abyss
+  publisher: Wizards of the Coast
+  page_count: 33
+  start_page: 50
+  end_page: 82
+  level_start:
+  level_end:
+  needs_levels: true
+- id: ADV-0436
+  title: Finding Droki
+  source_book: Out of the Abyss
+  publisher: Wizards of the Coast
+  page_count: 2
+  start_page: 68
+  end_page: 69
+  level_start:
+  level_end:
+  needs_levels: true
+- id: ADV-0437
+  title: Whorlstone Tunnels
+  source_book: Out of the Abyss
+  publisher: Wizards of the Coast
+  page_count: 15
+  start_page: 67
+  end_page: 81
+  level_start:
+  level_end:
+  needs_levels: true
+- id: ADV-0438
+  title: Neverlight Grove
+  source_book: Out of the Abyss
+  publisher: Wizards of the Coast
+  page_count: 12
+  start_page: 83
+  end_page: 94
+  level_start:
+  level_end:
+  needs_levels: true
+- id: ADV-0439
+  title: Into the Garden
+  source_book: Out of the Abyss
+  publisher: Wizards of the Coast
+  page_count: 6
+  start_page: 89
+  end_page: 94
+  level_start:
+  level_end:
+  needs_levels: true
+- id: ADV-0440
+  title: Blingdenstone
+  source_book: Out of the Abyss
+  publisher: Wizards of the Coast
+  page_count: 21
+  start_page: 95
+  end_page: 115
+  level_start:
+  level_end:
+  needs_levels: true
+- id: ADV-0441
+  title: Entémoch's Boon
+  source_book: Out of the Abyss
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 100
+  end_page: 100
+  level_start:
+  level_end:
+  needs_levels: true
+- id: ADV-0442
+  title: Rockblight
+  source_book: Out of the Abyss
+  publisher: Wizards of the Coast
+  page_count: 4
+  start_page: 107
+  end_page: 110
+  level_start:
+  level_end:
+  needs_levels: true
+- id: ADV-0443
+  title: Cleanse the Steadfast Stone
+  source_book: Out of the Abyss
+  publisher: Wizards of the Coast
+  page_count: 5
+  start_page: 106
+  end_page: 110
+  level_start:
+  level_end:
+  needs_levels: true
+- id: ADV-0444
+  title: Goldwhisker Warrens
+  source_book: Out of the Abyss
+  publisher: Wizards of the Coast
+  page_count: 2
+  start_page: 110
+  end_page: 111
+  level_start:
+  level_end:
+  needs_levels: true
+- id: ADV-0445
+  title: Battle for Blingdenstone
+  source_book: Out of the Abyss
+  publisher: Wizards of the Coast
+  page_count: 3
+  start_page: 113
+  end_page: 115
+  level_start:
+  level_end:
+  needs_levels: true
+- id: ADV-0446
+  title: Escape from the Underdark
+  source_book: Out of the Abyss
+  publisher: Wizards of the Coast
+  page_count: 4
+  start_page: 116
+  end_page: 119
+  level_start:
+  level_end:
+  needs_levels: true
+- id: ADV-0447
+  title: Audience in Gauntlgrym
+  source_book: Out of the Abyss
+  publisher: Wizards of the Coast
+  page_count: 12
+  start_page: 120
+  end_page: 131
+  level_start:
+  level_end:
+  needs_levels: true
+- id: ADV-0448
+  title: Mantol-Derith
+  source_book: Out of the Abyss
+  publisher: Wizards of the Coast
+  page_count: 11
+  start_page: 132
+  end_page: 142
+  level_start:
+  level_end:
+  needs_levels: true
+- id: ADV-0449
+  title: Gravenhollow
+  source_book: Out of the Abyss
+  publisher: Wizards of the Coast
+  page_count: 10
+  start_page: 150
+  end_page: 159
+  level_start:
+  level_end:
+  needs_levels: true
+- id: ADV-0450
+  title: The Tower of Vengeance
+  source_book: Out of the Abyss
+  publisher: Wizards of the Coast
+  page_count: 6
+  start_page: 160
+  end_page: 165
+  level_start:
+  level_end:
+  needs_levels: true
+- id: ADV-0451
+  title: Stealing into Araj
+  source_book: Out of the Abyss
+  publisher: Wizards of the Coast
+  page_count: 1
+  start_page: 165
+  end_page: 165
+  level_start:
+  level_end:
+  needs_levels: true
+- id: ADV-0452
+  title: The Wormwrithings
+  source_book: Out of the Abyss
+  publisher: Wizards of the Coast
+  page_count: 12
+  start_page: 166
+  end_page: 177
+  level_start:
+  level_end:
+  needs_levels: true
+- id: ADV-0453
+  title: Troglodyte Lair
+  source_book: Out of the Abyss
+  publisher: Wizards of the Coast
+  page_count: 4
+  start_page: 168
+  end_page: 171
+  level_start:
+  level_end:
+  needs_levels: true
+- id: ADV-0454
+  title: Worm Nursery
+  source_book: Out of the Abyss
+  publisher: Wizards of the Coast
+  page_count: 4
+  start_page: 172
+  end_page: 175
+  level_start:
+  level_end:
+  needs_levels: true
+- id: ADV-0455
+  title: The Vast Oblivium
+  source_book: Out of the Abyss
+  publisher: Wizards of the Coast
+  page_count: 3
+  start_page: 175
+  end_page: 177
+  level_start:
+  level_end:
+  needs_levels: true
+- id: ADV-0456
+  title: The Labyrinth
+  source_book: Out of the Abyss
+  publisher: Wizards of the Coast
+  page_count: 11
+  start_page: 178
+  end_page: 188
+  level_start:
+  level_end:
+  needs_levels: true
+- id: ADV-0457
+  title: Adamantine Tower
+  source_book: Out of the Abyss
+  publisher: Wizards of the Coast
+  page_count: 2
+  start_page: 180
+  end_page: 181
+  level_start:
+  level_end:
+  needs_levels: true
+- id: ADV-0458
+  title: Spiral of the Horned King
+  source_book: Out of the Abyss
+  publisher: Wizards of the Coast
+  page_count: 2
+  start_page: 181
+  end_page: 182
+  level_start:
+  level_end:
+  needs_levels: true
+- id: ADV-0459
+  title: The Maze Engine
+  source_book: Out of the Abyss
+  publisher: Wizards of the Coast
+  page_count: 3
+  start_page: 186
+  end_page: 188
+  level_start:
+  level_end:
+  needs_levels: true
+- id: ADV-0460
+  title: The City of Spiders
+  source_book: Out of the Abyss
+  publisher: Wizards of the Coast
+  page_count: 19
+  start_page: 189
+  end_page: 207
+  level_start:
+  level_end:
+  needs_levels: true
+- id: ADV-0461
+  title: Sorcere
+  source_book: Out of the Abyss
+  publisher: Wizards of the Coast
+  page_count: 3
+  start_page: 205
+  end_page: 207
+  level_start:
+  level_end:
+  needs_levels: true
+- id: ADV-0462
+  title: The Fetid Wedding
+  source_book: Out of the Abyss
+  publisher: Wizards of the Coast
+  page_count: 7
+  start_page: 208
+  end_page: 214
+  level_start:
+  level_end:
+  needs_levels: true
+- id: ADV-0463
+  title: Into the Gray Dream
+  source_book: Out of the Abyss
+  publisher: Wizards of the Coast
+  page_count: 2
+  start_page: 212
+  end_page: 213
+  level_start:
+  level_end:
+  needs_levels: true
+- id: ADV-0464
+  title: Against the Demon Lords
+  source_book: Out of the Abyss
+  publisher: Wizards of the Coast
+  page_count: 6
+  start_page: 215
+  end_page: 220
+  level_start:
+  level_end:
+  needs_levels: true

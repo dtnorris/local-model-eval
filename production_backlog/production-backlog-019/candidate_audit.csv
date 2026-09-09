@@ -1,0 +1,37 @@
+adventure_id,adventure_title,source_book,publisher,page_count,level_start,level_end,levels_action,decision,reason
+ADV-0429,Prisoners of the Drow,Out of the Abyss,Wizards of the Coast,13,,,SCORE,SELECT,exact_batch_018_target_levels_blank_score_levels_11_scores_blank_source_preflight_pass
+ADV-0430,The Silken Paths,Out of the Abyss,Wizards of the Coast,2,,,SCORE,SELECT,exact_batch_018_target_levels_blank_score_levels_11_scores_blank_source_preflight_pass
+ADV-0431,Hook Horror Hunt,Out of the Abyss,Wizards of the Coast,3,,,SCORE,SELECT,exact_batch_018_target_levels_blank_score_levels_11_scores_blank_source_preflight_pass
+ADV-0432,The Oozing Temple,Out of the Abyss,Wizards of the Coast,4,,,SCORE,SELECT,exact_batch_018_target_levels_blank_score_levels_11_scores_blank_source_preflight_pass
+ADV-0433,Lost Tomb of Khaem,Out of the Abyss,Wizards of the Coast,2,,,SCORE,SELECT,exact_batch_018_target_levels_blank_score_levels_11_scores_blank_source_preflight_pass
+ADV-0434,Sloobludop,Out of the Abyss,Wizards of the Coast,7,,,SCORE,SELECT,exact_batch_018_target_levels_blank_score_levels_11_scores_blank_source_preflight_pass
+ADV-0435,Gracklstugh,Out of the Abyss,Wizards of the Coast,33,,,SCORE,SELECT,exact_batch_018_target_levels_blank_score_levels_11_scores_blank_source_preflight_pass
+ADV-0436,Finding Droki,Out of the Abyss,Wizards of the Coast,2,,,SCORE,SELECT,exact_batch_018_target_levels_blank_score_levels_11_scores_blank_source_preflight_pass
+ADV-0437,Whorlstone Tunnels,Out of the Abyss,Wizards of the Coast,15,,,SCORE,SELECT,exact_batch_018_target_levels_blank_score_levels_11_scores_blank_source_preflight_pass
+ADV-0438,Neverlight Grove,Out of the Abyss,Wizards of the Coast,12,,,SCORE,SELECT,exact_batch_018_target_levels_blank_score_levels_11_scores_blank_source_preflight_pass
+ADV-0439,Into the Garden,Out of the Abyss,Wizards of the Coast,6,,,SCORE,SELECT,exact_batch_018_target_levels_blank_score_levels_11_scores_blank_source_preflight_pass
+ADV-0440,Blingdenstone,Out of the Abyss,Wizards of the Coast,21,,,SCORE,SELECT,exact_batch_018_target_levels_blank_score_levels_11_scores_blank_source_preflight_pass
+ADV-0441,Entémoch's Boon,Out of the Abyss,Wizards of the Coast,1,,,SCORE,SELECT,exact_batch_018_target_levels_blank_score_levels_11_scores_blank_source_preflight_pass
+ADV-0442,Rockblight,Out of the Abyss,Wizards of the Coast,4,,,SCORE,SELECT,exact_batch_018_target_levels_blank_score_levels_11_scores_blank_source_preflight_pass
+ADV-0443,Cleanse the Steadfast Stone,Out of the Abyss,Wizards of the Coast,5,,,SCORE,SELECT,exact_batch_018_target_levels_blank_score_levels_11_scores_blank_source_preflight_pass
+ADV-0444,Goldwhisker Warrens,Out of the Abyss,Wizards of the Coast,2,,,SCORE,SELECT,exact_batch_018_target_levels_blank_score_levels_11_scores_blank_source_preflight_pass
+ADV-0445,Battle for Blingdenstone,Out of the Abyss,Wizards of the Coast,3,,,SCORE,SELECT,exact_batch_018_target_levels_blank_score_levels_11_scores_blank_source_preflight_pass
+ADV-0446,Escape from the Underdark,Out of the Abyss,Wizards of the Coast,4,,,SCORE,SELECT,exact_batch_018_target_levels_blank_score_levels_11_scores_blank_source_preflight_pass
+ADV-0447,Audience in Gauntlgrym,Out of the Abyss,Wizards of the Coast,12,,,SCORE,SELECT,exact_batch_018_target_levels_blank_score_levels_11_scores_blank_source_preflight_pass
+ADV-0448,Mantol-Derith,Out of the Abyss,Wizards of the Coast,11,,,SCORE,SELECT,exact_batch_018_target_levels_blank_score_levels_11_scores_blank_source_preflight_pass
+ADV-0449,Gravenhollow,Out of the Abyss,Wizards of the Coast,10,,,SCORE,SELECT,exact_batch_018_target_levels_blank_score_levels_11_scores_blank_source_preflight_pass
+ADV-0450,The Tower of Vengeance,Out of the Abyss,Wizards of the Coast,6,,,SCORE,SELECT,exact_batch_018_target_levels_blank_score_levels_11_scores_blank_source_preflight_pass
+ADV-0451,Stealing into Araj,Out of the Abyss,Wizards of the Coast,1,,,SCORE,SELECT,exact_batch_018_target_levels_blank_score_levels_11_scores_blank_source_preflight_pass
+ADV-0452,The Wormwrithings,Out of the Abyss,Wizards of the Coast,12,,,SCORE,SELECT,exact_batch_018_target_levels_blank_score_levels_11_scores_blank_source_preflight_pass
+ADV-0453,Troglodyte Lair,Out of the Abyss,Wizards of the Coast,4,,,SCORE,SELECT,exact_batch_018_target_levels_blank_score_levels_11_scores_blank_source_preflight_pass
+ADV-0454,Worm Nursery,Out of the Abyss,Wizards of the Coast,4,,,SCORE,SELECT,exact_batch_018_target_levels_blank_score_levels_11_scores_blank_source_preflight_pass
+ADV-0455,The Vast Oblivium,Out of the Abyss,Wizards of the Coast,3,,,SCORE,SELECT,exact_batch_018_target_levels_blank_score_levels_11_scores_blank_source_preflight_pass
+ADV-0456,The Labyrinth,Out of the Abyss,Wizards of the Coast,11,,,SCORE,SELECT,exact_batch_018_target_levels_blank_score_levels_11_scores_blank_source_preflight_pass
+ADV-0457,Adamantine Tower,Out of the Abyss,Wizards of the Coast,2,,,SCORE,SELECT,exact_batch_018_target_levels_blank_score_levels_11_scores_blank_source_preflight_pass
+ADV-0458,Spiral of the Horned King,Out of the Abyss,Wizards of the Coast,2,,,SCORE,SELECT,exact_batch_018_target_levels_blank_score_levels_11_scores_blank_source_preflight_pass
+ADV-0459,The Maze Engine,Out of the Abyss,Wizards of the Coast,3,,,SCORE,SELECT,exact_batch_018_target_levels_blank_score_levels_11_scores_blank_source_preflight_pass
+ADV-0460,The City of Spiders,Out of the Abyss,Wizards of the Coast,19,,,SCORE,SELECT,exact_batch_018_target_levels_blank_score_levels_11_scores_blank_source_preflight_pass
+ADV-0461,Sorcere,Out of the Abyss,Wizards of the Coast,3,,,SCORE,SELECT,exact_batch_018_target_levels_blank_score_levels_11_scores_blank_source_preflight_pass
+ADV-0462,The Fetid Wedding,Out of the Abyss,Wizards of the Coast,7,,,SCORE,SELECT,exact_batch_018_target_levels_blank_score_levels_11_scores_blank_source_preflight_pass
+ADV-0463,Into the Gray Dream,Out of the Abyss,Wizards of the Coast,2,,,SCORE,SELECT,exact_batch_018_target_levels_blank_score_levels_11_scores_blank_source_preflight_pass
+ADV-0464,Against the Demon Lords,Out of the Abyss,Wizards of the Coast,6,,,SCORE,SELECT,exact_batch_018_target_levels_blank_score_levels_11_scores_blank_source_preflight_pass
