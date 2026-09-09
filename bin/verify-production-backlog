@@ -1,0 +1,10 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+require_relative '../lib/adventure_ingest_verifier'
+begin
+  abort 'Usage: bin/verify-production-backlog production_backlog/QUEUE' unless ARGV.length == 1
+  AdventureIngest::Verifier.new(root: File.expand_path('..', __dir__), queue_path: ARGV.fetch(0)).verify!
+rescue AdventureIngest::Error, KeyError, ArgumentError, Psych::Exception, SystemCallError, LoadError => e
+  warn "ERROR: #{e.message}"
+  exit 1
+end

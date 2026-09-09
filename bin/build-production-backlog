@@ -1,0 +1,32 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+require_relative '../lib/adventure_ingest'
+
+options = { ids: [], clamp_ids: [], clamp_gaps: {}, force: false, dry_run: false }
+parser = OptionParser.new do |opts|
+  opts.banner = 'Usage: bin/build-production-backlog --batch 020 --catalog CATALOG.xlsx --ids ADV-0465..ADV-0493 [options]'
+  opts.on('--batch NUMBER', 'Batch number or production-backlog-NNN') { |v| options[:batch] = v }
+  opts.on('--catalog FILE', 'Catalog basename resolved through scorer configuration') { |v| options[:catalog] = v }
+  opts.on('--ids IDS', 'Exact comma-separated IDs or inclusive ranges; repeatable') { |v| options[:ids] << v }
+  opts.on('--clamp-policy FILE', 'Explicit YAML source-boundary approvals (no automatic repairs)') do |path|
+    data = YAML.safe_load_file(path, aliases: true)
+    allowed = %w[allow_inward_boundary_clamp_adventure_ids inward_boundary_clamp_max_gap_by_adventure]
+    raise AdventureIngest::Error, 'unknown clamp policy keys' unless data.is_a?(Hash) && (data.keys - allowed).empty?
+    options[:clamp_ids] = data.fetch(allowed[0], [])
+    options[:clamp_gaps] = data.fetch(allowed[1], {})
+  end
+  opts.on('--force', 'Replace only an unstarted queue, after all preflights pass') { options[:force] = true }
+  opts.on('--dry-run', 'Run catalog/source checks; write no queue or manifests') { options[:dry_run] = true }
+  opts.on('-h', '--help') { puts opts; exit }
+end
+begin
+  parser.parse!
+  raise AdventureIngest::Error, 'unexpected arguments' unless ARGV.empty?
+  raise AdventureIngest::Error, '--batch and --catalog are required' unless options[:batch] && options[:catalog]
+  force = options.delete(:force)
+  dry_run = options.delete(:dry_run)
+  AdventureIngest::Batch.new(root: File.expand_path('..', __dir__), **options).build(force: force, dry_run: dry_run)
+rescue AdventureIngest::Error, OptionParser::ParseError, KeyError, ArgumentError, Psych::Exception, SystemCallError, LoadError => e
+  warn "ERROR: #{e.message}"
+  exit 1
+end

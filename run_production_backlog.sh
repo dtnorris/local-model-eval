@@ -50,24 +50,7 @@ case "$CONTRACT_TYPE" in
     VERIFY="$REPO/verify_production_backlog_seriousness.sh"
     ;;
   adventure_ingest_v1)
-    case "$(basename "$QUEUE_DIR")" in
-      production-backlog-016)
-        VERIFY="$REPO/verify_production_backlog_016.sh"
-        ;;
-      production-backlog-017)
-        VERIFY="$REPO/verify_production_backlog_017.sh"
-        ;;
-      production-backlog-018)
-        VERIFY="$REPO/verify_production_backlog_018.sh"
-        ;;
-      production-backlog-019)
-        VERIFY="$REPO/verify_production_backlog_019.sh"
-        ;;
-      *)
-        echo "ERROR: no verifier registered for adventure-ingest queue $(basename "$QUEUE_DIR")"
-        exit 1
-        ;;
-    esac
+    VERIFY="$REPO/bin/verify-production-backlog"
     ;;
   *)
     VERIFY="$REPO/verify_production_backlog.sh"
@@ -215,23 +198,16 @@ while IFS= read -r f; do
   # limits. Also remove any caller-supplied AF_LLM_MAX_TOKENS from unrelated
   # calls so it cannot override EE/GMPB/Seriousness/etc.
   runtime_max_tokens=""
-  case "$(basename "$QUEUE_DIR")" in
-    production-backlog-016|production-backlog-017|production-backlog-018|production-backlog-019)
+  case "$CONTRACT_TYPE" in
+    adventure_ingest_v1)
       runtime_max_tokens="$(
-        ruby - "$f" <<'RUBY'
+        ruby - "$f" "$REPO" <<'RUBY'
 require "yaml"
+require File.join(ARGV.fetch(1), "lib/production_backlog_runtime_contract")
 data = YAML.safe_load_file(ARGV.fetch(0), aliases: true) || {}
-qwen_core_dimensions = [
-  "Combat Emphasis",
-  "Social Interaction Emphasis",
-  "Investigation Emphasis",
-  "Structural Openness",
-  "Darkness / Horror Intensity",
-  "Player Beginner Suitability"
-].freeze
-
-if data.fetch("models", []).first == "qwen" &&
-   qwen_core_dimensions.include?(data["dimension"])
+if data.dig("production_contract", "contract_type") == "adventure_ingest_v1" &&
+   data.fetch("models", []) == ["qwen"] &&
+   ProductionBacklogRuntimeContract::QWEN35_CORE_DIMENSIONS.include?(data["dimension"])
   print "8192"
 end
 RUBY
