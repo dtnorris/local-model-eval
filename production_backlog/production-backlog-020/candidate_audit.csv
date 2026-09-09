@@ -1,0 +1,30 @@
+adventure_id,adventure_title,source_book,publisher,page_count,level_start,level_end,levels_action,decision,reason
+ADV-0466,Hoard of the Dragon Queen,Tyranny of Dragons,Wizards of the Coast,81,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0467,The Rise of Tiamat,Tyranny of Dragons,Wizards of the Coast,72,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0468,Greenest in Flames,Tyranny of Dragons,Wizards of the Coast,7,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0469,Raiders' Camp,Tyranny of Dragons,Wizards of the Coast,7,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0470,Dragon Hatchery,Tyranny of Dragons,Wizards of the Coast,8,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0471,On the Road,Tyranny of Dragons,Wizards of the Coast,11,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0472,Construction Ahead,Tyranny of Dragons,Wizards of the Coast,4,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0473,Castle Naerytar,Tyranny of Dragons,Wizards of the Coast,19,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0474,Hunting Lodge,Tyranny of Dragons,Wizards of the Coast,10,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0475,Castle in the Clouds,Tyranny of Dragons,Wizards of the Coast,15,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0476,Council of Waterdeep,Tyranny of Dragons,Wizards of the Coast,6,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0477,The Sea of Moving Ice,Tyranny of Dragons,Wizards of the Coast,14,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0478,Varram the White,Tyranny of Dragons,Wizards of the Coast,10,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0479,Neronvain,Tyranny of Dragons,Wizards of the Coast,6,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0480,The Cult Strikes Back,Tyranny of Dragons,Wizards of the Coast,4,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0481,"Metallic Dragons, Arise",Tyranny of Dragons,Wizards of the Coast,4,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0482,Xonthal's Tower,Tyranny of Dragons,Wizards of the Coast,13,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0483,Mission to Thay,Tyranny of Dragons,Wizards of the Coast,3,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0484,Tiamat's Return,Tyranny of Dragons,Wizards of the Coast,12,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0485,Seek the Keep,Tyranny of Dragons,Wizards of the Coast,2,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0486,The Sally Port,Tyranny of Dragons,Wizards of the Coast,1,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0487,Save the Mill,Tyranny of Dragons,Wizards of the Coast,1,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0488,Sanctuary,Tyranny of Dragons,Wizards of the Coast,2,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0489,Carnath Roadhouse,Tyranny of Dragons,Wizards of the Coast,2,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0490,Skyreach Castle,Tyranny of Dragons,Wizards of the Coast,12,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0491,Oyaviggaton,Tyranny of Dragons,Wizards of the Coast,11,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0492,Tomb of Diderius,Tyranny of Dragons,Wizards of the Coast,8,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0493,Neronvain's Stronghold,Tyranny of Dragons,Wizards of the Coast,4,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0494,The Well of Dragons,Tyranny of Dragons,Wizards of the Coast,11,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
