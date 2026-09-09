@@ -55,6 +55,11 @@ order = File.readlines(order_path, chomp: true).reject(&:empty?)
 CATALOG_FILENAME = "5e_Adventure_Master_Catalog_4.6.xlsx"
 CATALOG_SHA256 = "7451c6680eb59e76e686ac01951beb3d8ff0816dad385833cc9fcce3b3cf93cb"
 EXPECTED_IDS = ((404..412).to_a + (414..427).to_a).map { |n| format("ADV-%04d", n) }.freeze
+EXPECTED_LEVEL_IDS = %w[
+  ADV-0409
+  ADV-0414 ADV-0415 ADV-0416 ADV-0417 ADV-0418 ADV-0419 ADV-0420
+  ADV-0421 ADV-0422 ADV-0423 ADV-0424 ADV-0425 ADV-0426 ADV-0427
+].freeze
 SOURCE_BOUNDARY_CLAMP_IDS = [].freeze
 EXPECTED_DIMENSIONS = [
   ["# of Sessions", "nos-clean-blind-v1", "qwen27", "qwen3.6:27b", "base", "Number of Sessions"],
@@ -69,6 +74,9 @@ EXPECTED_DIMENSIONS = [
   ["GM Beginner Suitability", "gmbs-clean-blind-v0.3", "qwen", "qwen3.6:35b-a3b", "base", "GM Beginner Suitability"],
   ["Seriousness", "seriousness-reset-only", "qwen", "qwen3.6:35b-a3b", "seriousness", "Seriousness"]
 ].freeze
+EXPECTED_LEVELS = [
+  "Levels", "levels-v2.1", "qwen", "qwen3.6:35b-a3b", "base", ["Level Start", "Level End"]
+].freeze
 DEFERRED_COLUMNS = [
   "Rules / System-Master Demand",
   "Tactical Complexity",
@@ -78,7 +86,7 @@ DEFERRED_COLUMNS = [
   "Fantastic Weirdness",
   "GM Improvisation Demand"
 ].freeze
-EXPECTED_CALLS = EXPECTED_IDS.length * EXPECTED_DIMENSIONS.length
+EXPECTED_CALLS = (EXPECTED_IDS.length * EXPECTED_DIMENSIONS.length) + EXPECTED_LEVEL_IDS.length
 
 def sha256(path)
   Digest::SHA256.file(path).hexdigest
@@ -110,6 +118,8 @@ abort "adventure order changed" unless snapshot.fetch("adventure_order") == EXPE
 abort "source-boundary clamp approvals changed" unless
   snapshot.fetch("source_boundary_clamp_adventure_ids") == SOURCE_BOUNDARY_CLAMP_IDS
 abort "dimension order changed" unless snapshot.fetch("dimension_order") == EXPECTED_DIMENSIONS.map(&:first)
+abort "conditional dimension order changed" unless snapshot.fetch("conditional_dimension_order") == ["Levels"]
+abort "conditional Levels adventure IDs changed" unless snapshot.fetch("levels_inference_adventure_ids") == EXPECTED_LEVEL_IDS
 abort "deferred columns changed" unless snapshot.fetch("deferred_columns") == DEFERRED_COLUMNS
 
 qualification_files = snapshot.fetch("qualification_files")
@@ -157,6 +167,7 @@ models = YAML.safe_load_file(File.join(repo_root, "config", "models.yml"), alias
 EXPECTED_DIMENSIONS.each do |_name, _profile, alias_name, ollama_model, _runtime_key, _catalog_column|
   abort "model alias #{alias_name} changed" unless models.dig(alias_name, "ollama_model") == ollama_model
 end
+abort "Levels model alias changed" unless models.dig(EXPECTED_LEVELS.fetch(2), "ollama_model") == EXPECTED_LEVELS.fetch(3)
 
 dimension_contracts = snapshot.fetch("dimension_contracts")
 abort "snapshot dimension-contract count changed" unless dimension_contracts.length == EXPECTED_DIMENSIONS.length
@@ -172,6 +183,20 @@ EXPECTED_DIMENSIONS.each_with_index do |expected, index|
   qpath = actual.fetch("qualification_path")
   abort "dimension contract #{name} qualification SHA no longer matches frozen file" unless qualification_files.fetch(qpath) == actual.fetch("qualification_sha256")
 end
+
+levels_contract = snapshot.fetch("levels_contract")
+levels_name, levels_profile, levels_alias, levels_model, levels_runtime, levels_columns = EXPECTED_LEVELS
+abort "Levels contract name changed" unless levels_contract.fetch("name") == levels_name
+abort "Levels contract profile changed" unless levels_contract.fetch("profile") == levels_profile
+abort "Levels contract model alias changed" unless levels_contract.fetch("model_alias") == levels_alias
+abort "Levels contract Ollama model changed" unless levels_contract.fetch("ollama_model") == levels_model
+abort "Levels contract runtime key changed" unless levels_contract.fetch("runtime_key") == levels_runtime
+abort "Levels contract catalog columns changed" unless levels_contract.fetch("catalog_columns") == levels_columns
+levels_qpath = levels_contract.fetch("qualification_path")
+abort "Levels qualification SHA no longer matches frozen file" unless qualification_files.fetch(levels_qpath) == levels_contract.fetch("qualification_sha256")
+
+contracts_by_name = dimension_contracts.to_h { |contract| [contract.fetch("name"), contract] }
+contracts_by_name[levels_name] = levels_contract
 
 frozen_scorer = File.expand_path(snapshot.fetch("scorer_repo_path"), repo_root)
 abort "queue scorer path changed: snapshot=#{frozen_scorer} active=#{scorer_repo}" unless frozen_scorer == File.expand_path(scorer_repo)
@@ -196,26 +221,47 @@ workbook_rows.each do |row|
   values = headers.zip(row).to_h
   id = values["Adventure ID"].to_s.strip
   next unless EXPECTED_IDS.include?(id)
-  abort "#{id} Level Start is now blank" if blank?(values["Level Start"])
-  abort "#{id} Level End is now blank" if blank?(values["Level End"])
+
+  level_start_blank = blank?(values["Level Start"])
+  level_end_blank = blank?(values["Level End"])
+  abort "#{id} has asymmetric Levels state" if level_start_blank != level_end_blank
+  needs_levels = level_start_blank && level_end_blank
+  expected_needs_levels = EXPECTED_LEVEL_IDS.include?(id)
+  abort "#{id} Levels state changed" unless needs_levels == expected_needs_levels
+
   populated = score_columns.reject { |column| blank?(values[column]) }
   abort "#{id} Batch 18 score field is no longer blank: #{populated.join(', ')}" unless populated.empty?
   populated_deferred = DEFERRED_COLUMNS.reject { |column| blank?(values[column]) }
   abort "#{id} deferred field unexpectedly populated: #{populated_deferred.join(', ')}" unless populated_deferred.empty?
-  selected_rows << id
+  selected_rows << [id, needs_levels]
 end
-abort "AMC Batch 18 target IDs/order changed" unless selected_rows == EXPECTED_IDS
+abort "AMC Batch 18 target IDs/order changed" unless selected_rows.map(&:first) == EXPECTED_IDS
+actual_level_ids = selected_rows.select { |_id, needs_levels| needs_levels }.map(&:first)
+abort "AMC Batch 18 conditional Levels IDs changed" unless actual_level_ids == EXPECTED_LEVEL_IDS
+preserved_level_ids = selected_rows.reject { |_id, needs_levels| needs_levels }.map(&:first)
+abort "AMC Batch 18 preserved Levels count changed" unless preserved_level_ids.length == 8
 
 abort "case count #{rows.length}; expected #{EXPECTED_CALLS}" unless rows.length == EXPECTED_CALLS
 abort "run-order count #{order.length}; expected #{EXPECTED_CALLS}" unless order.length == EXPECTED_CALLS
 abort "run order has duplicates" unless order.uniq.length == order.length
 abort "run order/index mismatch" unless rows.map { |r| r["manifest_path"] } == order
 
+dimension_counts = rows.group_by { |row| row["dimension"] }.transform_values(&:length)
+EXPECTED_DIMENSIONS.each do |dimension|
+  name = dimension.fetch(0)
+  abort "#{name} case count changed" unless dimension_counts[name] == EXPECTED_IDS.length
+end
+abort "Levels case count changed" unless dimension_counts["Levels"] == EXPECTED_LEVEL_IDS.length
+expected_dimension_names = EXPECTED_DIMENSIONS.map(&:first) + ["Levels"]
+unexpected_dimensions = dimension_counts.keys - expected_dimension_names
+abort "unexpected Batch 18 dimensions: #{unexpected_dimensions.join(', ')}" unless unexpected_dimensions.empty?
+
 expected_rows = []
 EXPECTED_IDS.each_with_index do |id, adv_index|
   EXPECTED_DIMENSIONS.each do |dimension|
     expected_rows << [adv_index + 1, id, *dimension]
   end
+  expected_rows << [adv_index + 1, id, *EXPECTED_LEVELS] if EXPECTED_LEVEL_IDS.include?(id)
 end
 
 rows.each_with_index do |row, index|
@@ -248,8 +294,9 @@ rows.each_with_index do |row, index|
   abort "wrong contract type in #{relative_manifest}" unless contract["contract_type"] == "adventure_ingest_v1"
   abort "wrong queue in #{relative_manifest}" unless contract["queue"] == "production-backlog-018"
   abort "wrong qualified profile in #{relative_manifest}" unless contract["qualified_profile"] == profile
-  abort "wrong qualification path in #{relative_manifest}" unless contract["source_qualification_path"] == dimension_contracts.fetch((index % EXPECTED_DIMENSIONS.length)).fetch("qualification_path")
-  abort "qualification hash drift in #{relative_manifest}" unless contract["source_qualification_sha256"] == dimension_contracts.fetch((index % EXPECTED_DIMENSIONS.length)).fetch("qualification_sha256")
+  expected_contract = contracts_by_name.fetch(name)
+  abort "wrong qualification path in #{relative_manifest}" unless contract["source_qualification_path"] == expected_contract.fetch("qualification_path")
+  abort "qualification hash drift in #{relative_manifest}" unless contract["source_qualification_sha256"] == expected_contract.fetch("qualification_sha256")
   abort "favorable reruns allowed in #{relative_manifest}" unless contract["no_favorable_rerun"] == true
   abort "external API cost is not zero in #{relative_manifest}" unless contract["external_api_cost_usd"].to_f == 0.0
   abort "wrong cost cap in #{relative_manifest}" unless data["cost_cap_usd"].to_f == 0.01
@@ -268,10 +315,10 @@ end
 
 puts "Frozen Batch 18 queue semantics: PASS"
 puts "  Adventures: 23"
-puts "  Calls: #{EXPECTED_CALLS}"
-puts "  Order: adventure-major / 11 dimensions per row"
+puts "  Calls: #{EXPECTED_CALLS} (253 ordinary + 15 conditional Levels)"
+puts "  Order: adventure-major / 11 ordinary dimensions plus conditional Levels"
 puts "  Catalog: #{CATALOG_FILENAME} @ #{CATALOG_SHA256}"
-puts "  Levels: preserved / not scored"
+puts "  Levels: 8 preserved pairs / 15 qualified paired-output calls"
 puts "  Deferred AFAO columns: preserved blank / not scored"
 RUBY
 
@@ -316,8 +363,8 @@ end
 RUBY
 
 REPRESENTATIVE_COUNT="$(wc -l < "$REPRESENTATIVE_LIST" | tr -d '[:space:]')"
-[[ "$REPRESENTATIVE_COUNT" -eq 11 ]] || {
-  echo "ERROR: expected 11 representative manifests; found $REPRESENTATIVE_COUNT"
+[[ "$REPRESENTATIVE_COUNT" -eq 12 ]] || {
+  echo "ERROR: expected 12 representative manifests; found $REPRESENTATIVE_COUNT"
   exit 1
 }
 
@@ -330,7 +377,7 @@ while IFS= read -r manifest; do
     exit 1
   }
 done < "$REPRESENTATIVE_LIST"
-echo "LME manifest planning: PASS (11/11)"
+echo "LME manifest planning: PASS (12/12)"
 
 ruby - "$INDEX" >"$MODEL_LIST" <<'RUBY'
 require "csv"
@@ -363,7 +410,8 @@ done < "$MODEL_LIST"
 echo
 echo "BATCH 18 PREFLIGHT: PASS"
 echo "  23 adventures"
-echo "  11 scored fields per adventure"
-echo "  253 frozen local inference calls"
+echo "  11 ordinary scored fields per adventure"
+echo "  15 conditional Levels calls (paired Level Start + Level End)"
+echo "  268 frozen local inference calls"
 echo '  External/API inference cost: $0'
 echo "Runtime source resolution is rechecked by run_production_backlog.sh before inference starts."

@@ -17,7 +17,12 @@ QUEUE = "production-backlog-018"
 CATALOG_FILENAME = "5e_Adventure_Master_Catalog_4.6.xlsx"
 CATALOG_SHA256 = "7451c6680eb59e76e686ac01951beb3d8ff0816dad385833cc9fcce3b3cf93cb"
 EXPECTED_IDS = ((404..412).to_a + (414..427).to_a).map { |n| format("ADV-%04d", n) }.freeze
-EXPECTED_CALLS = EXPECTED_IDS.length * 11
+EXPECTED_LEVEL_IDS = %w[
+  ADV-0409
+  ADV-0414 ADV-0415 ADV-0416 ADV-0417 ADV-0418 ADV-0419 ADV-0420
+  ADV-0421 ADV-0422 ADV-0423 ADV-0424 ADV-0425 ADV-0426 ADV-0427
+].freeze
+EXPECTED_CALLS = (EXPECTED_IDS.length * 11) + EXPECTED_LEVEL_IDS.length
 ADVENTURES_PER_PACK = 5
 SOURCE_BOUNDARY_CLAMP_IDS = [].freeze
 
@@ -131,6 +136,7 @@ def load_qualifications
   end
 
   core_expected = {
+    "Levels" => ["levels", "levels-v2.1"],
     "Combat Emphasis" => ["combat", "production-base"],
     "Social Interaction Emphasis" => ["social", "phase6-v0.3"],
     "Investigation Emphasis" => ["investigation", "phase6-v0.4"],
@@ -196,6 +202,25 @@ def dimension_contracts
     individual.call("gmbs", gmbs, "base"),
     individual.call("seriousness", seriousness, "seriousness")
   ]
+end
+
+def levels_contract
+  core, core_by_name, *_rest = load_qualifications
+  d = core_by_name.fetch("Levels")
+  columns = d.fetch("catalog_columns")
+  abort_with("qualified Levels catalog columns changed") unless columns == ["Level Start", "Level End"]
+
+  {
+    "name" => "Levels",
+    "slug" => d.fetch("slug"),
+    "catalog_columns" => columns,
+    "model_alias" => core.fetch("model_alias"),
+    "ollama_model" => core.fetch("ollama_model"),
+    "profile" => d.fetch("profile"),
+    "qualification_path" => QUALIFICATION_PATHS.fetch("core"),
+    "qualification_sha256" => sha256(qualification_path("core")),
+    "runtime_key" => "base"
+  }
 end
 
 def catalog_path_for(scorer_repo)
@@ -323,6 +348,7 @@ abort_with("AMC 4.6 SHA mismatch: #{actual_catalog_sha}; expected #{CATALOG_SHA2
 
 dimensions = dimension_contracts
 abort_with("Batch 18 dimension count changed: #{dimensions.length}") unless dimensions.length == 11
+levels = levels_contract
 score_columns = dimensions.map { |d| d.fetch("catalog_column") }
 
 require File.join(SCORER_REPO, "lib", "af_scoring", "errors")
@@ -354,8 +380,17 @@ rows.each do |row|
 
   abort_with("#{id} missing/invalid page count") unless page_count&.positive?
   abort_with("#{id} falls outside the proven <100 page production envelope") unless page_count < 100
-  abort_with("#{id} Level Start is blank") if blank?(values["Level Start"])
-  abort_with("#{id} Level End is blank") if blank?(values["Level End"])
+
+  level_start_blank = blank?(values["Level Start"])
+  level_end_blank = blank?(values["Level End"])
+  if level_start_blank != level_end_blank
+    abort_with("#{id} has asymmetric Levels state; Level Start and Level End must both be populated or both blank")
+  end
+  needs_levels = level_start_blank && level_end_blank
+  expected_needs_levels = EXPECTED_LEVEL_IDS.include?(id)
+  unless needs_levels == expected_needs_levels
+    abort_with("#{id} Levels state changed: expected #{expected_needs_levels ? 'blank / score' : 'populated / preserve'}")
+  end
 
   populated_scores = score_columns.reject { |column| blank?(values[column]) }
   abort_with("#{id} already has Batch 18 target values: #{populated_scores.join(', ')}") unless populated_scores.empty?
@@ -372,7 +407,8 @@ rows.each do |row|
     "start_page" => start_page,
     "end_page" => end_page,
     "level_start" => integer_or_nil(values["Level Start"]),
-    "level_end" => integer_or_nil(values["Level End"])
+    "level_end" => integer_or_nil(values["Level End"]),
+    "needs_levels" => needs_levels
   }
 end
 
@@ -380,7 +416,15 @@ duplicates = catalog_ids.tally.select { |_id, count| count > 1 }
 abort_with("AMC duplicate Adventure IDs: #{duplicates.keys.join(', ')}") unless duplicates.empty?
 actual_ids = targets.map { |t| t.fetch("id") }
 abort_with("Batch 18 IDs/order changed: #{actual_ids.inspect}; expected #{EXPECTED_IDS.inspect}") unless actual_ids == EXPECTED_IDS
-abort_with("Batch 18 target count #{targets.length}; expected 33") unless targets.length == 23
+abort_with("Batch 18 target count #{targets.length}; expected 23") unless targets.length == 23
+actual_level_ids = targets.select { |t| t.fetch("needs_levels") }.map { |t| t.fetch("id") }
+unless actual_level_ids == EXPECTED_LEVEL_IDS
+  abort_with("Batch 18 conditional Levels IDs changed: #{actual_level_ids.inspect}; expected #{EXPECTED_LEVEL_IDS.inspect}")
+end
+preserved_level_ids = targets.reject { |t| t.fetch("needs_levels") }.map { |t| t.fetch("id") }
+unless preserved_level_ids == (EXPECTED_IDS - EXPECTED_LEVEL_IDS)
+  abort_with("Batch 18 preserved Levels IDs changed: #{preserved_level_ids.inspect}")
+end
 
 queue_dir = File.join(ROOT, "production_backlog", QUEUE)
 experiment_dir = File.join(ROOT, "experiments", QUEUE)
@@ -444,6 +488,9 @@ snapshot = {
   "source_boundary_clamp_adventure_ids" => SOURCE_BOUNDARY_CLAMP_IDS,
   "dimension_order" => dimensions.map { |d| d.fetch("name") },
   "dimension_contracts" => dimensions,
+  "conditional_dimension_order" => ["Levels"],
+  "levels_contract" => levels,
+  "levels_inference_adventure_ids" => EXPECTED_LEVEL_IDS,
   "deferred_columns" => DEFERRED_COLUMNS,
   "qualification_files" => qualification_files,
   "runtime_files" => runtime_paths,
@@ -452,12 +499,16 @@ snapshot = {
 File.write(File.join(queue_dir, "snapshot.yml"), YAML.dump(snapshot))
 
 CSV.open(File.join(queue_dir, "candidate_audit.csv"), "w") do |csv|
-  csv << %w[adventure_id adventure_title source_book publisher page_count level_start level_end decision reason]
+  csv << %w[adventure_id adventure_title source_book publisher page_count level_start level_end levels_action decision reason]
   targets.each do |target|
+    needs_levels = target.fetch("needs_levels")
     csv << [
       target.fetch("id"), target.fetch("title"), target.fetch("source_book"), target.fetch("publisher"),
       target.fetch("page_count"), target.fetch("level_start"), target.fetch("level_end"),
-      "SELECT", "exact_batch_018_target_levels_present_11_scores_blank_source_preflight_pass"
+      needs_levels ? "SCORE" : "PRESERVE",
+      "SELECT",
+      needs_levels ? "exact_batch_018_target_levels_blank_score_levels_11_scores_blank_source_preflight_pass" :
+                     "exact_batch_018_target_levels_present_preserve_levels_11_scores_blank_source_preflight_pass"
     ]
   end
 end
@@ -474,7 +525,9 @@ scorer_rel = Pathname.new(SCORER_REPO).relative_path_from(Pathname.new(experimen
 
 targets.each_with_index do |adv, adv_offset|
   pack_index = (adv_offset / ADVENTURES_PER_PACK) + 1
-  dimensions.each do |dimension|
+  operations = dimensions.dup
+  operations << levels if adv.fetch("needs_levels")
+  operations.each do |dimension|
     case_index = case_rows.length + 1
     runtime_key = dimension.fetch("runtime_key")
     runtime_relative = runtime_paths.fetch(runtime_key).fetch("path")
@@ -526,9 +579,11 @@ puts
 puts "PRODUCTION BACKLOG 018 PREPARED — NO INFERENCE WAS RUN"
 puts "Queue: production_backlog/#{QUEUE}"
 puts "Adventures: 23"
-puts "Dimensions per adventure: 11 (Levels excluded; seven deferred AFAO fields untouched)"
-puts "Calls: #{EXPECTED_CALLS}"
-puts "Order: adventure-major / row-major"
+puts "Ordinary scored fields per adventure: 11"
+puts "Conditional Levels calls: #{EXPECTED_LEVEL_IDS.length} (paired Level Start + Level End)"
+puts "Preserved existing Levels pairs: #{EXPECTED_IDS.length - EXPECTED_LEVEL_IDS.length}"
+puts "Calls: #{EXPECTED_CALLS} (#{EXPECTED_IDS.length * 11} ordinary + #{EXPECTED_LEVEL_IDS.length} Levels)"
+puts "Order: adventure-major / row-major; Levels follows the 11 ordinary fields when required"
 puts 'External/API inference cost: $0'
 puts "Next: ./verify_production_backlog_018.sh production_backlog/#{QUEUE}"
 puts "Then: ./run_production_backlog.sh production_backlog/#{QUEUE}"

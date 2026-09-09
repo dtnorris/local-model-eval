@@ -1,0 +1,10 @@
+---
+llm:
+  provider: ollama
+  model: qwen3.6:35b-a3b
+  reasoning_effort: low
+  max_tokens: 16384
+files:
+  catalog: 5e_Adventure_Master_Catalog_4.6.xlsx
+source:
+  allow_inward_boundary_clamp_adventure_ids: []

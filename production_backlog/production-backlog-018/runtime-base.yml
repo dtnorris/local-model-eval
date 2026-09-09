@@ -1,0 +1,5 @@
+---
+files:
+  catalog: 5e_Adventure_Master_Catalog_4.6.xlsx
+source:
+  allow_inward_boundary_clamp_adventure_ids: []

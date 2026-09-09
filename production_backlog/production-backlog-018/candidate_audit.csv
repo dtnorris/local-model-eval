@@ -1,0 +1,24 @@
+adventure_id,adventure_title,source_book,publisher,page_count,level_start,level_end,levels_action,decision,reason
+ADV-0404,Bone Brambles,Baldur's Gate: Descent into Avernus,Wizards of the Coast,3,8,8,PRESERVE,SELECT,exact_batch_018_target_levels_present_preserve_levels_11_scores_blank_source_preflight_pass
+ADV-0405,Hold the Fort,Baldur's Gate: Descent into Avernus,Wizards of the Coast,1,8,8,PRESERVE,SELECT,exact_batch_018_target_levels_present_preserve_levels_11_scores_blank_source_preflight_pass
+ADV-0406,Uldrak's Grave,Baldur's Gate: Descent into Avernus,Wizards of the Coast,5,8,9,PRESERVE,SELECT,exact_batch_018_target_levels_present_preserve_levels_11_scores_blank_source_preflight_pass
+ADV-0407,Bel's Forge,Baldur's Gate: Descent into Avernus,Wizards of the Coast,10,9,11,PRESERVE,SELECT,exact_batch_018_target_levels_present_preserve_levels_11_scores_blank_source_preflight_pass
+ADV-0408,Wrecked Flying Fortress,Baldur's Gate: Descent into Avernus,Wizards of the Coast,5,10,10,PRESERVE,SELECT,exact_batch_018_target_levels_present_preserve_levels_11_scores_blank_source_preflight_pass
+ADV-0409,Test Run 221,Baldur's Gate: Descent into Avernus,Wizards of the Coast,1,,,SCORE,SELECT,exact_batch_018_target_levels_blank_score_levels_11_scores_blank_source_preflight_pass
+ADV-0410,The Scab,Baldur's Gate: Descent into Avernus,Wizards of the Coast,6,11,12,PRESERVE,SELECT,exact_batch_018_target_levels_present_preserve_levels_11_scores_blank_source_preflight_pass
+ADV-0411,Idyllglen,Baldur's Gate: Descent into Avernus,Wizards of the Coast,5,12,12,PRESERVE,SELECT,exact_batch_018_target_levels_present_preserve_levels_11_scores_blank_source_preflight_pass
+ADV-0412,Endgame in Elturel,Baldur's Gate: Descent into Avernus,Wizards of the Coast,2,13,13,PRESERVE,SELECT,exact_batch_018_target_levels_present_preserve_levels_11_scores_blank_source_preflight_pass
+ADV-0414,Camp Righteous,Tomb of Annihilation,Wizards of the Coast,4,,,SCORE,SELECT,exact_batch_018_target_levels_blank_score_levels_11_scores_blank_source_preflight_pass
+ADV-0415,Dungrunglung,Tomb of Annihilation,Wizards of the Coast,3,,,SCORE,SELECT,exact_batch_018_target_levels_blank_score_levels_11_scores_blank_source_preflight_pass
+ADV-0416,Firefinger,Tomb of Annihilation,Wizards of the Coast,3,,,SCORE,SELECT,exact_batch_018_target_levels_blank_score_levels_11_scores_blank_source_preflight_pass
+ADV-0417,Hrakhamar,Tomb of Annihilation,Wizards of the Coast,5,,,SCORE,SELECT,exact_batch_018_target_levels_blank_score_levels_11_scores_blank_source_preflight_pass
+ADV-0418,Jahaka Anchorage,Tomb of Annihilation,Wizards of the Coast,5,,,SCORE,SELECT,exact_batch_018_target_levels_blank_score_levels_11_scores_blank_source_preflight_pass
+ADV-0419,Mbala,Tomb of Annihilation,Wizards of the Coast,3,,,SCORE,SELECT,exact_batch_018_target_levels_blank_score_levels_11_scores_blank_source_preflight_pass
+ADV-0420,Nangalore,Tomb of Annihilation,Wizards of the Coast,7,,,SCORE,SELECT,exact_batch_018_target_levels_blank_score_levels_11_scores_blank_source_preflight_pass
+ADV-0421,Orolunga,Tomb of Annihilation,Wizards of the Coast,3,,,SCORE,SELECT,exact_batch_018_target_levels_blank_score_levels_11_scores_blank_source_preflight_pass
+ADV-0422,Wreck of the Star Goddess,Tomb of Annihilation,Wizards of the Coast,2,,,SCORE,SELECT,exact_batch_018_target_levels_blank_score_levels_11_scores_blank_source_preflight_pass
+ADV-0423,Wyrmheart Mine,Tomb of Annihilation,Wizards of the Coast,5,,,SCORE,SELECT,exact_batch_018_target_levels_blank_score_levels_11_scores_blank_source_preflight_pass
+ADV-0424,Yellyark,Tomb of Annihilation,Wizards of the Coast,2,,,SCORE,SELECT,exact_batch_018_target_levels_blank_score_levels_11_scores_blank_source_preflight_pass
+ADV-0425,Omu,Tomb of Annihilation,Wizards of the Coast,20,,,SCORE,SELECT,exact_batch_018_target_levels_blank_score_levels_11_scores_blank_source_preflight_pass
+ADV-0426,Fane of the Night Serpent,Tomb of Annihilation,Wizards of the Coast,14,,,SCORE,SELECT,exact_batch_018_target_levels_blank_score_levels_11_scores_blank_source_preflight_pass
+ADV-0427,Tomb of the Nine Gods,Tomb of Annihilation,Wizards of the Coast,66,,,SCORE,SELECT,exact_batch_018_target_levels_blank_score_levels_11_scores_blank_source_preflight_pass
