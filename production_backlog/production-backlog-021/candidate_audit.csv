@@ -1,0 +1,40 @@
+adventure_id,adventure_title,source_book,publisher,page_count,level_start,level_end,levels_action,decision,reason
+ADV-0496,The Eruption,Sunken Isles,Ghostfire Gaming,4,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0497,The Empty Port Town / Taking Inventory,Sunken Isles,Ghostfire Gaming,5,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0498,The King's Request,Sunken Isles,Ghostfire Gaming,1,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0499,Helping the Enemy? — The Tunnels / Kumuhea,Sunken Isles,Ghostfire Gaming,3,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0500,Helping the Enemy? — The Depths / Captain Keelhaul,Sunken Isles,Ghostfire Gaming,4,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0501,Setting Sail — Keyport,Sunken Isles,Ghostfire Gaming,5,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0502,Setting Sail — Makolf,Sunken Isles,Ghostfire Gaming,12,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0503,SpringBog,Sunken Isles,Ghostfire Gaming,11,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0504,Chitoni,Sunken Isles,Ghostfire Gaming,12,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0505,Eastguard or Westguard,Sunken Isles,Ghostfire Gaming,9,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0506,The Primal Archipelago,Sunken Isles,Ghostfire Gaming,8,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0507,The Living Wall,Sunken Isles,Ghostfire Gaming,8,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0508,The Ruins,Sunken Isles,Ghostfire Gaming,15,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0509,Redfield,Sunken Isles,Ghostfire Gaming,11,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0510,The Glowing Caves,Sunken Isles,Ghostfire Gaming,11,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0511,The Entropy Abyss,Sunken Isles,Ghostfire Gaming,5,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0512,SpringBog,Sunken Isles,Ghostfire Gaming,11,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0513,Keyport,Sunken Isles,Ghostfire Gaming,5,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0514,Turntail Swamp,Sunken Isles,Ghostfire Gaming,14,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0515,Kauhale,Sunken Isles,Ghostfire Gaming,13,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0516,Alaula Cove,Sunken Isles,Ghostfire Gaming,9,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0517,Wishmaster's Conclave,Sunken Isles,Ghostfire Gaming,6,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0518,Seputus,Sunken Isles,Ghostfire Gaming,8,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0519,Eastguard or Westguard,Sunken Isles,Ghostfire Gaming,9,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0520,Chitoni,Sunken Isles,Ghostfire Gaming,12,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0521,Skyreach Temple,Sunken Isles,Ghostfire Gaming,7,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0522,The Entropy Abyss,Sunken Isles,Ghostfire Gaming,5,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0523,The Ruins,Sunken Isles,Ghostfire Gaming,15,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0524,Turntail Swamp,Sunken Isles,Ghostfire Gaming,14,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0525,The Glowing Caves,Sunken Isles,Ghostfire Gaming,11,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0526,The Watching Woman,Sunken Isles,Ghostfire Gaming,9,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0527,The Primal Archipelago,Sunken Isles,Ghostfire Gaming,8,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0528,Redfield,Sunken Isles,Ghostfire Gaming,11,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0529,Skyreach Temple,Sunken Isles,Ghostfire Gaming,7,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0530,Kauhale,Sunken Isles,Ghostfire Gaming,13,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0531,King's Tomb,Sunken Isles,Ghostfire Gaming,13,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0532,The Living Wall,Sunken Isles,Ghostfire Gaming,8,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0533,The War for the Isles,Sunken Isles,Ghostfire Gaming,5,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0534,The End of the Isles,Sunken Isles,Ghostfire Gaming,4,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass

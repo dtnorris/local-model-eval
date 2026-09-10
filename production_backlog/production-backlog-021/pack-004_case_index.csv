@@ -1,0 +1,61 @@
+case_index,pack_index,pack_case_index,adventure_index,adventure_id,adventure_title,source_book,publisher,page_count,dimension,profile,model_alias,runtime_key,manifest_path
+181,4,1,16,ADV-0511,The Entropy Abyss,Sunken Isles,Ghostfire Gaming,5,# of Sessions,nos-clean-blind-v1,qwen27,base,experiments/production-backlog-021/production-backlog-021-qwen27-nos-adv0511-v1.yml
+182,4,2,16,ADV-0511,The Entropy Abyss,Sunken Isles,Ghostfire Gaming,5,Exploration Emphasis,ee-clean-reset-v0.5,gptoss,ee,experiments/production-backlog-021/production-backlog-021-gptoss-ee-adv0511-v1.yml
+183,4,3,16,ADV-0511,The Entropy Abyss,Sunken Isles,Ghostfire Gaming,5,GM Preparation Burden,gmpb-v0.6-dependency-fan-out,gemma,gmpb,experiments/production-backlog-021/production-backlog-021-gemma-gmpb-adv0511-v1.yml
+184,4,4,16,ADV-0511,The Entropy Abyss,Sunken Isles,Ghostfire Gaming,5,Combat Emphasis,production-base,qwen,base,experiments/production-backlog-021/production-backlog-021-qwen-combat-adv0511-v1.yml
+185,4,5,16,ADV-0511,The Entropy Abyss,Sunken Isles,Ghostfire Gaming,5,Social Interaction Emphasis,phase6-v0.3,qwen,base,experiments/production-backlog-021/production-backlog-021-qwen-social-adv0511-v1.yml
+186,4,6,16,ADV-0511,The Entropy Abyss,Sunken Isles,Ghostfire Gaming,5,Investigation Emphasis,phase6-v0.4,qwen,base,experiments/production-backlog-021/production-backlog-021-qwen-investigation-adv0511-v1.yml
+187,4,7,16,ADV-0511,The Entropy Abyss,Sunken Isles,Ghostfire Gaming,5,Structural Openness,production-base,qwen,base,experiments/production-backlog-021/production-backlog-021-qwen-structural-openness-adv0511-v1.yml
+188,4,8,16,ADV-0511,The Entropy Abyss,Sunken Isles,Ghostfire Gaming,5,Darkness / Horror Intensity,production-base,qwen,base,experiments/production-backlog-021/production-backlog-021-qwen-darkness-adv0511-v1.yml
+189,4,9,16,ADV-0511,The Entropy Abyss,Sunken Isles,Ghostfire Gaming,5,Player Beginner Suitability,production-base,qwen,base,experiments/production-backlog-021/production-backlog-021-qwen-player-beginner-adv0511-v1.yml
+190,4,10,16,ADV-0511,The Entropy Abyss,Sunken Isles,Ghostfire Gaming,5,GM Beginner Suitability,gmbs-clean-blind-v0.3,qwen,base,experiments/production-backlog-021/production-backlog-021-qwen-gmbs-adv0511-v1.yml
+191,4,11,16,ADV-0511,The Entropy Abyss,Sunken Isles,Ghostfire Gaming,5,Seriousness,seriousness-reset-only,qwen,seriousness,experiments/production-backlog-021/production-backlog-021-qwen-seriousness-adv0511-v1.yml
+192,4,12,16,ADV-0511,The Entropy Abyss,Sunken Isles,Ghostfire Gaming,5,Levels,levels-v2.1,qwen,base,experiments/production-backlog-021/production-backlog-021-qwen-levels-adv0511-v1.yml
+193,4,13,17,ADV-0512,SpringBog,Sunken Isles,Ghostfire Gaming,11,# of Sessions,nos-clean-blind-v1,qwen27,base,experiments/production-backlog-021/production-backlog-021-qwen27-nos-adv0512-v1.yml
+194,4,14,17,ADV-0512,SpringBog,Sunken Isles,Ghostfire Gaming,11,Exploration Emphasis,ee-clean-reset-v0.5,gptoss,ee,experiments/production-backlog-021/production-backlog-021-gptoss-ee-adv0512-v1.yml
+195,4,15,17,ADV-0512,SpringBog,Sunken Isles,Ghostfire Gaming,11,GM Preparation Burden,gmpb-v0.6-dependency-fan-out,gemma,gmpb,experiments/production-backlog-021/production-backlog-021-gemma-gmpb-adv0512-v1.yml
+196,4,16,17,ADV-0512,SpringBog,Sunken Isles,Ghostfire Gaming,11,Combat Emphasis,production-base,qwen,base,experiments/production-backlog-021/production-backlog-021-qwen-combat-adv0512-v1.yml
+197,4,17,17,ADV-0512,SpringBog,Sunken Isles,Ghostfire Gaming,11,Social Interaction Emphasis,phase6-v0.3,qwen,base,experiments/production-backlog-021/production-backlog-021-qwen-social-adv0512-v1.yml
+198,4,18,17,ADV-0512,SpringBog,Sunken Isles,Ghostfire Gaming,11,Investigation Emphasis,phase6-v0.4,qwen,base,experiments/production-backlog-021/production-backlog-021-qwen-investigation-adv0512-v1.yml
+199,4,19,17,ADV-0512,SpringBog,Sunken Isles,Ghostfire Gaming,11,Structural Openness,production-base,qwen,base,experiments/production-backlog-021/production-backlog-021-qwen-structural-openness-adv0512-v1.yml
+200,4,20,17,ADV-0512,SpringBog,Sunken Isles,Ghostfire Gaming,11,Darkness / Horror Intensity,production-base,qwen,base,experiments/production-backlog-021/production-backlog-021-qwen-darkness-adv0512-v1.yml
+201,4,21,17,ADV-0512,SpringBog,Sunken Isles,Ghostfire Gaming,11,Player Beginner Suitability,production-base,qwen,base,experiments/production-backlog-021/production-backlog-021-qwen-player-beginner-adv0512-v1.yml
+202,4,22,17,ADV-0512,SpringBog,Sunken Isles,Ghostfire Gaming,11,GM Beginner Suitability,gmbs-clean-blind-v0.3,qwen,base,experiments/production-backlog-021/production-backlog-021-qwen-gmbs-adv0512-v1.yml
+203,4,23,17,ADV-0512,SpringBog,Sunken Isles,Ghostfire Gaming,11,Seriousness,seriousness-reset-only,qwen,seriousness,experiments/production-backlog-021/production-backlog-021-qwen-seriousness-adv0512-v1.yml
+204,4,24,17,ADV-0512,SpringBog,Sunken Isles,Ghostfire Gaming,11,Levels,levels-v2.1,qwen,base,experiments/production-backlog-021/production-backlog-021-qwen-levels-adv0512-v1.yml
+205,4,25,18,ADV-0513,Keyport,Sunken Isles,Ghostfire Gaming,5,# of Sessions,nos-clean-blind-v1,qwen27,base,experiments/production-backlog-021/production-backlog-021-qwen27-nos-adv0513-v1.yml
+206,4,26,18,ADV-0513,Keyport,Sunken Isles,Ghostfire Gaming,5,Exploration Emphasis,ee-clean-reset-v0.5,gptoss,ee,experiments/production-backlog-021/production-backlog-021-gptoss-ee-adv0513-v1.yml
+207,4,27,18,ADV-0513,Keyport,Sunken Isles,Ghostfire Gaming,5,GM Preparation Burden,gmpb-v0.6-dependency-fan-out,gemma,gmpb,experiments/production-backlog-021/production-backlog-021-gemma-gmpb-adv0513-v1.yml
+208,4,28,18,ADV-0513,Keyport,Sunken Isles,Ghostfire Gaming,5,Combat Emphasis,production-base,qwen,base,experiments/production-backlog-021/production-backlog-021-qwen-combat-adv0513-v1.yml
+209,4,29,18,ADV-0513,Keyport,Sunken Isles,Ghostfire Gaming,5,Social Interaction Emphasis,phase6-v0.3,qwen,base,experiments/production-backlog-021/production-backlog-021-qwen-social-adv0513-v1.yml
+210,4,30,18,ADV-0513,Keyport,Sunken Isles,Ghostfire Gaming,5,Investigation Emphasis,phase6-v0.4,qwen,base,experiments/production-backlog-021/production-backlog-021-qwen-investigation-adv0513-v1.yml
+211,4,31,18,ADV-0513,Keyport,Sunken Isles,Ghostfire Gaming,5,Structural Openness,production-base,qwen,base,experiments/production-backlog-021/production-backlog-021-qwen-structural-openness-adv0513-v1.yml
+212,4,32,18,ADV-0513,Keyport,Sunken Isles,Ghostfire Gaming,5,Darkness / Horror Intensity,production-base,qwen,base,experiments/production-backlog-021/production-backlog-021-qwen-darkness-adv0513-v1.yml
+213,4,33,18,ADV-0513,Keyport,Sunken Isles,Ghostfire Gaming,5,Player Beginner Suitability,production-base,qwen,base,experiments/production-backlog-021/production-backlog-021-qwen-player-beginner-adv0513-v1.yml
+214,4,34,18,ADV-0513,Keyport,Sunken Isles,Ghostfire Gaming,5,GM Beginner Suitability,gmbs-clean-blind-v0.3,qwen,base,experiments/production-backlog-021/production-backlog-021-qwen-gmbs-adv0513-v1.yml
+215,4,35,18,ADV-0513,Keyport,Sunken Isles,Ghostfire Gaming,5,Seriousness,seriousness-reset-only,qwen,seriousness,experiments/production-backlog-021/production-backlog-021-qwen-seriousness-adv0513-v1.yml
+216,4,36,18,ADV-0513,Keyport,Sunken Isles,Ghostfire Gaming,5,Levels,levels-v2.1,qwen,base,experiments/production-backlog-021/production-backlog-021-qwen-levels-adv0513-v1.yml
+217,4,37,19,ADV-0514,Turntail Swamp,Sunken Isles,Ghostfire Gaming,14,# of Sessions,nos-clean-blind-v1,qwen27,base,experiments/production-backlog-021/production-backlog-021-qwen27-nos-adv0514-v1.yml
+218,4,38,19,ADV-0514,Turntail Swamp,Sunken Isles,Ghostfire Gaming,14,Exploration Emphasis,ee-clean-reset-v0.5,gptoss,ee,experiments/production-backlog-021/production-backlog-021-gptoss-ee-adv0514-v1.yml
+219,4,39,19,ADV-0514,Turntail Swamp,Sunken Isles,Ghostfire Gaming,14,GM Preparation Burden,gmpb-v0.6-dependency-fan-out,gemma,gmpb,experiments/production-backlog-021/production-backlog-021-gemma-gmpb-adv0514-v1.yml
+220,4,40,19,ADV-0514,Turntail Swamp,Sunken Isles,Ghostfire Gaming,14,Combat Emphasis,production-base,qwen,base,experiments/production-backlog-021/production-backlog-021-qwen-combat-adv0514-v1.yml
+221,4,41,19,ADV-0514,Turntail Swamp,Sunken Isles,Ghostfire Gaming,14,Social Interaction Emphasis,phase6-v0.3,qwen,base,experiments/production-backlog-021/production-backlog-021-qwen-social-adv0514-v1.yml
+222,4,42,19,ADV-0514,Turntail Swamp,Sunken Isles,Ghostfire Gaming,14,Investigation Emphasis,phase6-v0.4,qwen,base,experiments/production-backlog-021/production-backlog-021-qwen-investigation-adv0514-v1.yml
+223,4,43,19,ADV-0514,Turntail Swamp,Sunken Isles,Ghostfire Gaming,14,Structural Openness,production-base,qwen,base,experiments/production-backlog-021/production-backlog-021-qwen-structural-openness-adv0514-v1.yml
+224,4,44,19,ADV-0514,Turntail Swamp,Sunken Isles,Ghostfire Gaming,14,Darkness / Horror Intensity,production-base,qwen,base,experiments/production-backlog-021/production-backlog-021-qwen-darkness-adv0514-v1.yml
+225,4,45,19,ADV-0514,Turntail Swamp,Sunken Isles,Ghostfire Gaming,14,Player Beginner Suitability,production-base,qwen,base,experiments/production-backlog-021/production-backlog-021-qwen-player-beginner-adv0514-v1.yml
+226,4,46,19,ADV-0514,Turntail Swamp,Sunken Isles,Ghostfire Gaming,14,GM Beginner Suitability,gmbs-clean-blind-v0.3,qwen,base,experiments/production-backlog-021/production-backlog-021-qwen-gmbs-adv0514-v1.yml
+227,4,47,19,ADV-0514,Turntail Swamp,Sunken Isles,Ghostfire Gaming,14,Seriousness,seriousness-reset-only,qwen,seriousness,experiments/production-backlog-021/production-backlog-021-qwen-seriousness-adv0514-v1.yml
+228,4,48,19,ADV-0514,Turntail Swamp,Sunken Isles,Ghostfire Gaming,14,Levels,levels-v2.1,qwen,base,experiments/production-backlog-021/production-backlog-021-qwen-levels-adv0514-v1.yml
+229,4,49,20,ADV-0515,Kauhale,Sunken Isles,Ghostfire Gaming,13,# of Sessions,nos-clean-blind-v1,qwen27,base,experiments/production-backlog-021/production-backlog-021-qwen27-nos-adv0515-v1.yml
+230,4,50,20,ADV-0515,Kauhale,Sunken Isles,Ghostfire Gaming,13,Exploration Emphasis,ee-clean-reset-v0.5,gptoss,ee,experiments/production-backlog-021/production-backlog-021-gptoss-ee-adv0515-v1.yml
+231,4,51,20,ADV-0515,Kauhale,Sunken Isles,Ghostfire Gaming,13,GM Preparation Burden,gmpb-v0.6-dependency-fan-out,gemma,gmpb,experiments/production-backlog-021/production-backlog-021-gemma-gmpb-adv0515-v1.yml
+232,4,52,20,ADV-0515,Kauhale,Sunken Isles,Ghostfire Gaming,13,Combat Emphasis,production-base,qwen,base,experiments/production-backlog-021/production-backlog-021-qwen-combat-adv0515-v1.yml
+233,4,53,20,ADV-0515,Kauhale,Sunken Isles,Ghostfire Gaming,13,Social Interaction Emphasis,phase6-v0.3,qwen,base,experiments/production-backlog-021/production-backlog-021-qwen-social-adv0515-v1.yml
+234,4,54,20,ADV-0515,Kauhale,Sunken Isles,Ghostfire Gaming,13,Investigation Emphasis,phase6-v0.4,qwen,base,experiments/production-backlog-021/production-backlog-021-qwen-investigation-adv0515-v1.yml
+235,4,55,20,ADV-0515,Kauhale,Sunken Isles,Ghostfire Gaming,13,Structural Openness,production-base,qwen,base,experiments/production-backlog-021/production-backlog-021-qwen-structural-openness-adv0515-v1.yml
+236,4,56,20,ADV-0515,Kauhale,Sunken Isles,Ghostfire Gaming,13,Darkness / Horror Intensity,production-base,qwen,base,experiments/production-backlog-021/production-backlog-021-qwen-darkness-adv0515-v1.yml
+237,4,57,20,ADV-0515,Kauhale,Sunken Isles,Ghostfire Gaming,13,Player Beginner Suitability,production-base,qwen,base,experiments/production-backlog-021/production-backlog-021-qwen-player-beginner-adv0515-v1.yml
+238,4,58,20,ADV-0515,Kauhale,Sunken Isles,Ghostfire Gaming,13,GM Beginner Suitability,gmbs-clean-blind-v0.3,qwen,base,experiments/production-backlog-021/production-backlog-021-qwen-gmbs-adv0515-v1.yml
+239,4,59,20,ADV-0515,Kauhale,Sunken Isles,Ghostfire Gaming,13,Seriousness,seriousness-reset-only,qwen,seriousness,experiments/production-backlog-021/production-backlog-021-qwen-seriousness-adv0515-v1.yml
+240,4,60,20,ADV-0515,Kauhale,Sunken Isles,Ghostfire Gaming,13,Levels,levels-v2.1,qwen,base,experiments/production-backlog-021/production-backlog-021-qwen-levels-adv0515-v1.yml
