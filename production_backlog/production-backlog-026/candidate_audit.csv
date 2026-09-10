@@ -1,0 +1,18 @@
+adventure_id,adventure_title,source_book,publisher,page_count,level_start,level_end,levels_action,decision,reason
+ADV-0630,Blood o' the Vine,Ravenloft: The Horrors Within,Wizards of the Coast,3,6,6,PRESERVE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0631,Treacherous Blood,Ravenloft: The Horrors Within,Wizards of the Coast,2,9,9,PRESERVE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0632,Lethal Lavender,Ravenloft: The Horrors Within,Wizards of the Coast,1,5,5,PRESERVE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0633,Secrets of Avernus,Ravenloft: The Horrors Within,Wizards of the Coast,2,16,16,PRESERVE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0634,The Grand Masquerade,Ravenloft: The Horrors Within,Wizards of the Coast,2,4,4,PRESERVE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0635,Siege of Lekar,Ravenloft: The Horrors Within,Wizards of the Coast,2,9,9,PRESERVE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0636,Scrolls of the Dead,Ravenloft: The Horrors Within,Wizards of the Coast,2,12,12,PRESERVE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0637,Eyes of the Darklord,Ravenloft: The Horrors Within,Wizards of the Coast,2,10,10,PRESERVE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0638,Vault of the Elder,Ravenloft: The Horrors Within,Wizards of the Coast,2,11,11,PRESERVE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0639,Tower of Traitors,Ravenloft: The Horrors Within,Wizards of the Coast,2,11,11,PRESERVE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0640,Hungry for More,Ravenloft: The Horrors Within,Wizards of the Coast,2,7,7,PRESERVE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0641,Isles of Agony,Ravenloft: The Horrors Within,Wizards of the Coast,1,5,5,PRESERVE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0642,The Ghost Hunter's Haunting,Ravenloft: The Horrors Within,Wizards of the Coast,2,3,3,PRESERVE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0643,The Shadowborn Sword,Ravenloft: The Horrors Within,Wizards of the Coast,2,10,10,PRESERVE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0644,Shadow of the Black Rose,Ravenloft: The Horrors Within,Wizards of the Coast,2,14,14,PRESERVE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0645,The Tithe,Ravenloft: The Horrors Within,Wizards of the Coast,2,2,2,PRESERVE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0646,Trial of Hearts,Ravenloft: The Horrors Within,Wizards of the Coast,2,8,8,PRESERVE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
