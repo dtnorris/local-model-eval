@@ -1,0 +1,15 @@
+adventure_id,adventure_title,source_book,publisher,page_count,level_start,level_end,levels_action,decision,reason
+ADV-0536,A Chill in the Air,Courts of the Shadow Fey,Kobold Press,33,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0537,The Invisible Courts,Courts of the Shadow Fey,Kobold Press,40,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0538,The Honored Guests,Courts of the Shadow Fey,Kobold Press,46,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0539,Royal Audiences and Treachery,Courts of the Shadow Fey,Kobold Press,24,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0540,Seeking the Hidden Ambassador / Dogs at the Door,Courts of the Shadow Fey,Kobold Press,10,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0541,Finding the Shadow Road Ritual,Courts of the Shadow Fey,Kobold Press,5,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0542,Déjà-Vu in the Shadows,Courts of the Shadow Fey,Kobold Press,5,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0543,The Haunted Forest,Courts of the Shadow Fey,Kobold Press,4,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0544,The Moebius Shadow,Courts of the Shadow Fey,Kobold Press,4,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0545,The Courtesans' Dance,Courts of the Shadow Fey,Kobold Press,9,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0546,Dueling Season,Courts of the Shadow Fey,Kobold Press,10,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0547,The Hunting Lodge: Catching the Firebird,Courts of the Shadow Fey,Kobold Press,5,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0548,Lost Children and Eyeless Beggars / Eyes in the Dark,Courts of the Shadow Fey,Kobold Press,5,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0549,Tower of the Moon,Courts of the Shadow Fey,Kobold Press,10,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
