@@ -1,0 +1,22 @@
+adventure_id,adventure_title,source_book,publisher,page_count,level_start,level_end,levels_action,decision,reason
+ADV-0550,Fury of the Forsaken,T&B Fury of the Forsaken,Lazy Wolf Studios,66,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0551,Part 1: Twisted Travels,T&B Fury of the Forsaken,Lazy Wolf Studios,11,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0552,Smárvik,T&B Fury of the Forsaken,Lazy Wolf Studios,5,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0553,The Cowering Troll,T&B Fury of the Forsaken,Lazy Wolf Studios,4,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0554,Unmasking the Murderer,T&B Fury of the Forsaken,Lazy Wolf Studios,23,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0555,The Burial Isle and Grave Ship,T&B Fury of the Forsaken,Lazy Wolf Studios,3,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0556,Town Under Siege,T&B Fury of the Forsaken,Lazy Wolf Studios,5,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0557,Draumheim and the Dreamforest,T&B Fury of the Forsaken,Lazy Wolf Studios,6,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0558,Skallagrímsson's Cave,T&B Fury of the Forsaken,Lazy Wolf Studios,6,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0559,Part 3: The Battle,T&B Fury of the Forsaken,Lazy Wolf Studios,10,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0560,Banner of the Bull,T&B The Bense Trilogy,Lazy Wolf Studios,30,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0561,Frantic Furballs at the Farm,T&B The Bense Trilogy,Lazy Wolf Studios,5,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0562,Part Two: Trouble at the Trelleborg,T&B The Bense Trilogy,Lazy Wolf Studios,10,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0563,Part Three: The Thorn Maze,T&B The Bense Trilogy,Lazy Wolf Studios,5,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0564,Keeper of the Drowned,T&B The Bense Trilogy,Lazy Wolf Studios,28,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0565,Part 1: The Ritual,T&B The Bense Trilogy,Lazy Wolf Studios,15,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0566,Part 2: The Wave,T&B The Bense Trilogy,Lazy Wolf Studios,5,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0567,Troll of the Town,T&B The Bense Trilogy,Lazy Wolf Studios,20,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0568,Part 1: Stolen Goods,T&B The Bense Trilogy,Lazy Wolf Studios,7,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0569,Part 2: Raven's Wood,T&B The Bense Trilogy,Lazy Wolf Studios,9,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0570,Skogarmaor Camp,T&B The Bense Trilogy,Lazy Wolf Studios,3,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass

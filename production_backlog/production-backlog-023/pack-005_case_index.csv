@@ -1,0 +1,13 @@
+case_index,pack_index,pack_case_index,adventure_index,adventure_id,adventure_title,source_book,publisher,page_count,dimension,profile,model_alias,runtime_key,manifest_path
+241,5,1,21,ADV-0570,Skogarmaor Camp,T&B The Bense Trilogy,Lazy Wolf Studios,3,# of Sessions,nos-clean-blind-v1,qwen27,base,experiments/production-backlog-023/production-backlog-023-qwen27-nos-adv0570-v1.yml
+242,5,2,21,ADV-0570,Skogarmaor Camp,T&B The Bense Trilogy,Lazy Wolf Studios,3,Exploration Emphasis,ee-clean-reset-v0.5,gptoss,ee,experiments/production-backlog-023/production-backlog-023-gptoss-ee-adv0570-v1.yml
+243,5,3,21,ADV-0570,Skogarmaor Camp,T&B The Bense Trilogy,Lazy Wolf Studios,3,GM Preparation Burden,gmpb-v0.6-dependency-fan-out,gemma,gmpb,experiments/production-backlog-023/production-backlog-023-gemma-gmpb-adv0570-v1.yml
+244,5,4,21,ADV-0570,Skogarmaor Camp,T&B The Bense Trilogy,Lazy Wolf Studios,3,Combat Emphasis,production-base,qwen,base,experiments/production-backlog-023/production-backlog-023-qwen-combat-adv0570-v1.yml
+245,5,5,21,ADV-0570,Skogarmaor Camp,T&B The Bense Trilogy,Lazy Wolf Studios,3,Social Interaction Emphasis,phase6-v0.3,qwen,base,experiments/production-backlog-023/production-backlog-023-qwen-social-adv0570-v1.yml
+246,5,6,21,ADV-0570,Skogarmaor Camp,T&B The Bense Trilogy,Lazy Wolf Studios,3,Investigation Emphasis,phase6-v0.4,qwen,base,experiments/production-backlog-023/production-backlog-023-qwen-investigation-adv0570-v1.yml
+247,5,7,21,ADV-0570,Skogarmaor Camp,T&B The Bense Trilogy,Lazy Wolf Studios,3,Structural Openness,production-base,qwen,base,experiments/production-backlog-023/production-backlog-023-qwen-structural-openness-adv0570-v1.yml
+248,5,8,21,ADV-0570,Skogarmaor Camp,T&B The Bense Trilogy,Lazy Wolf Studios,3,Darkness / Horror Intensity,production-base,qwen,base,experiments/production-backlog-023/production-backlog-023-qwen-darkness-adv0570-v1.yml
+249,5,9,21,ADV-0570,Skogarmaor Camp,T&B The Bense Trilogy,Lazy Wolf Studios,3,Player Beginner Suitability,production-base,qwen,base,experiments/production-backlog-023/production-backlog-023-qwen-player-beginner-adv0570-v1.yml
+250,5,10,21,ADV-0570,Skogarmaor Camp,T&B The Bense Trilogy,Lazy Wolf Studios,3,GM Beginner Suitability,gmbs-clean-blind-v0.3,qwen,base,experiments/production-backlog-023/production-backlog-023-qwen-gmbs-adv0570-v1.yml
+251,5,11,21,ADV-0570,Skogarmaor Camp,T&B The Bense Trilogy,Lazy Wolf Studios,3,Seriousness,seriousness-reset-only,qwen,seriousness,experiments/production-backlog-023/production-backlog-023-qwen-seriousness-adv0570-v1.yml
+252,5,12,21,ADV-0570,Skogarmaor Camp,T&B The Bense Trilogy,Lazy Wolf Studios,3,Levels,levels-v2.1,qwen,base,experiments/production-backlog-023/production-backlog-023-qwen-levels-adv0570-v1.yml
