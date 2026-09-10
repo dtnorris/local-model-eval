@@ -1,0 +1,22 @@
+adventure_id,adventure_title,source_book,publisher,page_count,level_start,level_end,levels_action,decision,reason
+ADV-0571,Golgoron Arises,SF City of Arches,Sly Flourish,2,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0572,The Key of Worlds,SF City of Arches,Sly Flourish,5,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0573,Return of the Nameless King,SF City of Arches,Sly Flourish,5,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0574,Collision of Worlds,SF City of Arches,Sly Flourish,8,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0575,The Obsidian Skull,SF City of Arches,Sly Flourish,2,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0576,Pit of the Vile Prince,SF City of Arches,Sly Flourish,2,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0577,The Tomb of Rorathix,SF City of Arches,Sly Flourish,2,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0578,One More for the Road,Book of Spirits,Beyond the Screen,24,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0579,Act 1: A Dream of Home,Book of Spirits,Beyond the Screen,5,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0580,Auktume's Manor,Book of Spirits,Beyond the Screen,2,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0581,Valley of Ghosts,Book of Spirits,Beyond the Screen,10,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0582,Act 3: Cut Through the Past,Book of Spirits,Beyond the Screen,7,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0583,Lady of Lamentation,Book of Spirits,Beyond the Screen,19,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0584,Act 1: Pensiveness,Book of Spirits,Beyond the Screen,5,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0585,Act 2: Sadness,Book of Spirits,Beyond the Screen,8,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0586,Act 3: Grief,Book of Spirits,Beyond the Screen,6,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0587,The Beast and the Baroness,Book of Spirits,Beyond the Screen,23,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0588,Act 1: The Raging Beast,Book of Spirits,Beyond the Screen,4,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0589,Act 2: Hidden Histories,Book of Spirits,Beyond the Screen,4,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0590,Act 3: Memories,Book of Spirits,Beyond the Screen,13,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0591,Castle Arnevoux in the Everlast,Book of Spirits,Beyond the Screen,11,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
