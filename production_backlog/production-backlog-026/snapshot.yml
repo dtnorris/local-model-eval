@@ -386,7 +386,7 @@ qualification_files:
   production_backlog/qualified_seriousness.yml: 5b4d23f7112b4745e36cbc90053b48daa5d004b23282d77f35792af4020e1ac5
 local_model_eval_commit: 60ef6fe5e59d232d572699a0d567776fddb45975
 scorer_commit: d34a43555773947f69825be69f525463be916cda
-scorer_repo_path: "../af-cli-scoring-utility-main"
+scorer_repo_path: "../af-cli-scoring-utility"
 generated_at: '2026-09-10T08:19:59-04:00'
 runtime_files:
   base:
