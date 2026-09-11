@@ -1,11 +1,14 @@
 # frozen_string_literal: true
 
+require "json"
 require "open3"
 require_relative "config"
 require_relative "experiment"
 
 module LocalModelEvaluation
   class ProductionBacklogSourcePreflight
+    TERMINAL_STATUSES = %w[complete failed].freeze
+
     def initialize(root:, io: $stdout, err: $stderr, command_runner: nil)
       @root = File.expand_path(root)
       @io = io
@@ -28,10 +31,19 @@ module LocalModelEvaluation
       seen = {}
       failures = []
       checked = 0
+      terminal_skipped = 0
+      nonterminal_considered = 0
 
       manifest_paths.each do |manifest_entry|
         manifest_path = File.expand_path(manifest_entry, @root)
         experiment = Experiment.new(manifest_path)
+
+        if TERMINAL_STATUSES.include?(manifest_status(experiment))
+          terminal_skipped += 1
+          next
+        end
+
+        nonterminal_considered += 1
         manifest = Config.load_yaml(manifest_path)
 
         unless experiment.scorer_mode == "positional"
@@ -66,11 +78,17 @@ module LocalModelEvaluation
         end
       end
 
+      summary = source_summary(
+        checked: checked,
+        terminal_skipped: terminal_skipped,
+        nonterminal_considered: nonterminal_considered
+      )
+
       if failures.empty?
-        @io.puts "Runtime source preflight: PASS (#{checked} unique source context#{checked == 1 ? '' : 's'})"
+        @io.puts "Runtime source preflight: PASS (#{summary})"
         true
       else
-        @err.puts "Runtime source preflight: FAIL (#{failures.length}/#{checked} failed). No inference is authorized."
+        @err.puts "Runtime source preflight: FAIL (#{failures.length}/#{checked} failed; #{summary}). No inference is authorized."
         false
       end
     rescue KeyError, ArgumentError, Errno::ENOENT => e
@@ -88,6 +106,29 @@ module LocalModelEvaluation
 
     def capture3(env, command, chdir)
       Open3.capture3(env, *command, chdir: chdir)
+    end
+
+    def manifest_status(experiment)
+      pattern = File.join(@root, "output", experiment.name, "runs", "*", "metadata.json")
+      metadata = Dir.glob(pattern).sort
+      return "pending" if metadata.empty?
+
+      statuses = metadata.map { |path| JSON.parse(File.read(path))["status"].to_s }
+      return "complete" if statuses.all? { |status| status == "complete" }
+      return "failed" if statuses.any? { |status| status == "failed" }
+      return "running" if statuses.any? { |status| status == "running" }
+
+      "unknown"
+    rescue JSON::ParserError
+      "unknown"
+    end
+
+    def source_summary(checked:, terminal_skipped:, nonterminal_considered:)
+      [
+        "#{checked} unique source context#{checked == 1 ? '' : 's'} checked",
+        "#{terminal_skipped} terminal manifest#{terminal_skipped == 1 ? '' : 's'} skipped",
+        "#{nonterminal_considered} nonterminal manifest#{nonterminal_considered == 1 ? '' : 's'} considered"
+      ].join("; ")
     end
 
     def preflight_command(experiment, ollama_model, adventure)
