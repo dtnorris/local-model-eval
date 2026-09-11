@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative "test_helper"
+require "json"
 require "open3"
 require "pathname"
 require "stringio"
@@ -85,6 +86,95 @@ class ProductionBacklogSourcePreflightTest < Minitest::Test
     assert_match(/No inference is authorized/, err.string)
   end
 
+  def test_skips_complete_and_failed_manifests_before_source_preflight
+    complete = write_manifest("complete", "Combat Emphasis", "ADV-0101")
+    failed = write_manifest("failed", "Combat Emphasis", "ADV-0102")
+    pending = write_manifest("pending", "Combat Emphasis", "ADV-0103")
+    write_status("complete", "complete")
+    write_status("failed", "complete", "failed")
+    write_order(complete, failed, pending)
+
+    calls = []
+    runner = lambda do |env, command, chdir|
+      calls << [env, command, chdir]
+      ["ok", "", FakeStatus.new(true)]
+    end
+    out = StringIO.new
+
+    ok = LocalModelEvaluation::ProductionBacklogSourcePreflight.new(
+      root: @root,
+      io: out,
+      err: StringIO.new,
+      command_runner: runner
+    ).run("production_backlog/queue")
+
+    assert ok
+    assert_equal 1, calls.length
+    assert_includes calls.fetch(0).fetch(1), "ADV-0103"
+    assert_match(/1 unique source context checked/, out.string)
+    assert_match(/2 terminal manifests skipped/, out.string)
+    assert_match(/1 nonterminal manifest considered/, out.string)
+  end
+
+  def test_preflights_pending_running_and_unknown_manifests
+    pending = write_manifest("pending", "Combat Emphasis", "ADV-0201")
+    running = write_manifest("running", "Combat Emphasis", "ADV-0202")
+    unknown = write_manifest("unknown", "Combat Emphasis", "ADV-0203")
+    write_status("running", "running")
+    write_malformed_status("unknown")
+    write_order(pending, running, unknown)
+
+    calls = []
+    runner = lambda do |env, command, chdir|
+      calls << [env, command, chdir]
+      ["ok", "", FakeStatus.new(true)]
+    end
+    out = StringIO.new
+
+    ok = LocalModelEvaluation::ProductionBacklogSourcePreflight.new(
+      root: @root,
+      io: out,
+      err: StringIO.new,
+      command_runner: runner
+    ).run("production_backlog/queue")
+
+    assert ok
+    assert_equal 3, calls.length
+    assert_equal %w[ADV-0201 ADV-0202 ADV-0203], calls.map { |_env, command, _chdir| command.fetch(6) }
+    assert_match(/3 unique source contexts checked/, out.string)
+    assert_match(/0 terminal manifests skipped/, out.string)
+    assert_match(/3 nonterminal manifests considered/, out.string)
+  end
+
+  def test_all_terminal_queue_passes_without_source_checks
+    complete = write_manifest("complete", "Combat Emphasis", "ADV-0301")
+    failed = write_manifest("failed", "Combat Emphasis", "ADV-0302")
+    write_status("complete", "complete")
+    write_status("failed", "failed")
+    write_order(complete, failed)
+
+    calls = []
+    out = StringIO.new
+    err = StringIO.new
+
+    ok = LocalModelEvaluation::ProductionBacklogSourcePreflight.new(
+      root: @root,
+      io: out,
+      err: err,
+      command_runner: lambda do |*args|
+        calls << args
+        ["ok", "", FakeStatus.new(true)]
+      end
+    ).run("production_backlog/queue")
+
+    assert ok
+    assert_empty calls
+    assert_match(/0 unique source contexts checked/, out.string)
+    assert_match(/2 terminal manifests skipped/, out.string)
+    assert_match(/0 nonterminal manifests considered/, out.string)
+    assert_empty err.string
+  end
+
   def test_applies_manifest_prompt_profile_environment_and_runtime_config
     manifest = write_manifest(
       "social",
@@ -147,6 +237,20 @@ class ProductionBacklogSourcePreflightTest < Minitest::Test
     data["phase6_contract"] = phase6 if phase6
     File.write(path, YAML.dump(data))
     Pathname.new(path).relative_path_from(Pathname.new(@root)).to_s
+  end
+
+  def write_status(slug, *statuses)
+    statuses.each_with_index do |status, index|
+      dir = File.join(@root, "output", "queue-#{slug}", "runs", "run-#{index + 1}")
+      FileUtils.mkdir_p(dir)
+      File.write(File.join(dir, "metadata.json"), JSON.dump("status" => status))
+    end
+  end
+
+  def write_malformed_status(slug)
+    dir = File.join(@root, "output", "queue-#{slug}", "runs", "run-1")
+    FileUtils.mkdir_p(dir)
+    File.write(File.join(dir, "metadata.json"), "{not-json")
   end
 
   def write_order(*entries)
