@@ -1,0 +1,36 @@
+adventure_id,adventure_title,source_book,publisher,page_count,level_start,level_end,levels_action,decision,reason
+ADV-0647,Harrowhall,The Book of Many Things,Wizards of the Coast,9,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0648,Gardmore Abbey,The Book of Many Things,Wizards of the Coast,9,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0649,The Donjon Sphere,The Book of Many Things,Wizards of the Coast,12,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0650,House of Cards,The Book of Many Things,Wizards of the Coast,11,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0651,Encounters with Hulgaz,The Book of Many Things,Wizards of the Coast,1,,,SCORE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0652,Tide of Retribution,Explorer's Guide to Wildemount,Wizards of the Coast,12,1,3,PRESERVE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0653,That Sinking Feeling,Explorer's Guide to Wildemount,Wizards of the Coast,4,1,2,PRESERVE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0654,Hunger of the Deep,Explorer's Guide to Wildemount,Wizards of the Coast,6,2,3,PRESERVE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0655,Dangerous Designs,Explorer's Guide to Wildemount,Wizards of the Coast,18,1,3,PRESERVE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0656,A Boom in the Night,Explorer's Guide to Wildemount,Wizards of the Coast,11,1,2,PRESERVE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0657,Stahlmast's Lair,Explorer's Guide to Wildemount,Wizards of the Coast,7,2,3,PRESERVE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0658,Frozen Sick,Explorer's Guide to Wildemount,Wizards of the Coast,15,1,3,PRESERVE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0659,Mystery in Palebank Village,Explorer's Guide to Wildemount,Wizards of the Coast,7,1,2,PRESERVE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0660,Croaker Cave,Explorer's Guide to Wildemount,Wizards of the Coast,4,1,1,PRESERVE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0661,Traveling to Eiselcross,Explorer's Guide to Wildemount,Wizards of the Coast,8,2,3,PRESERVE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0662,Salsvault,Explorer's Guide to Wildemount,Wizards of the Coast,6,2,3,PRESERVE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0663,Unwelcome Spirits,Explorer's Guide to Wildemount,Wizards of the Coast,14,1,3,PRESERVE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0664,Exploring Brokenveil Marsh,Explorer's Guide to Wildemount,Wizards of the Coast,7,1,2,PRESERVE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0665,Infiltrating Fort Venture,Explorer's Guide to Wildemount,Wizards of the Coast,7,2,3,PRESERVE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0666,Forgotten Relics,Eberron: Rising from the Last War,Wizards of the Coast,14,1,2,PRESERVE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0667,The Fouled Stream,Dungeon Master's Guide (2024),Wizards of the Coast,1,1,2,PRESERVE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0668,Miner Difficulties,Dungeon Master's Guide (2024),Wizards of the Coast,1,2,3,PRESERVE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0669,The Winged God,Dungeon Master's Guide (2024),Wizards of the Coast,1,3,4,PRESERVE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0670,Horns of the Beast,Dungeon Master's Guide (2024),Wizards of the Coast,1,5,5,PRESERVE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0671,Boreal Ball,Dungeon Master's Guide (2024),Wizards of the Coast,1,7,7,PRESERVE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0672,Donjon of Doom,Delve: How to Build & Survive Deadly Dungeons,Bob World Builder and Eventyr Games,15,1,10,PRESERVE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0673,Lair of the Frog King,Delve: How to Build & Survive Deadly Dungeons,Bob World Builder and Eventyr Games,7,1,4,PRESERVE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0674,Shrine of the Sunken Star,Delve: How to Build & Survive Deadly Dungeons,Bob World Builder and Eventyr Games,7,2,5,PRESERVE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0675,The Festering Hive,Delve: How to Build & Survive Deadly Dungeons,Bob World Builder and Eventyr Games,9,3,6,PRESERVE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0676,The Bloody Sepulcher,Delve: How to Build & Survive Deadly Dungeons,Bob World Builder and Eventyr Games,5,4,7,PRESERVE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0677,Crypt of the Oozing Dragon,Delve: How to Build & Survive Deadly Dungeons,Bob World Builder and Eventyr Games,11,4,7,PRESERVE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0678,Everwatch Prison,Delve: How to Build & Survive Deadly Dungeons,Bob World Builder and Eventyr Games,12,4,7,PRESERVE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0679,Temple of the Jade Lantern,Delve: How to Build & Survive Deadly Dungeons,Bob World Builder and Eventyr Games,9,5,8,PRESERVE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0680,Warren of the Fetid Hag,Delve: How to Build & Survive Deadly Dungeons,Bob World Builder and Eventyr Games,10,5,8,PRESERVE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
+ADV-0681,Vault of the Magi,Delve: How to Build & Survive Deadly Dungeons,Bob World Builder and Eventyr Games,11,6,9,PRESERVE,SELECT,explicit_target_11_scores_blank_source_preflight_pass
